@@ -98,6 +98,7 @@ def main(args):
     loss_fxn = torch.nn.CrossEntropyLoss()
     best_epoch = 0
     best_acc = -1
+    epochs_without_change = 0
     for e in range(args.epochs):
         print(f"training epoch {e}")
         train_loss, train_acc, interest_train_acc = train_epoch(model, train_batches, loss_fxn, optimizer, args.intent_of_interest)
@@ -120,6 +121,11 @@ def main(args):
                 data_to_write = {"best_epoch": e, "best_acc": dev_acc, f"best_{args.intent_of_interest}_acc": interest_dev_acc}
                 json.dump(data_to_write, f1)
             torch.save(model.state_dict(), checkpoint_dir.joinpath("best.th"))
+            epochs_without_change = 0
+
+        if epochs_without_change > args.patience:
+            print(f"Ran out of patience!")
+            break 
 
     print(f"evaluating model...")
     print(f"loading best weights from {checkpoint_dir.joinpath('best.th')}")
@@ -144,11 +150,12 @@ if __name__ == "__main__":
 
     # Model/Training
     parser.add_argument("--bert-name", default="bert-base-cased", required=True, help="bert pretrained model to use")
-    parser.add_argument("--epochs", type=int, default=10, help="number of epochs to train")
+    parser.add_argument("--epochs", type=int, default=100, help="number of epochs to train")
     parser.add_argument("--lr", type=float, default=1e-5, help="learn rate to use") 
     parser.add_argument("--batch-size", type=int, default=128, help="batch size for training")
     parser.add_argument("--checkpoint-dir", type=str, required=True, help="path to save models and logs")
     parser.add_argument("--seed", type=int, default=12)
+    parser.add_argument("--patience", type=int, default=10, help="how many epochs to wait for without improvement before early stopping")
     args = parser.parse_args() 
 
     main(args)
