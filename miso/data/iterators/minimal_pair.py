@@ -852,3 +852,173 @@ class TemperatureMinimalPairIterator(MinimalPairIterator):
         #print(f"Length of batch is {len(output_instances)}")
         #print(f"Skipped instances: {skipped_original_instances}, Skipped by backoff: {skipped_by_end}, Paired: {paired}")
         return output_instances, None
+
+
+@DataIterator.register("low_resource_min_pair")
+class LowResourceMinimalPairIterator(MinimalPairIterator):
+    def __init__(self,
+                 sorting_keys: List[Tuple[str, str]],
+                 padding_noise: float = 0.1,
+                 biggest_batch_first: bool = False,
+                 batch_size: int = 32,
+                 instances_per_epoch: int = None,
+                 max_instances_in_memory: int = None,
+                 cache_instances: bool = False,
+                 track_epoch: bool = False,
+                 maximum_samples_per_batch: Tuple[str, int] = None,
+                 skip_smaller_batches: bool = False,
+                 fxn_of_interest: str = "Func2",
+                 pair_lookup_table: str = None,
+                 train_path: str = None, 
+                 dataset_reader: DatasetReader = None,
+                 choose_top: bool = True,
+                 sample_top_k: int = -1,
+                 percentile: float = 0.5,
+                 frequency_path: str = None) -> None:
+
+
+        # likely this will make batches smaller than they need to be  
+        # since if we're looking at the bottom 50% of functions by frequency, 
+        # they will appear in < 50% of programs 
+        batch_size = int(batch_size * percentile)
+
+        super().__init__(sorting_keys=sorting_keys,
+                        padding_noise=padding_noise,
+                        biggest_batch_first=biggest_batch_first,
+                        batch_size=batch_size,
+                        instances_per_epoch=instances_per_epoch,
+                        max_instances_in_memory=max_instances_in_memory,
+                        cache_instances=cache_instances,
+                        track_epoch=track_epoch,
+                        maximum_samples_per_batch=maximum_samples_per_batch,
+                        skip_smaller_batches=skip_smaller_batches)
+
+        self.fxn_of_interest = fxn_of_interest
+        self.dataset_reader = dataset_reader
+
+        self.frequency_data = json.load(open(frequency_path))
+        self.low_freq_fxns = self.get_low_freq(percentile)
+
+
+        self.lookup_table = json.load(open(pair_lookup_table))
+        self.train_path = pathlib.Path(train_path)
+
+        src_path = self.train_path.joinpath("train.src_tok") 
+        idx_path = self.train_path.joinpath("train.idx") 
+        tgt_path = self.train_path.joinpath("train.tgt")
+
+        train_src = [line.strip() for line in open(src_path).readlines()]
+        train_tgt = [line.strip() for line in open(tgt_path).readlines()]
+        train_idx = [line.strip() for line in open(idx_path).readlines()]
+
+        self.train_idx_lookup = {int(idx): (src, tgt) for src, idx, tgt in zip(train_src, train_idx, train_tgt)}
+        self.used_idxs = set()
+
+        # if choosing top, just take the best possible pair 
+        self.choose_top = choose_top
+        # if sampling top k, sample randomly from the top k minimal pairs 
+        self.sample_top_k = sample_top_k
+
+        if self.choose_top and self.sample_top_k > -1: 
+            raise AssertionError(f"You cannot have choose_top and sample_top_k set simultaneously, you must pick one method.")
+        if not self.choose_top and self.sample_top_k == -1: 
+            raise AssertionError(f"You cannot have choose_top and sample_top_k unset simultaneously, you must pick one method.")
+
+    def get_low_freq(self, percentile):
+        sorted_freq_items = sorted(self.frequency_data.items(), key=lambda x: x[1])
+        idx = int(percentile * len(sorted_freq_items)) + 1 
+        under_percentile = [x[0] for x in sorted_freq_items][0:idx]
+        return under_percentile
+
+    def get_topk_choices(self, ranking): 
+        ranking = [x for x in ranking if int(x) not in self.used_idxs]
+        if len(ranking) == 0:
+            return None
+        ranking = ranking[0: self.sample_top_k]
+        return ranking 
+
+    def is_low_resource(self, tgt_tokens): 
+        return any([x in self.low_freq_fxns for x in tgt_tokens])
+
+    @overrides
+    def create_minimal_pairs(self, instances: Iterable[Instance]):
+        """
+        Function to create minimal pairs for real data
+        """
+        # copy instances 
+        #output_instances = [x for x in instances]
+        paired = 0
+        skipped_original_instances = 0
+        skipped_by_end = 0
+        output_instances = []
+        for i, inst in enumerate(instances):
+            tgt_tokens = inst['tgt_tokens_str'].metadata[1:-1]
+            is_lr = self.is_low_resource(tgt_tokens)
+            inst_index = str(inst['line_index'].metadata)
+            # if the instance has been used as a pair before, skip it 
+            if int(inst_index) in self.used_idxs:
+                skipped_original_instances += 1
+                # need to remove from instances 
+                continue 
+            output_instances.append(inst)
+            # add instance idx so that instance is not seen as a pair in the future 
+            self.used_idxs.add(int(inst_index))
+            new_idx = None
+            j = 0
+            skip = False
+
+            # only add min pair for low resource functions 
+            if is_lr:
+                # cycle through candidate indices until find an unused one 
+                while new_idx is None:
+                    try:
+                        if self.choose_top:
+                            # choose the highest-ranked instance
+                            candidate = self.lookup_table[inst_index][j]
+                        else:
+                            # choose a random instance from the top k
+                            #print(f"choosing from {len(self.lookup_table[inst_index][0:self.sample_top_k])}")
+                            choices = self.get_topk_choices(self.lookup_table[inst_index])
+                            if choices is None or len(choices) == 0:
+                                print(f"skipping!")
+                                skip = True
+                                break
+                            elif len(choices) == 1:
+                                choice_idx = choices[0]
+                            else:
+                                choice_idx = np.random.choice(len(choices)-1)
+                            candidate = choices[choice_idx]
+                            #print(f"chose {candidate}")
+                    except IndexError:
+                        skip = True
+                        break
+                    j+=1
+                    # if the candidate has been seen before, skip it 
+                    if int(candidate) in self.used_idxs:
+                        continue
+
+                    new_idx = candidate
+                if skip:
+                    skipped_by_end += 1
+                    continue
+                #self.lookup_table[inst_index] = self.lookup_table[inst_index][1:]
+                self.used_idxs.add(int(new_idx))
+
+                new_src_str, new_tgt_str = self.train_idx_lookup[new_idx]
+                src_toks = [str(x) for x in inst['source_tokens'].tokens]
+                user_idxs = [i for i, x in enumerate(src_toks) if x == "__User"]
+                src_str = " ".join(src_toks[user_idxs[-1]+1:])
+                print(f"Pairing {src_str} with {new_src_str}")
+                print(f"Pairing {' '.join(tgt_tokens)} with {new_tgt_str}")
+                #pdb.set_trace()
+                new_graph = CalFlowGraph(new_src_str, 
+                                        new_tgt_str, 
+                                        use_agent_utterance = self.dataset_reader.use_agent_utterance, 
+                                        use_context = self.dataset_reader.use_context,
+                                        use_program = self.dataset_reader.use_program,
+                                        fxn_of_interest=self.fxn_of_interest) 
+                new_instance = self.dataset_reader.text_to_instance(new_graph)
+                paired += 1
+                output_instances.append(new_instance)
+
+        return output_instances, None

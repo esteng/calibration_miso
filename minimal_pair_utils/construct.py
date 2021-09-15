@@ -73,6 +73,10 @@ def anonymize_tgt(lispress_seq):
     seq = lispress_to_seq(lispress)
     return seq
 
+def share_words(s1, s2):
+    return any([x in s2 for x in s1])
+
+
 def restrict_mutants(mutants, 
                     fxn_tgt,    
                     train_src, 
@@ -83,7 +87,8 @@ def restrict_mutants(mutants,
                     do_sum = False, 
                     fxn_frequencies=None, 
                     anon_plan=False,
-                    top_k=-1): 
+                    top_k=-1,
+                    heuristics=False): 
     """
     This function is key. Enforces target constraints on the mutant, namely that 
     fxn of interest doesn't appear in target (minimal pair).
@@ -99,19 +104,31 @@ def restrict_mutants(mutants,
         full_dists = np.ones((len(mutants), top_k)) * np.inf   
 
     counter = -1
+    min_dist = np.inf 
     for j, (src, tgt, idx) in enumerate(zip(train_src, train_tgt, train_idxs)): 
         counter +=1 
-        if top_k != -1 and counter >= top_k-1: 
-            break 
+
         if do_sum:
             tgt_dist = levenshtein(fxn_tgt, tgt)
+
         for i, mutant in enumerate(mutants):
             if top_k == -1:
                 tj = j
             else:
                 tj = counter 
+
+            # heuristics 
+            # if they're the same, skip
             if mutant == src: 
                 continue
+            # if the lengths are so different that it doesn't possibly have a 
+            # chance of being the min, skip 
+            if abs(len(mutant) - len(src)) >= min_dist:
+                continue
+            # if they're above a length of 1 and share 0 words, skip
+            if not(share_words(mutant, src)) and len(mutant) > 1:
+                continue
+
             if not anon_plan:
                 if fxn_of_interest is None:
                     fxn_of_interest = choose_fxn(fxn_tgt, fxn_frequencies)
@@ -126,6 +143,10 @@ def restrict_mutants(mutants,
             if names is not None:
                 src = anonymize_input(src, names)
             src_dist =  levenshtein(mutant, src) 
+
+            if src_dist < min_dist:
+                min_dist = src_dist 
+
             if do_sum:
                 full_dists[i,tj] = src_dist + tgt_dist 
             else:
@@ -214,6 +235,20 @@ def sort_train_by_min_pair(train_src,
     # reorder train idxs 
     return best_train_idxs.tolist()         
 
+def bucket_by_src(train_src, train_idxs, train_tgt, bucket_size):
+    print(f"getting lengths for {len(train_src)} examples")
+    train_lengths = [len(x) for x in train_src]
+    max_len = np.max(train_lengths) 
+    max_len = max_len + max_len % bucket_size
+    print(f"Making buckets in increments of size: {bucket_size}")
+    buckets_by_len = {i:{"src":[], "idx": [], "tgt":[]} for i in range(0, max_len, bucket_size)} 
+    for src, idx, tgt, l in zip(train_src, train_idxs, train_tgt, train_lengths):
+        bucket_idx = l - l % bucket_size 
+        buckets_by_len[bucket_idx]['src'].append(src)
+        buckets_by_len[bucket_idx]['idx'].append(idx)
+        buckets_by_len[bucket_idx]['tgt'].append(tgt)
+    return buckets_by_len
+
 
 def main(args):
     train_src, train_idxs, train_tgt = read_data(args.train_path)
@@ -230,10 +265,28 @@ def main(args):
     mutation_types = [x.strip() for x in args.mutation_types.split(",")]
     # keys are idxs, values are sorted list of train lines 
     min_pair_lookup = defaultdict(list)
+
+    # TODO: need to so something smart here where we bucket src into lengths, only consider things within a 
+    # certain length of the original 
+    if args.bucket_size > -1:
+        bucketed_data = bucket_by_src(train_src, train_idxs, train_tgt, bucket_size=args.bucket_size)
+
     for src, idx, tgt in tqdm(zip(fxn_src, fxn_idxs, fxn_tgt)):
-        min_pair_lookup[idx] = sort_train_by_min_pair(train_src, 
-                                                      train_idxs, 
-                                                      train_tgt, 
+        if args.bucket_size > -1:
+            src_len = len(src) - len(src) % args.bucket_size
+            bucket_subset = bucketed_data[src_len]
+            bucket_src = bucket_subset['src']
+            bucket_idxs = bucket_subset['idx']
+            bucket_tgt = bucket_subset['tgt']
+            print(f"bucket: {src_len} has {len(bucket_src)} examples")
+        else:
+            bucket_src = train_src
+            bucket_idxs = train_idxs
+            bucket_tgt = train_tgt 
+
+        min_pair_lookup[idx] = sort_train_by_min_pair(bucket_src, 
+                                                      bucket_idxs, 
+                                                      bucket_tgt, 
                                                       src, 
                                                       tgt, 
                                                       args.fxn_of_interest, 
@@ -248,7 +301,6 @@ def main(args):
     with open(args.out_path, "w") as f1:
         json.dump(min_pair_lookup, f1)
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--train-path", type=str, help="path to dir containing train files (src_tok, idx, tgt)", required = True)
@@ -262,6 +314,7 @@ if __name__ == "__main__":
     parser.add_argument("--anon-plan", action="store_true", help="instead of doing TFIDF for sampling in full data setting, just ensure that the anonymized plans aren't equal")
     parser.add_argument("--num-mutants", type=int, default=10, help="number of mutants to consider")
     parser.add_argument("--top-k", type=int, default=-1, help = "number of pairs to get per example (-1 means rank the whole train set)")
+    parser.add_argument("--bucket-size", type=int, default=-1, help = "size of the bucket for length bucketing")
     args = parser.parse_args()
     main(args)
 

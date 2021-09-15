@@ -1,9 +1,11 @@
 #!/bin/bash 
 
 FXN=$1
-SEED=$2
+MODEL=$2
+SEED=$3
+DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/intent/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
 
 for num in 750 1500 3000 7500 15000 18000 
 do
@@ -19,9 +21,10 @@ do
             --split-type interest \
             --total-train ${num} \
             --total-interest ${fxn_num} \
-            --epochs 100 \
+            --epochs 200 \
             --intent-of-interest ${FXN} \
-            --seed ${SEED} 
+            --seed ${SEED} \
+            --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
     done
 done
 

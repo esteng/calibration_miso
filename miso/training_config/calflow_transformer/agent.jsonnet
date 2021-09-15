@@ -1,5 +1,5 @@
-local data_dir = "data/smcalflow.agent.data/";
-local glove_embeddings = "/home/t-eliass/resources/glove.840B.300d.zip";
+local data_dir = "/home/estengel/resources/data/smcalflow.agent.data/";
+local glove_embeddings = "/home/estengel/resources/glove.840B.300d.zip";
 
 {
   dataset_reader: {
@@ -202,6 +202,7 @@ local glove_embeddings = "/home/t-eliass/resources/glove.840B.300d.zip";
       },
     },
     label_smoothing: {
+        type: "base",
         smoothing: 0.0,
     },
     dropout: 0.2,
