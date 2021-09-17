@@ -43,6 +43,11 @@ from dataflow.core.lispress import render_compact
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
+class FakeMetricTracker:
+    def state_dict(self):
+        return None
+    def is_best_so_far(self):
+        return False
 
 @TrainerBase.register("calflow_parsing")
 class CalflowTrainer(Trainer):
@@ -54,6 +59,7 @@ class CalflowTrainer(Trainer):
                  accumulate_batches: int = 1,
                  bert_optimizer: Optimizer = None,
                  do_train_metrics: bool = False,
+                 model_save_every: int = None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.validation_data_path = validation_data_path
@@ -61,6 +67,7 @@ class CalflowTrainer(Trainer):
         self.accumulate_batches = accumulate_batches
         self.bert_optimizer = bert_optimizer
         self.do_train_metrics = do_train_metrics
+        self._model_save_every = model_save_every
 
         self._warmup_epochs = warmup_epochs
         self._curr_epoch = 0
@@ -372,6 +379,16 @@ class CalflowTrainer(Trainer):
                 self._save_checkpoint(
                         '{0}.{1}'.format(epoch, training_util.time_to_str(int(last_save_time)))
                 )
+
+
+            if self._model_save_every is not None and self._batch_num_total % self._model_save_every == 0: 
+                old_metric_tracker = self._metric_tracker
+                # hacky way to make sure best.th doesn't get overwritten here without modifying allennlp
+                new_metric_tracker = FakeMetricTracker()
+                self._metric_tracker = new_metric_tracker
+                self._save_checkpoint(f"{self._batch_num_total}.interim")
+                self._metric_tracker = old_metric_tracker
+
         metrics = training_util.get_metrics(self.model, train_loss, batches_this_epoch, reset=True)
         metrics['cpu_memory_MB'] = peak_cpu_usage
         for (gpu_num, memory) in gpu_usage:
@@ -522,6 +539,7 @@ def _from_params(cls,  # type: ignore
     log_batch_size_period = params.pop_int("log_batch_size_period", None)
     accumulate_batches = params.pop("accumulate_batches", 1) 
     do_train_metrics = params.pop("do_train_metrics", False)
+    model_save_every = params.pop("model_save_every", None)
     params.assert_empty(cls.__name__)
     return cls(model=model,
                optimizer=optimizer,
@@ -552,6 +570,7 @@ def _from_params(cls,  # type: ignore
                log_batch_size_period=log_batch_size_period,
                moving_average=moving_average,
                accumulate_batches=accumulate_batches,
-               do_train_metrics=do_train_metrics) 
+               do_train_metrics=do_train_metrics,
+               model_save_every=model_save_every) 
                
 

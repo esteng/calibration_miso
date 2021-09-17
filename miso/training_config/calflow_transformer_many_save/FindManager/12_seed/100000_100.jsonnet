@@ -1,10 +1,9 @@
-local data_dir = "/srv/local1/estengel/resources/data/smcalflow.agent.data/";
-local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
+local data_dir = "/mnt/default/resources/data/smcalflow_samples_curated/FindManager/100000_100/";
+local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
 
 {
   dataset_reader: {
     type: "calflow",
-    line_limit: 1000,
     use_agent_utterance: true,
     use_context: true,
     source_token_indexers: {
@@ -45,7 +44,7 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
     },
   },
   train_data_path: data_dir + "train",
-  validation_data_path: data_dir + "valid",
+  validation_data_path: data_dir + "dev_valid",
   test_data_path: null,
   datasets_for_vocab_creation: [
     "train"
@@ -65,6 +64,7 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
     },
   },
   model: {
+    fxn_of_interest: "FindManager",
     type: "calflow_transformer_parser",
     bert_encoder: {
                     type: "seq2seq_bert_encoder",
@@ -75,7 +75,7 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
         source_tokens: {
           type: "embedding",
           vocab_namespace: "source_tokens",
-          #pretrained_file: glove_embeddings,
+          pretrained_file: glove_embeddings,
           embedding_dim: 300,
           trainable: true,
         },
@@ -116,7 +116,7 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
         target_tokens: {
           type: "embedding",
           vocab_namespace: "target_tokens",
-          #pretrained_file: glove_embeddings,
+          pretrained_file: glove_embeddings,
           embedding_dim: 300,
           trainable: true,
         },
@@ -203,7 +203,7 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
       },
     },
     label_smoothing: {
-        type: "base",
+	type: "base",
         smoothing: 0.0,
     },
     dropout: 0.2,
@@ -218,23 +218,24 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
     # TODO: try to sort by target tokens.
     sorting_keys: [["source_tokens", "num_tokens"]],
     padding_noise: 0.0,
-    batch_size: 125,
+    batch_size: 180,
   },
   validation_iterator: {
     type: "basic",
-    batch_size: 125,
+    batch_size: 180,
+    instances_per_epoch: 1600,
   },
 
   trainer: {
     type: "calflow_parsing",
-    num_epochs: 450,
+    num_epochs: 250,
     warmup_epochs: 0,
-    patience: 250,
+    patience: 20,
     grad_norm: 5.0,
     # TODO: try to use grad clipping.
     grad_clipping: null,
     cuda_device: 0,
-    model_save_every: 1,
+    model_save_every: 100,
     num_serialized_models_to_keep: 1000,
     validation_metric: "+exact_match",
     optimizer: {
@@ -251,7 +252,7 @@ local glove_embeddings = "//srv/local1/estengel/resources/glove.840B.300d.zip";
     },
     no_grad: [],
     # smatch_tool_path: null, # "smatch_tool",
-    validation_data_path: "valid",
+    validation_data_path: "dev_valid",
     validation_prediction_path: "valid_validation.txt",
   },
   random_seed: 12,
