@@ -235,7 +235,7 @@ local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
     # TODO: try to use grad clipping.
     grad_clipping: null,
     cuda_device: 0,
-    model_save_every: 100,
+    model_save_every: 10,
     num_serialized_models_to_keep: 1000,
     validation_metric: "+exact_match",
     optimizer: {
