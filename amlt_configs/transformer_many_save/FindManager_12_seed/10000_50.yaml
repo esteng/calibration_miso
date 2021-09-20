@@ -36,8 +36,8 @@ data:
 
 storage:
    output:
-       storage_account_name: ysumiso
-       container_name: ysumiso
+       storage_account_name: elias
+       container_name: miso
        mount_dir: /mnt/output
 
 jobs: 
