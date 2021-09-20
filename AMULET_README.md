@@ -1,13 +1,13 @@
 # Using Amulet
 
-I've been using [amulet](https://amulet-docs.azurewebsites.net/master/index.html) for submitting jobs at scale. 
+I've been using [amulet](https://amulet-docs.azurewebsites.net/main/index.html) for submitting jobs at scale. 
 
 ## Setting up Amulet 
 
 The steps I took to get this set up were: 
 
-1. follow instructions on [installing amulet](https://amulet-docs.azurewebsites.net/master/setup.html#installation)
-2. set up an [azure storage account](https://amulet-docs.azurewebsites.net/master/setup.html#azure-storage-account)
+1. follow instructions on [installing amulet](https://amulet-docs.azurewebsites.net/main/setup.html#installation)
+2. set up an [azure storage account](https://amulet-docs.azurewebsites.net/main/setup.html#azure-storage-account)
     - navigate to the storage account through the [azure portal](https://ms.portal.azure.com/#home) 
     - create a container called `miso`, which is where all models will be stored 
 3. install [blobfuse](https://github.com/Azure/azure-storage-fuse)
