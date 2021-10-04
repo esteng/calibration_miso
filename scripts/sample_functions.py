@@ -2,6 +2,7 @@ import argparse
 import numpy as np
 import pdb 
 import pathlib
+import re 
 
 from curate import curate
 np.random.seed(12)
@@ -17,15 +18,36 @@ def read_data(basepath):
     assert(len(src_lines) == len(tgt_lines) == len(ids_lines))
     return list(zip(src_lines,tgt_lines, ids_lines))
 
-def split_data(lines, fxn):
+def has_trigger(line, triggers): 
+    splitline = re.split("[\s,\.\?]+", line.lower())
+    for trig in triggers:
+        if trig in splitline:
+            return True
+    return False 
+
+def split_data(lines, fxn, exclude_triggers = None):
+    if exclude_triggers is not None:
+        exclude_triggers = exclude_triggers.split(",")
     interest_lines, rest_lines = [], []
     for src_line, tgt_line, id_line in lines:
         tgt_split = tgt_line.strip().split(" ")
         if fxn in tgt_split:
             interest_lines.append((src_line, tgt_line, id_line))
         else:
-            rest_lines.append((src_line, tgt_line, id_line))
-    assert(len(lines) == len(rest_lines) + len(interest_lines))
+            if exclude_triggers is None:
+                rest_lines.append((src_line, tgt_line, id_line))
+            else:
+                if not has_trigger(src_line, exclude_triggers):
+                    rest_lines.append((src_line, tgt_line, id_line))
+                else:
+                    continue 
+    if exclude_triggers:
+        # make sure we excluded some examples 
+        assert(len(lines) != len(rest_lines) + len(interest_lines))
+    else:
+        # make sure we covered the whole training set 
+        assert(len(lines) == len(rest_lines) + len(interest_lines))
+
     return interest_lines, rest_lines 
 
 def subsample(data, n_or_perc, max = False, perc = False, do_curate=False, read_path = None, write_path=None):
@@ -80,7 +102,7 @@ def write_data(data, basepath):
 def main(args):
     train_data = read_data(args.train_path)
     # split into lines that contain fxn and those that don't 
-    fxn_data, rest_data = split_data(train_data, args.fxn)
+    fxn_data, rest_data = split_data(train_data, args.fxn, exclude_triggers=args.exclude_triggers)
     if args.exact_n > -1:
         fxn_data_sample = subsample(fxn_data, args.exact_n, do_curate=args.do_curate, write_path=args.idx_write_path, read_path=args.idx_read_path)
     elif args.max_n > -1:
@@ -107,6 +129,7 @@ if __name__ == "__main__":
     parser.add_argument("--total-perc", type=float, help="percentage of the original data to keep", default=-1.0)
     parser.add_argument("--out-path", type=str, help="path to output file", required=True)
     parser.add_argument("--do-curate", action="store_true", default=False)
+    parser.add_argument("--exclude-triggers", type=str, default=None, help="comma-separated list of source triggers to exclude in building the rest of the dataset (e.g. boss,manager,skip for FindManager)") 
     parser.add_argument("--idx-write-path", type=str, help="path to save idxs if curating")
     parser.add_argument("--idx-read-path", type=str, help="path to read curated idxs " )
     args = parser.parse_args() 
