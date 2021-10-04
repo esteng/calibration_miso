@@ -32,9 +32,9 @@ jobs:
         - ls /mnt
         - ls /mnt/default
         - ls /mnt/default//data
-        - ls /mnt/default//data/smcalflow_samples_curated
-        - ls /mnt/default//data/smcalflow_samples_curated/FindManager
-        - ls /mnt/default//data/smcalflow_samples_curated/FindManager/5000_100
+        - ls /mnt/default//data/smcalflow_samples_no_source
+        - ls /mnt/default//data/smcalflow_samples_no_source/FindManager
+        - ls /mnt/default//data/smcalflow_samples_no_source/FindManager/5000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_no_source_triggers/FindManager/64_seed/5000_100.jsonnet 
         - echo "DONE"
 
