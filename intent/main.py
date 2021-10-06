@@ -56,21 +56,29 @@ def train_epoch(model, train_data, loss_fxn, optimizer, intent_of_interest):
         all_loss.append(loss.item())
     return np.mean(all_loss), np.mean(all_accs), np.mean(intent_accs)
 
-def eval_epoch(model, eval_data, loss_fxn, intent_of_interest = None):
+def eval_epoch(model, eval_data, loss_fxn, intent_of_interest = None, output_individual_preds = False):
     all_accs = []
     all_loss = []
     intent_accs = []
     model.eval() 
+    if output_individual_preds:
+        individ_preds = [] 
+    else:
+        individ_preds = None
     with torch.no_grad():
         for batch in tqdm(eval_data):
             pred_classes = model(batch)
             true_classes = batch['label']
             acc, intent_acc = get_accuracy(pred_classes, true_classes, intent_of_interest)
+            if output_individual_preds:
+                for i, (pred_class, true_class) in enumerate(zip(pred_classes, true_classes)): 
+                    input = batch['input_str'][i]
+                    individ_preds.append({"input": input, "pred": torch.softmax(pred_class,dim=0).detach().cpu().numpy().tolist(), "true": true_class.detach().cpu().numpy().tolist()})
             all_accs.append(acc)
             intent_accs.append(intent_acc)
             loss = loss_fxn(pred_classes, true_classes)
             all_loss.append(loss.item())
-    return np.mean(all_loss), np.mean(all_accs), np.mean(intent_accs)
+    return np.mean(all_loss), np.mean(all_accs), np.mean(intent_accs), individ_preds
 
 def generate_lookup_table(train_data, intent_of_interest):
     train_src, train_tgt, train_idx = [], [], []
@@ -106,13 +114,39 @@ def main(args):
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     random.seed(args.seed)
+    if args.device != "cpu": 
+        #import os 
+        #import subprocess
+        #device = torch.device(f"cuda:{torch.cuda.current_device()}") 
+        #print(device) 
+        #print(f"cuda_visible: {os.environ['CUDA_VISIBLE_DEVICES']}") 
+        #print(f"before: {torch.cuda.memory_summary(torch.cuda.current_device())}") 
+        #c = subprocess.Popen(["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+        #out, err = c.communicate() 
+        #print(out.decode('utf8')) 
+        #print("=========================") 
+        #test = torch.ones((2,2)).to(device) 
+        #print(f"after: {torch.cuda.memory_summary(torch.cuda.current_device())}") 
+        #print(f"test {test}") 
+        #c = subprocess.Popen(["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+        #out, err = c.communicate() 
+        #print(out.decode('utf8')) 
 
-    device = torch.device(f"cuda:{args.device}")
+        #sys.exit()
+        device = torch.device("cuda:0") 
+    else:
+        device = torch.device("cpu") 
     checkpoint_dir = pathlib.Path(args.checkpoint_dir)
-    if checkpoint_dir.joinpath("best.th").exists():
+    if checkpoint_dir.joinpath("best.th").exists() and not args.do_test_only:
         raise AssertionError(f"Checkpoint dir {checkpoint_dir} is not empty! Will not overwrite")
 
     checkpoint_dir.joinpath("data").mkdir(exist_ok=True, parents=True)
+
+    # get triggers
+    if args.source_triggers is not None:
+        source_triggers = args.source_triggers.split(",")
+    else:
+        source_triggers = None
 
     # get data 
     dataset = load_dataset("nlu_evaluation_data")
@@ -123,7 +157,8 @@ def main(args):
                                                           args.intent_of_interest,
                                                           args.total_train,
                                                           args.total_interest,
-                                                          out_path = checkpoint_dir.joinpath("data"))
+                                                          out_path = checkpoint_dir.joinpath("data"),
+                                                          source_triggers = source_triggers)
 
     if args.batch_min_pairs:
         lookup_table = generate_lookup_table(train_data, args.intent_of_interest)
@@ -142,53 +177,62 @@ def main(args):
     model = Classifier(args.bert_name)
     model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    # train
+    # make loss 
     if not args.do_dro:
         loss_fxn = torch.nn.CrossEntropyLoss()
     else:
         loss_fxn = GroupDROLoss()
-    best_epoch = 0
-    best_acc = -1
-    epochs_without_change = 0
-    for e in range(args.epochs):
-        print(f"training epoch {e}")
-        train_loss, train_acc, interest_train_acc = train_epoch(model, train_batches, loss_fxn, optimizer, args.intent_of_interest)
-        dev_loss, dev_acc, interest_dev_acc = eval_epoch(model, dev_batches, loss_fxn, args.intent_of_interest) 
-        print(f"TRAIN loss/acc: {train_loss}, {train_acc:0.1%}, DEV loss/acc: {dev_loss}, {dev_acc:0.1%}")
-        if args.intent_of_interest is not None: 
-            print(f"TRAIN {args.intent_of_interest} acc: {interest_train_acc:0.1%}, DEV acc: {interest_dev_acc:0.1%}")
 
-        with open(checkpoint_dir.joinpath(f"train_metrics_{e}.json"), "w") as f1:
-            data_to_write = {"epoch": e, "acc": train_acc, f"{args.intent_of_interest}_acc": interest_train_acc, "loss": train_loss}
-            json.dump(data_to_write, f1)
-        with open(checkpoint_dir.joinpath(f"dev_metrics_{e}.json"), "w") as f1:
-            data_to_write = {"epoch": e, "acc": dev_acc, f"{args.intent_of_interest}_acc": interest_dev_acc, "loss": dev_loss}
-            json.dump(data_to_write, f1)
+    e = -1 
+    # train
+    if not args.do_test_only: 
+        best_epoch = 0
+        best_acc = -1
+        epochs_without_change = 0
+        for e in range(args.epochs):
+            print(f"training epoch {e}")
+            train_loss, train_acc, interest_train_acc = train_epoch(model, train_batches, loss_fxn, optimizer, args.intent_of_interest)
+            dev_loss, dev_acc, interest_dev_acc, __ = eval_epoch(model, dev_batches, loss_fxn, args.intent_of_interest) 
+            print(f"TRAIN loss/acc: {train_loss}, {train_acc:0.1%}, DEV loss/acc: {dev_loss}, {dev_acc:0.1%}")
+            if args.intent_of_interest is not None: 
+                print(f"TRAIN {args.intent_of_interest} acc: {interest_train_acc:0.1%}, DEV acc: {interest_dev_acc:0.1%}")
 
-        if dev_acc > best_acc:
-            best_acc = dev_acc 
-            print(f"new best at epoch {e}: {dev_acc:0.1%}")
-            with open(checkpoint_dir.joinpath("best_dev_metrics.json"), "w") as f1:
-                data_to_write = {"best_epoch": e, "best_acc": dev_acc, f"best_{args.intent_of_interest}_acc": interest_dev_acc}
+            with open(checkpoint_dir.joinpath(f"train_metrics_{e}.json"), "w") as f1:
+                data_to_write = {"epoch": e, "acc": train_acc, f"{args.intent_of_interest}_acc": interest_train_acc, "loss": train_loss}
                 json.dump(data_to_write, f1)
-            torch.save(model.state_dict(), checkpoint_dir.joinpath("best.th"))
-            epochs_without_change = 0
+            with open(checkpoint_dir.joinpath(f"dev_metrics_{e}.json"), "w") as f1:
+                data_to_write = {"epoch": e, "acc": dev_acc, f"{args.intent_of_interest}_acc": interest_dev_acc, "loss": dev_loss}
+                json.dump(data_to_write, f1)
 
-        if epochs_without_change > args.patience:
-            print(f"Ran out of patience!")
-            break 
+            if dev_acc > best_acc:
+                best_acc = dev_acc 
+                print(f"new best at epoch {e}: {dev_acc:0.1%}")
+                with open(checkpoint_dir.joinpath("best_dev_metrics.json"), "w") as f1:
+                    data_to_write = {"best_epoch": e, "best_acc": dev_acc, f"best_{args.intent_of_interest}_acc": interest_dev_acc}
+                    json.dump(data_to_write, f1)
+                torch.save(model.state_dict(), checkpoint_dir.joinpath("best.th"))
+                epochs_without_change = 0
+
+            if epochs_without_change > args.patience:
+                print(f"Ran out of patience!")
+                break 
 
     print(f"evaluating model...")
     print(f"loading best weights from {checkpoint_dir.joinpath('best.th')}")
     model.load_state_dict(torch.load(checkpoint_dir.joinpath("best.th")))
-    test_loss, test_acc, interest_test_acc = eval_epoch(model, test_batches, loss_fxn, 
-                                                        intent_of_interest = args.intent_of_interest) 
+    test_loss, test_acc, interest_test_acc, individual_preds = eval_epoch(model, test_batches, loss_fxn, 
+                                                        intent_of_interest = args.intent_of_interest,
+                                                        output_individual_preds = args.output_individual_preds) 
+    if args.output_individual_preds: 
+        with open(checkpoint_dir.joinpath("test_predictions.json"), "w") as f1:
+            json.dump(individual_preds, f1, indent=4)
+    else:
+        with open(checkpoint_dir.joinpath("test_metrics.json"), "w") as f1:
+            data_to_write = {"epoch": e, "acc": test_acc, 
+                            f"{args.intent_of_interest}_acc": interest_test_acc, 
+                            "loss": test_loss}
+            json.dump(data_to_write, f1)
 
-    with open(checkpoint_dir.joinpath("test_metrics.json"), "w") as f1:
-        data_to_write = {"epoch": e, "acc": test_acc, 
-                         f"{args.intent_of_interest}_acc": interest_test_acc, 
-                         "loss": test_loss}
-        json.dump(data_to_write, f1)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -201,7 +245,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch-min-pairs", action="store_true", help="flag to set if you want to train with minimal pair batching")
     parser.add_argument("--double-in-batch", action="store_true", help="flag to set if you want to double examples of interest in batch")
     parser.add_argument("--double-in-data", action="store_true", help="flag to set if you want to double examples of interest in data")
-
+    parser.add_argument("--source-triggers", type=str, default=None, help="source triggers to exclude in constructing the remainder of the dataset, e.g. radio,fm,am for play_radio intent. For analysis only.")
     # Model/Training
     parser.add_argument("--bert-name", default="bert-base-cased", required=True, help="bert pretrained model to use")
     parser.add_argument("--epochs", type=int, default=100, help="number of epochs to train")
@@ -211,7 +255,9 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=12)
     parser.add_argument("--patience", type=int, default=10, help="how many epochs to wait for without improvement before early stopping")
     parser.add_argument("--do-dro", action="store_true", help="flag to do group DRO over intents")
-    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--device", type=str, default="0")
+    parser.add_argument("--do-test-only", action="store_true", help="flag to skip training and just evaluate")
+    parser.add_argument("--output-individual-preds", action="store_true", help="flag to store predictions to file at test time") 
     args = parser.parse_args() 
 
     main(args)

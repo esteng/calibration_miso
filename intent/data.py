@@ -2,6 +2,7 @@ import pdb
 import pathlib
 import numpy as np
 import torch 
+import re
 from transformers import AutoTokenizer
 from datasets import load_dataset 
 np.random.seed(12) 
@@ -25,11 +26,32 @@ def random_split(dataset, p_train, p_dev, p_test):
     test_data = [dataset[i] for i in test_idxs]
     return train_data, dev_data, test_data 
 
-def split_by_intent(dataset, intent_of_interest, n_data, n_intent, out_path = None): 
+def has_source_trigger(datapoint, triggers):
+    text = re.split("[\s,.]+", datapoint['text'].strip())
+    for t in triggers:
+        if t in text:
+            return True
+    return False
+
+def split_by_intent(dataset, intent_of_interest, n_data, n_intent, out_path = None, source_triggers = None): 
     dataset = dataset['train']
     # split into interest and non-interest 
     of_interest = [i for i, x in enumerate(dataset) if x['label'] == intent_of_interest]
+    if n_intent > len(of_interest):
+        # Take the max you can take while leaving some for test and dev
+        num_devtest = int(0.3 * len(of_interest))
+        num_train_intent = len(of_interest) - num_devtest
+        n_intent = num_train_intent
+
     not_interest = [i for i in range(len(dataset)) if i not in of_interest]
+    if n_data > n_intent + len(not_interest):
+        # Take the max you can take 
+        n_data = n_intent + len(not_interest)
+
+    if source_triggers is not None:
+        # filter not_interest so that source triggers don't appear 
+        not_interest = [i for i in range(len(dataset)) if not has_source_trigger(dataset[i], source_triggers)]
+        
     np.random.shuffle(of_interest)
     np.random.shuffle(not_interest)
 
@@ -57,10 +79,12 @@ def split_by_intent(dataset, intent_of_interest, n_data, n_intent, out_path = No
 
     return train_data, dev_data, test_data 
 
+    
+
 def batchify(data, batch_size, bert_model, device):
     batches = []
     tokenizer = AutoTokenizer.from_pretrained(bert_model, add_special_tokens=True)
-    curr_batch = {"input": [], "label": []}
+    curr_batch = {"input": [], "label": [], "input_str": []}
     curr_batch_as_text = {"input": [], "label": []}
     for chunk_start in range(0, len(data), batch_size):
         for example in data[chunk_start: chunk_start + batch_size]:
@@ -73,10 +97,11 @@ def batchify(data, batch_size, bert_model, device):
         ids = tokenized['input_ids']
         curr_batch['input'] = ids
         curr_batch['input'] = torch.tensor(curr_batch['input']).to(device)
+        curr_batch['input_str'] = all_text
         curr_batch['label'] = torch.tensor(curr_batch['label']).to(device)
 
         batches.append(curr_batch)
-        curr_batch = {"input": [], "label": []}
+        curr_batch = {"input": [], "label": [], "input_str": []}
         curr_batch_as_text = {"input": [], "label": []}
     return batches 
 
@@ -250,3 +275,4 @@ def batchify_double_in_data(data, batch_size, bert_model, device, intent_of_inte
         curr_batch = {"input": [], "label": []}
         curr_batch_as_text = {"input": [], "label": []}
     return batches 
+
