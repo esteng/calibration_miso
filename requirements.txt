@@ -15,4 +15,3 @@ transformers==3.0.2
 icecream
 python-Levenshtein
 git+git://github.com/decompositional-semantics-initiative/decomp.git
-git+https://github.com/microsoft/task_oriented_dialogue_as_dataflow_synthesis
