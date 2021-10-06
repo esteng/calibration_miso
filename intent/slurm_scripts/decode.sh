@@ -1,8 +1,9 @@
 #!/bin/bash 
 
-#SBATCH --gpus=1
-#SBATCH -o /dev/null
+#SBATCH -o /home/estengel/scratch/decode_intent.out
 #SBATCH -p brtx6
+#SBATCH --gpus=1
+#SBATCH --nodelist brtx604
 
 #FXN=$1
 #MODEL=$2
@@ -18,7 +19,7 @@ do
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}
-        python -u main.py \
+        CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python -u main.py \
             --split-type interest \
             --bert-name bert-base-cased \
             --checkpoint-dir ${checkpoint_dir} \
@@ -29,7 +30,9 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
-            --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
+            --do-test-only \
+            --output-individual-preds \
+            --device 0  
     done
 done
 

@@ -1,13 +1,9 @@
 #!/bin/bash 
 
-#SBATCH --gpus=1
-#SBATCH -o /dev/null
-#SBATCH -p brtx6
-
-#FXN=$1
-#MODEL=$2
-#SEED=$3
-#DEVICE=$4
+FXN=$1
+MODEL=$2
+SEED=$3
+DEVICE=$4
 
 checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
 
@@ -29,7 +25,9 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
-            --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
+            --do-test-only \
+            --output-individual-preds \
+            --device ${DEVICE} 
     done
 done
 

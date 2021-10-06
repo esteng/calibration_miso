@@ -1,7 +1,6 @@
 #!/bin/bash 
 
-#SBATCH --gpus=1
-#SBATCH -o /dev/null
+#SBATCH -o /home/estengel/scratch/intent_slurm.out 
 #SBATCH -p brtx6
 
 #FXN=$1
@@ -29,8 +28,10 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
-            --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
+            --device cpu | tee ${checkpoint_dir}/stdout.log 
+        exit
     done
 done
 
 
+#---- ~~~ SBATCH --gpus=1

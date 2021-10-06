@@ -1,20 +1,15 @@
 #!/bin/bash 
 
-#SBATCH --gpus=1
-#SBATCH -o /dev/null
-#SBATCH -p brtx6
-
-#FXN=$1
-#MODEL=$2
-#SEED=$3
-#DEVICE=$4
+FXN=$1
+MODEL=$2
+SEED=$3
+DEVICE=$4
 
 checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
 
 for num in 750 1500 3000 7500 15000 18000 
 do
-    #for fxn_num in 7 15 30 75
-    for fxn_num in 15 
+    for fxn_num in 7 15 30 75
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}
@@ -26,9 +21,10 @@ do
             --split-type interest \
             --total-train ${num} \
             --total-interest ${fxn_num} \
-            --epochs 200 \
+            --epochs 100 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
+            --batch-min-pairs \
             --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
     done
 done
