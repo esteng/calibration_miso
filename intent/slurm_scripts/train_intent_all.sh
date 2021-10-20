@@ -13,9 +13,11 @@ checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
 
 
 
-for num in 750 1500 3000 7500 15000 18000 
+#for num in 750 1500 3000 7500 15000 18000 
+for num in 750
 do
-    for fxn_num in 7 30 75
+    #for fxn_num in 7 30 75
+    for fxn_num in 7
     #for fxn_num in 15 
     do
         echo "Visible: ${CUDA_VISIBLE_DEVICES}"

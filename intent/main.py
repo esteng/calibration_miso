@@ -4,6 +4,7 @@ import json
 import pdb 
 import random
 from collections import defaultdict
+
 path_to_min_pair_utils = pathlib.Path(__file__).resolve().parent.parent.joinpath("minimal_pair_utils")
 import sys
 sys.path.insert(0, str(path_to_min_pair_utils))
@@ -16,7 +17,17 @@ import numpy as np
 from datasets import load_dataset 
 
 from model import Classifier
-from data import batchify, batchify_min_pair, batchify_double_in_batch, batchify_double_in_data, split_by_intent, random_split 
+from data import (batchify, 
+                  batchify_min_pair, 
+                  batchify_double_in_batch, 
+                  batchify_double_in_data, 
+                  batchify_by_source_trigger, 
+                  batchify_mask_source_trigger, 
+                  batchify_weight_source_trigger, 
+                  batchify_sample_source_trigger,
+                  split_by_intent, 
+                  random_split)
+
 from dro_loss import GroupDROLoss
 def get_accuracy(pred, true, intent_of_interest = None):
     pred_classes = torch.argmax(pred, dim=1).detach().cpu()
@@ -50,7 +61,13 @@ def train_epoch(model, train_data, loss_fxn, optimizer, intent_of_interest):
         acc, intent_acc = get_accuracy(pred_classes, true_classes, intent_of_interest)
         all_accs.append(acc)
         intent_accs.append(intent_acc)
-        loss = loss_fxn(pred_classes, true_classes)
+        if "weight" in batch.keys():
+            loss_by_example = loss_fxn(pred_classes, true_classes)
+            weighted_loss = loss_by_example * batch['weight']
+            loss = torch.mean(weighted_loss)
+        else:
+            loss = loss_fxn(pred_classes, true_classes)
+
         loss.backward()
         optimizer.step()
         all_loss.append(loss.item())
@@ -109,33 +126,46 @@ def generate_lookup_table(train_data, intent_of_interest):
                                                       top_k=-1)
     return min_pair_lookup
 
+def get_train_batches(train_data,
+                     device,
+                     args,
+                     epoch=None): 
+    np.random.shuffle(train_data)
+    if args.batch_min_pairs:
+        lookup_table = generate_lookup_table(train_data, args.intent_of_interest)
+        train_batches = batchify_min_pair(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, lookup_table)
+    elif args.double_in_batch:
+        train_batches = batchify_double_in_batch(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest)
+    elif args.double_in_data:
+        train_batches = batchify_double_in_data(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest)
+    elif args.batch_by_source_trigger:
+        train_batches = batchify_by_source_trigger(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, k=3, threshold = 0.8)
+    elif args.mask_source_triggers:
+        use_word = args.masking_method == "other"
+        use_intent = args.masking_method == "intent"
+        train_batches = batchify_mask_source_trigger(train_data, args.batch_size, args.bert_name, device, args.mask_temperature, use_word, use_intent)
+    elif args.weight_by_source_prob:
+        train_batches = batchify_weight_source_trigger(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, args.weight_temperature)
+    elif args.sample_by_source_prob:
+        # default is linear decrease through to epoch 100 
+        curr_temp = max(0, 1 - args.sample_decrease_factor * epoch)
+        train_batches = batchify_sample_source_trigger(train_data, args.batch_size, args.bert_name, device, curr_temp)
+    else:
+        train_batches = batchify(train_data, args.batch_size, args.bert_name, device) 
+    return train_batches
+
+
 def main(args):
     # set seed 
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     random.seed(args.seed)
+    print("set seeds") 
     if args.device != "cpu": 
-        #import os 
-        #import subprocess
-        #device = torch.device(f"cuda:{torch.cuda.current_device()}") 
-        #print(device) 
-        #print(f"cuda_visible: {os.environ['CUDA_VISIBLE_DEVICES']}") 
-        #print(f"before: {torch.cuda.memory_summary(torch.cuda.current_device())}") 
-        #c = subprocess.Popen(["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
-        #out, err = c.communicate() 
-        #print(out.decode('utf8')) 
-        #print("=========================") 
-        #test = torch.ones((2,2)).to(device) 
-        #print(f"after: {torch.cuda.memory_summary(torch.cuda.current_device())}") 
-        #print(f"test {test}") 
-        #c = subprocess.Popen(["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
-        #out, err = c.communicate() 
-        #print(out.decode('utf8')) 
-
-        #sys.exit()
         device = torch.device("cuda:0") 
     else:
         device = torch.device("cpu") 
+    print("got device") 
     checkpoint_dir = pathlib.Path(args.checkpoint_dir)
     if checkpoint_dir.joinpath("best.th").exists() and not args.do_test_only:
         raise AssertionError(f"Checkpoint dir {checkpoint_dir} is not empty! Will not overwrite")
@@ -147,7 +177,7 @@ def main(args):
         source_triggers = args.source_triggers.split(",")
     else:
         source_triggers = None
-
+    print("getting data") 
     # get data 
     dataset = load_dataset("nlu_evaluation_data")
     if args.split_type == "random": 
@@ -158,30 +188,25 @@ def main(args):
                                                           args.total_train,
                                                           args.total_interest,
                                                           out_path = checkpoint_dir.joinpath("data"),
-                                                          source_triggers = source_triggers)
+                                                          source_triggers = source_triggers,
+                                                          upsample_by_factor=args.upsample_interest_by_factor, 
+                                                          adaptive_upsample=args.adaptive_upsample)
 
-    if args.batch_min_pairs:
-        lookup_table = generate_lookup_table(train_data, args.intent_of_interest)
-        train_batches = batchify_min_pair(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, lookup_table)
-        dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [dev_data, test_data]]
-    elif args.double_in_batch:
-        train_batches = batchify_double_in_batch(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest)
-        dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [dev_data, test_data]]
-    elif args.double_in_data:
-        train_batches = batchify_double_in_data(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest)
-        dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [dev_data, test_data]]
-    else:
-        train_batches, dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [train_data, dev_data, test_data]]
-
+    dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [dev_data, test_data]]
+    print("got data") 
     # make model and optimizer
     model = Classifier(args.bert_name)
     model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     # make loss 
     if not args.do_dro:
-        loss_fxn = torch.nn.CrossEntropyLoss()
+        if args.weight_by_source_prob:
+            loss_fxn = torch.nn.CrossEntropyLoss(reduction='none')
+        else:
+            loss_fxn = torch.nn.CrossEntropyLoss()
     else:
         loss_fxn = GroupDROLoss()
+    eval_loss_fxn = torch.nn.CrossEntropyLoss()
 
     e = -1 
     # train
@@ -190,9 +215,12 @@ def main(args):
         best_acc = -1
         epochs_without_change = 0
         for e in range(args.epochs):
+            # shuffle data before making train batches 
+            train_batches = get_train_batches(train_data, device, args, e)
+
             print(f"training epoch {e}")
             train_loss, train_acc, interest_train_acc = train_epoch(model, train_batches, loss_fxn, optimizer, args.intent_of_interest)
-            dev_loss, dev_acc, interest_dev_acc, __ = eval_epoch(model, dev_batches, loss_fxn, args.intent_of_interest) 
+            dev_loss, dev_acc, interest_dev_acc, __ = eval_epoch(model, dev_batches, eval_loss_fxn, args.intent_of_interest) 
             print(f"TRAIN loss/acc: {train_loss}, {train_acc:0.1%}, DEV loss/acc: {dev_loss}, {dev_acc:0.1%}")
             if args.intent_of_interest is not None: 
                 print(f"TRAIN {args.intent_of_interest} acc: {interest_train_acc:0.1%}, DEV acc: {interest_dev_acc:0.1%}")
@@ -220,7 +248,7 @@ def main(args):
     print(f"evaluating model...")
     print(f"loading best weights from {checkpoint_dir.joinpath('best.th')}")
     model.load_state_dict(torch.load(checkpoint_dir.joinpath("best.th")))
-    test_loss, test_acc, interest_test_acc, individual_preds = eval_epoch(model, test_batches, loss_fxn, 
+    test_loss, test_acc, interest_test_acc, individual_preds = eval_epoch(model, test_batches, eval_loss_fxn, 
                                                         intent_of_interest = args.intent_of_interest,
                                                         output_individual_preds = args.output_individual_preds) 
     if args.output_individual_preds: 
@@ -235,6 +263,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    print("parser args")
     parser = argparse.ArgumentParser()
     # Data 
     parser.add_argument("--split-type", default="random", choices=["random", "interest"], 
@@ -242,9 +271,20 @@ if __name__ == "__main__":
     parser.add_argument("--intent-of-interest", default=None, type=int, help="intent to look at") 
     parser.add_argument("--total-train", type=int, default=None, help = "total num training examples") 
     parser.add_argument("--total-interest", type=int, default=None, help = "total num intent of interest examples") 
+    parser.add_argument("--upsample-interest-by-factor", type=float, default=None, help="if set, upsample intent of interest examples by this ammount")
+    parser.add_argument("--adaptive-upsample", action="store_true", help="automatically adapt the upsampling ratio to maintain equal source-target mapping ratio")
     parser.add_argument("--batch-min-pairs", action="store_true", help="flag to set if you want to train with minimal pair batching")
     parser.add_argument("--double-in-batch", action="store_true", help="flag to set if you want to double examples of interest in batch")
     parser.add_argument("--double-in-data", action="store_true", help="flag to set if you want to double examples of interest in data")
+    parser.add_argument("--batch-by-source-trigger", action="store_true", help="flag to set if you want to batch by source triggers")
+    parser.add_argument("--mask-source-triggers", action="store_true", help="flag to selectively mask highly predictive terms ")
+    parser.add_argument("--masking-method", default="other", help="method for choosing mask probabilities; other uses the max probabity P(intent | word) for all intents that aren't the current intent. \
+                                Inverse uses the inverse prob of the current intent given the word, 1 - p(intent | word). Intent means use p(word | intent) instead of p(intent | word)", choices=['other', 'inverse', 'intent'])
+    parser.add_argument("--mask-temperature", type=float, default=0.10, help="temperature for masking input, get's multiplied with the prob")
+    parser.add_argument("--weight-by-source-prob", action="store_true", help="weight the example by max prob(word | intent_of_interest)")
+    parser.add_argument("--weight-temperature", default=1.0, type=float, help="temperature for downweighting")
+    parser.add_argument("--sample-by-source-prob", action='store_true', help="flag to sample examples into batches based on how reliable the source mapping is. Excludes conflicting examples earlier in training, with a decreasing temperature to include them more later in training ")
+    parser.add_argument("--sample-decrease-factor", type=float, default = 0.01, help="factor by which to decrease the temperature of sampling. Default is 0.01 corresponding to linear decrease until epoch 100")
     parser.add_argument("--source-triggers", type=str, default=None, help="source triggers to exclude in constructing the remainder of the dataset, e.g. radio,fm,am for play_radio intent. For analysis only.")
     # Model/Training
     parser.add_argument("--bert-name", default="bert-base-cased", required=True, help="bert pretrained model to use")
@@ -258,6 +298,8 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="0")
     parser.add_argument("--do-test-only", action="store_true", help="flag to skip training and just evaluate")
     parser.add_argument("--output-individual-preds", action="store_true", help="flag to store predictions to file at test time") 
+    print("got parser args")
     args = parser.parse_args() 
-
+ 
+    print("at main") 
     main(args)

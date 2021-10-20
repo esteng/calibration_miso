@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-#SBATCH -o /home/estengel/incremental-function-learning/intent/logs/full.out
+#SBATCH -o /home/estengel/incremental-function-learning/intent/logs/train.out
 #SBATCH -p brtx6
 #SBATCH --gpus=1
 
@@ -12,11 +12,9 @@
 checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
 
 
-
-for num in 750 1500 3000 7500 15000 18000 
+for num in 18000 15000 7500 3000 1500 750 
 do
-    #for fxn_num in 7 15 30 75
-    for fxn_num in 10000
+    for fxn_num in 15 30 75
     do
         echo "Visible: ${CUDA_VISIBLE_DEVICES}"
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
@@ -32,6 +30,7 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
+            --adaptive-upsample \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done
