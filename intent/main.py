@@ -180,20 +180,26 @@ def main(args):
     print("getting data") 
     # get data 
     dataset = load_dataset("nlu_evaluation_data")
-    if args.split_type == "random": 
-        train_data, dev_data, test_data = random_split(dataset, 0.7, 0.1, 0.2)
-    else:
-        train_data, dev_data, test_data = split_by_intent(dataset, 
-                                                          args.intent_of_interest,
-                                                          args.total_train,
-                                                          args.total_interest,
-                                                          out_path = checkpoint_dir.joinpath("data"),
-                                                          source_triggers = source_triggers,
-                                                          upsample_by_factor=args.upsample_interest_by_factor, 
-                                                          adaptive_upsample=args.adaptive_upsample)
+    if not args.special_test:
+        if args.split_type == "random": 
+            train_data, dev_data, test_data = random_split(dataset, 0.7, 0.1, 0.2)
+        else:
+            train_data, dev_data, test_data = split_by_intent(dataset, 
+                                                            args.intent_of_interest,
+                                                            args.total_train,
+                                                            args.total_interest,
+                                                            out_path = checkpoint_dir.joinpath("data"),
+                                                            source_triggers = source_triggers,
+                                                            upsample_by_factor=args.upsample_interest_by_factor, 
+                                                            adaptive_upsample=args.adaptive_upsample,
+                                                            adaptive_factor=args.adaptive_factor)
 
-    dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [dev_data, test_data]]
-    print("got data") 
+        dev_batches, test_batches = [batchify(x, args.batch_size, args.bert_name, device) for x in [dev_data, test_data]]
+        print("got data") 
+    else:
+        assert(args.do_test_only)
+        test_data = json.load(open(args.special_test))
+        test_batches = batchify(test_data, args.batch_size, args.bert_name, device)
     # make model and optimizer
     model = Classifier(args.bert_name)
     model.to(device)
@@ -247,20 +253,27 @@ def main(args):
 
     print(f"evaluating model...")
     print(f"loading best weights from {checkpoint_dir.joinpath('best.th')}")
-    model.load_state_dict(torch.load(checkpoint_dir.joinpath("best.th")))
+    model.load_state_dict(torch.load(checkpoint_dir.joinpath("best.th"), map_location="cuda:0"))
     test_loss, test_acc, interest_test_acc, individual_preds = eval_epoch(model, test_batches, eval_loss_fxn, 
                                                         intent_of_interest = args.intent_of_interest,
                                                         output_individual_preds = args.output_individual_preds) 
+
+    if args.special_test:
+        test_name = pathlib.Path(args.special_test).stem
+        test_metrics_name = f"{test_name}_metrics"
+        test_predictions_name = f"{test_name}_predictions"
+    else:
+        test_predictions_name = "test_predictions"
+        test_metrics_name = "test_metrics"
     if args.output_individual_preds: 
-        with open(checkpoint_dir.joinpath("test_predictions.json"), "w") as f1:
+        with open(checkpoint_dir.joinpath(f"{test_predictions_name}.json"), "w") as f1:
             json.dump(individual_preds, f1, indent=4)
     else:
-        with open(checkpoint_dir.joinpath("test_metrics.json"), "w") as f1:
+        with open(checkpoint_dir.joinpath(f"{test_metrics_name}.json"), "w") as f1:
             data_to_write = {"epoch": e, "acc": test_acc, 
                             f"{args.intent_of_interest}_acc": interest_test_acc, 
                             "loss": test_loss}
             json.dump(data_to_write, f1)
-
 
 if __name__ == "__main__":
     print("parser args")
@@ -273,6 +286,7 @@ if __name__ == "__main__":
     parser.add_argument("--total-interest", type=int, default=None, help = "total num intent of interest examples") 
     parser.add_argument("--upsample-interest-by-factor", type=float, default=None, help="if set, upsample intent of interest examples by this ammount")
     parser.add_argument("--adaptive-upsample", action="store_true", help="automatically adapt the upsampling ratio to maintain equal source-target mapping ratio")
+    parser.add_argument("--adaptive-factor", type=float, default=1.0, help="factor to multiply adaptive upsamply factor by.")
     parser.add_argument("--batch-min-pairs", action="store_true", help="flag to set if you want to train with minimal pair batching")
     parser.add_argument("--double-in-batch", action="store_true", help="flag to set if you want to double examples of interest in batch")
     parser.add_argument("--double-in-data", action="store_true", help="flag to set if you want to double examples of interest in data")
@@ -297,6 +311,7 @@ if __name__ == "__main__":
     parser.add_argument("--do-dro", action="store_true", help="flag to do group DRO over intents")
     parser.add_argument("--device", type=str, default="0")
     parser.add_argument("--do-test-only", action="store_true", help="flag to skip training and just evaluate")
+    parser.add_argument("--special-test", type=str, default=None, help="path to a special test file to evaluate on")
     parser.add_argument("--output-individual-preds", action="store_true", help="flag to store predictions to file at test time") 
     print("got parser args")
     args = parser.parse_args() 
