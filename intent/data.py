@@ -59,7 +59,18 @@ def get_adaptive_upsample_factor(of_interest, not_of_interest, dataset, intent_o
     return np.max(ratios)
 
 
-def split_by_intent(dataset, intent_of_interest, n_data, n_intent, out_path = None, source_triggers = None, upsample_by_factor=None, adaptive_upsample=False, adaptive_factor=1.0): 
+def split_by_intent(dataset, 
+                    intent_of_interest, 
+                    n_data, 
+                    n_intent, 
+                    out_path = None, 
+                    source_triggers = None, 
+                    upsample_by_factor=None, 
+                    upsample_by_linear_fxn=False,
+                    upsample_linear_fxn_coef=None,
+                    upsample_linear_fxn_intercept=None,
+                    adaptive_upsample=False, 
+                    adaptive_factor=1.0): 
     dataset = dataset['train']
     # split into interest and non-interest 
     of_interest = [i for i, x in enumerate(dataset) if x['label'] == intent_of_interest]
@@ -85,6 +96,10 @@ def split_by_intent(dataset, intent_of_interest, n_data, n_intent, out_path = No
     if adaptive_upsample:
         upsample_by_factor = get_adaptive_upsample_factor(of_interest[0:n_intent], not_interest[0:n_data-n_intent], dataset, intent_of_interest) * adaptive_factor
         print(f"upsampling by a factor of {upsample_by_factor}")
+
+    if upsample_by_linear_fxn:
+        fxn_of_train = lambda x: upsample_linear_fxn_coef * x + upsample_linear_fxn_intercept
+        upsample_by_factor = fxn_of_train(len(train_idxs))
 
     if upsample_by_factor is not None:
         effective_num_of_interest = int(len(of_interest[0:n_intent]) * upsample_by_factor)

@@ -51,8 +51,8 @@ def main(args):
 
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--n_data", type=int, default=750)
-    parser.add_argument("--n_intent", type=int, default=15)
+    parser.add_argument("--n-data", type=int, default=750)
+    parser.add_argument("--n-intent", type=int, default=15)
     parser.add_argument("--out-path", type=str, help="path to output json", required=True)
     parser.add_argument("--intent", type=int, default=50, help="intent of interest")
     parser.add_argument("--seed", type=int, default=12)

@@ -12,9 +12,9 @@
 checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
 
 
-for num in 18000 15000 7500 3000 1500 750 
+for fxn_num in 15 30 75
 do
-    for fxn_num in 15 30 75
+    for num in 18000 15000 7500 3000 1500 750 
     do
         echo "Visible: ${CUDA_VISIBLE_DEVICES}"
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
@@ -31,6 +31,7 @@ do
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
             --adaptive-upsample \
+            --adaptive-factor 0.66 \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done
