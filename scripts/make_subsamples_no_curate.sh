@@ -14,8 +14,8 @@ do
             --out-path ${output_dir}/train \
             --fxn ${fxn} \
             --exact-n ${sample_n} \
-            --total-n ${total_n} 
-	    #--idx-read-path data/${fxn}_${sample_n}_curated.idxs
+            --total-n ${total_n} \
+	    --idx-read-path data/${fxn}_${sample_n}_curated.idxs
 
         cp ${in_path}/dev_valid.src ${output_dir}
         cp ${in_path}/dev_valid.src_tok ${output_dir}

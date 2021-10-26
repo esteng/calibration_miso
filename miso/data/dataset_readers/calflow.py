@@ -38,6 +38,7 @@ class CalFlowDatasetReader(DatasetReader):
                  use_context: bool = False, 
                  fxn_of_interest: str = None,
                  lazy: bool = False,
+                 do_remove_source_triggers: bool=False,   
                  ) -> None:
 
         super().__init__(lazy=lazy)
@@ -45,6 +46,7 @@ class CalFlowDatasetReader(DatasetReader):
         self.use_program = use_program 
         self.use_agent_utterance = use_agent_utterance
         self.fxn_of_interest = fxn_of_interest
+        self.do_remove_source_triggers = do_remove_source_triggers
 
         try:
             assert(not(use_program and use_agent_utterance))
