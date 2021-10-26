@@ -48,10 +48,10 @@ jobs:
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer/PlaceHasFeature/31_seed/100000_50.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_50/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_50/dev_valid
         - export FXN=PlaceHasFeature
         - ./experiments/calflow.sh -a eval_fxn
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_50/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_50/test_valid
         - export FXN=PlaceHasFeature
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -59,7 +59,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/PlaceHasFeature_31_seed/100000_50
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_50/dev_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_50/dev_valid
          - export FXN=PlaceHasFeature
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -67,7 +67,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/PlaceHasFeature_31_seed/100000_50
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_50/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_50/test_valid
          - export FXN=PlaceHasFeature
          - ./experiments/calflow.sh -a eval_fxn
 

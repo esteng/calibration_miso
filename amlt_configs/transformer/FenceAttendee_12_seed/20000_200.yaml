@@ -48,10 +48,10 @@ jobs:
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer/FenceAttendee/12_seed/20000_200.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/20000_200/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/20000_200/dev_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a eval_fxn
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/20000_200/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/20000_200/test_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -59,7 +59,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/FenceAttendee_12_seed/20000_200
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/20000_200/dev_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/20000_200/dev_valid
          - export FXN=FenceAttendee
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -67,7 +67,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/FenceAttendee_12_seed/20000_200
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/20000_200/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/20000_200/test_valid
          - export FXN=FenceAttendee
          - ./experiments/calflow.sh -a eval_fxn
 
