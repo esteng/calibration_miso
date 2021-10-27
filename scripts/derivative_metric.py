@@ -48,6 +48,25 @@ def prepare_intent(df, fxn_num):
     df['acc'] *= ratio
     return df 
 
+
+def detect_missing(fxn, df, seeds=[12,31,64]):
+    sub_dfs = []
+    for seed in seeds:
+        sub_df = df[df['seed'] == seed]
+        sub_dfs.append(sub_df)
+
+    for i,sdf_a in enumerate(sub_dfs):
+        for j, sdf_b in enumerate(sub_dfs):
+            if i == j:
+                continue
+
+            for train_setting in sdf_a['train']:
+                b_vals = sdf_b[sdf_b['train'] == train_setting]
+                if len(b_vals) == 0:
+                    seed = sdf_a[sdf_a['train'] == train_setting].loc['seed']
+                    seed = sdf_a[sdf_a['train'] == train_setting].loc['fxn']
+                    print(f"{fxn} is missing {train_setting} for seed {seed}")
+    
 def compute_derivative_metric(df, average_first=False):
     # Assumed datatframe format: 
     # columns: "train", "function", "seed", "accuracy"
@@ -70,9 +89,12 @@ def compute_derivative_metric(df, average_first=False):
         all_slopes = []
         for ((start_index, start_row), (end_index, end_row)) in zip(start_rows.iterrows(), end_rows.iterrows()):
             seed = start_row['seed']
-            assert(start_row['seed'] == end_row['seed'])
-            assert(int(start_row['train']) < int(end_row['train']))
-            assert(start_row['function'] == end_row['function'])
+            try:
+                assert(start_row['seed'] == end_row['seed'])
+                assert(int(start_row['train']) < int(end_row['train']))
+                assert(start_row['function'] == end_row['function'])
+            except AssertionError:
+                pdb.set_trace() 
             start_acc = start_row['acc']
             end_acc = end_row['acc']
             single_slope = (end_acc - start_acc)/(end_ts - start_ts)
@@ -93,9 +115,10 @@ def prepare_latex(paths_and_settings, functions = [50, 66], seeds = [12, 31, 64]
     # columns: intent/function, #examples, setting, deriv_metric, min_acc, min_x, max_acc, max_x 
     latex_df = pd.DataFrame(columns=["function", "examples", "setting", "deriv_metric", "min_acc", "min_x", "max_acc", "max_x"],dtype=object)
     for path, setting in paths_and_settings:
-        function, num_examples, model_name = setting
+        function, function_name, num_examples, model_name = setting
         df = get_intent_data_from_dir(path, function, seeds)
         prepped_df = prepare_intent(df, num_examples)
+        detect_missing(function_name, prepped_df)
         mean, stddev = compute_derivative_metric(prepped_df)
         metric_str = f"${mean:.2f}\pm{stddev:.2f}$"
         acc_df = df[df['function'] == num_examples]
@@ -107,7 +130,7 @@ def prepare_latex(paths_and_settings, functions = [50, 66], seeds = [12, 31, 64]
         max_acc_x = f"${acc_df.index[max_acc_idx]}$"
         max_acc = f"${acc_df['fxn_acc'].max():.2f}$"
 
-        latex_df = latex_df.append({"function": function, "examples": num_examples, 
+        latex_df = latex_df.append({"function": function_name, "examples": num_examples, 
                                     "setting": model_name, "deriv_metric": metric_str, 
                                     "min_acc": min_acc, "min_x": min_acc_x,
                                     "max_acc": max_acc, "max_x": max_acc_x}, ignore_index=True)
@@ -115,15 +138,33 @@ def prepare_latex(paths_and_settings, functions = [50, 66], seeds = [12, 31, 64]
 
 
 if __name__ == "__main__":
-    paths_and_settings = [("/brtx/603-nvme1/estengel/intent/", (50, 15, "baseline")),
-                          ("/brtx/603-nvme1/estengel/intent/", (50, 30, "baseline")),
-                          ("/brtx/603-nvme1/estengel/intent/", (50, 75, "baseline")),
-                          ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 15, "remove source")),
-                          ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 30, "remove source")),
-                          ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 75, "remove source")),
-                          ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 15, "linear upsample")),
-                          ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 30, "remove source")),
-                          ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 75, "remove source"))]
+    # paths_and_settings = [("/brtx/603-nvme1/estengel/intent/", (50, 15, "baseline")),
+    #                       ("/brtx/603-nvme1/estengel/intent/", (50, 30, "baseline")),
+    #                       ("/brtx/603-nvme1/estengel/intent/", (50, 75, "baseline")),
+    #                       ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 15, "remove source")),
+    #                       ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 30, "remove source")),
+    #                       ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 75, "remove source")),
+    #                       ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 15, "linear upsample")),
+    #                       ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 30, "remove source")),
+    #                       ("/brtx/604-nvme1/estengel/intent_no_source_triggers/", (50, 75, "remove source"))]
+
+
+    paths = {"baseline": "/brtx/603-nvme1/estengel/intent_fixed_test/intent/",
+             "remove source": "/brtx/605-nvme1/estengel/intent_fixed_test/intent_no_source"}
+            #  "upsample": "/brtx/605-nvme1/estengel/intent_fixed_test/intent_no_source" 
+    # functions_and_names = [(50, "play_radio"), (66, "transit_traffic"), (15, "email_query"), (16, "email_querycontact"), (27, "general_quirky")]
+    functions_and_names = [ (50, "play_radio"), (66, "transit_traffic"), (15, "email_query"), (16, "email_querycontact"), (27, "general_quirky")]
+    # numbers = [15, 30, 75]
+    numbers = [15, 30, 75]
+
+    paths_and_settings = []
+
+    for num in numbers:
+        for fxn, name in functions_and_names:
+            for model_name, path in paths.items():
+                paths_and_settings.append((path, (fxn, name, num, model_name)))
+    
+
 
 
     prepare_latex(paths_and_settings)
