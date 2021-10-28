@@ -55,7 +55,7 @@ do
     done
 done
 
-for sample_n in 50 100 200 500
+for sample_n in 100 
 do
     cp ${in_path}/dev_valid.* ${out_path}/${fxn}/max_${sample_n}
     cp ${in_path}/test_valid.* ${out_path}/${fxn}/max_${sample_n}
