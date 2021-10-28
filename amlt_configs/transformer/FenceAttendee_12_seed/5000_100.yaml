@@ -24,6 +24,8 @@ environment:
      - pip install sentencepiece==0.1.91 --user
      - pip install transformers==3.0.2 --user
      - pip install icecream --user
+     - pip install datasets --user
+     - pip install datasets --user
      - pip install git+git://github.com/decompositional-semantics-initiative/decomp.git --user 
      - pip install git+https://github.com/microsoft/task_oriented_dialogue_as_dataflow_synthesis --user
 code:
