@@ -45,7 +45,7 @@ jobs:
       sku: G1
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_32/FindManager_31_seed/20000_100
-        - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample/FindManager/31_seed/20000_100.jsonnet 
+        - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample_amlt_32/FindManager/31_seed/20000_100.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FindManager/20000_100/dev_valid
