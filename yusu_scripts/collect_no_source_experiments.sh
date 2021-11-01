@@ -13,7 +13,10 @@ do
     #python scripts/collect_results.py --model-dir ~/amlt_models/transformer_no_source --data-dir ~/resources/data/smcalflow.agent.data --out-path ${results_dir}/${fxn}_transformer_no_source.csv --fxn ${fxn} --fxn-splits 100 --test 
     for seed in 12 31 64
     do 
-        #cp ~/amlt_models/transformer_no_source/${fxn}_${seed}_seed/translate_output/dev_valid.tgt ${results_dir}/${fxn}_${seed}_seed_dev_valid.tgt 
-        cp ~/amlt_models/transformer_no_source/${fxn}_${seed}_seed/translate_output/test_valid.tgt ${results_dir}/${fxn}_${seed}_seed_test_valid.tgt 
+        for split in 5000 10000 20000 50000 100000 max 
+        do 
+            cp ~/amlt_models/transformer_no_source/${fxn}_${seed}_seed/${split}_100/translate_output/dev_valid.tgt ${results_dir}/${fxn}_${split}_100_${seed}_seed_dev_valid.tgt 
+            cp ~/amlt_models/transformer_no_source/${fxn}_${seed}_seed/${split}_100/translate_output/test_valid.tgt ${results_dir}/${fxn}_${split}_100_${seed}_seed_test_valid.tgt 
+        done 
     done 
 done 
