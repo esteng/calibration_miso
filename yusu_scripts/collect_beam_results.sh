@@ -10,6 +10,6 @@ for fxn in FindManager Tomorrow DoNotConfirm FenceAttendee PlaceHasFeature
 do
     for seed in 12 31 64
     do  
-        cp ~/amlt_models/transformer/${fxn}_${seed}_seed/translate_output/fxn_dev_valid.tgt ${results_dir}/${fxn}_${seed}_transformer_beam_dev_valid.tgt 
+        cp ~/amlt_models/transformer/${fxn}_${seed}_seed/translate_output/fxn_dev_valid_top_100.tgt ${results_dir}/${fxn}_${seed}_transformer_dev_valid_top_100.tgt 
     done
 done 
