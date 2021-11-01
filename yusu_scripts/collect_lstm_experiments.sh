@@ -1,6 +1,6 @@
 #!/bin/bash
 
-results_dir=$1/no_source
+results_dir=$1/lstm 
 
 mkdir -p ${results_dir} 
 
