@@ -72,5 +72,16 @@ jobs:
          - export FXN=PlaceHasFeature
          - ./experiments/calflow.sh -a eval_fxn
 
+    - name: beam
+      sku: G1
+      command: 
+        - export CHECKPOINT_DIR=/mnt/output/transformer/PlaceHasFeature_31_seed/20000_100
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/20000_100/fxn_test_valid
+        - export FXN=PlaceHasFeature
+        - ./experiments/calflow.sh -a beam 
+
+
+
+
 
 
