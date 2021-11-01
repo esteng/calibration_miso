@@ -74,6 +74,6 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_31_seed/10000_100
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/Tomorrow/10000_100/fxn_test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/Tomorrow/10000_100/fxn_dev_valid
          - export FXN=Tomorrow
          - ./experiments/calflow.sh -a beam

@@ -76,6 +76,6 @@ jobs:
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer/FindManager_84_seed/100000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer/FindManager/84_seed/100000_100.jsonnet 
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FindManager/100000_100/fxn_test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FindManager/100000_100/fxn_dev_valid
         - export FXN=FindManager
         - ./experiments/calflow.sh -a prob

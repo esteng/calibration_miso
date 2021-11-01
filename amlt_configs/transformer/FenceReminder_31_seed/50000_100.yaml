@@ -85,6 +85,6 @@ jobs:
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer/FenceReminder_31_seed/50000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer/FenceReminder/31_seed/50000_100.jsonnet 
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceReminder/50000_100/fxn_test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceReminder/50000_100/fxn_dev_valid
         - export FXN=FenceReminder
         - ./experiments/calflow.sh -a beam 
