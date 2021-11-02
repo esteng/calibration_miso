@@ -1,19 +1,25 @@
 #!/bin/bash 
 
-FXN=$1
-MODEL=$2
-SEED=$3
-DEVICE=$4
+#SBATCH -o /home/estengel/incremental-function-learning/intent/logs/train.out
+#SBATCH -p brtx6
+#SBATCH --gpus=1
 
-checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
+#FXN=$1
+#MODEL=$2
+#SEED=$3
+#DEVICE=$4
 
-for num in 750 1500 3000 7500 15000 18000 
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
+
+#for fxn_num in 15 30 75
+#do
+for fxn_num in 75
 do
-    for fxn_num in 7 15 30 75
+    for num in 750 1500 3000 7500 15000 18000 
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}
-        python -u main.py \
+        CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python -u main.py \
             --split-type interest \
             --bert-name bert-base-cased \
             --checkpoint-dir ${checkpoint_dir} \
@@ -25,7 +31,7 @@ do
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
             --do-dro \
-            --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
+            --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done
 

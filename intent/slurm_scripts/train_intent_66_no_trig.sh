@@ -9,13 +9,15 @@
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
+
+FXN=66 
 
 for num in 750 1500 3000 7500 15000 18000 
 do
     #for fxn_num in 7 15 30 75
     #for fxn_num in 15 30 
-    for fxn_num in 7 75
+    for fxn_num in 15 30 75
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}

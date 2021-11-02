@@ -173,10 +173,10 @@ def main(args):
     checkpoint_dir.joinpath("data").mkdir(exist_ok=True, parents=True)
 
     # get triggers
-    if args.source_triggers is not None:
-        source_triggers = args.source_triggers.split(",")
-    else:
-        source_triggers = None
+    #if args.source_triggers is not None:
+    #    source_triggers = args.source_triggers.split(",")
+    #else:
+    #    source_triggers = None
     print("getting data") 
     # get data 
     dataset = load_dataset("nlu_evaluation_data")
@@ -184,12 +184,13 @@ def main(args):
         if args.split_type == "random": 
             train_data, dev_data, test_data = random_split(dataset, 0.7, 0.1, 0.2)
         else:
-            train_data, dev_data, test_data = split_by_intent(dataset, 
+            train_data, dev_data, test_data = split_by_intent(args.data_path, 
                                                             args.intent_of_interest,
                                                             args.total_train,
                                                             args.total_interest,
                                                             out_path = checkpoint_dir.joinpath("data"),
-                                                            source_triggers = source_triggers,
+                                                            source_triggers=args.source_triggers,
+                                                            do_source_triggers = args.do_source_triggers,
                                                             upsample_by_factor=args.upsample_interest_by_factor, 
                                                             upsample_by_linear_fxn=args.upsample_interest_by_linear_fxn,
                                                             upsample_linear_fxn_coef=args.upsample_linear_fxn_coef,
@@ -282,6 +283,7 @@ if __name__ == "__main__":
     print("parser args")
     parser = argparse.ArgumentParser()
     # Data 
+    parser.add_argument("--data-path", type=str, default="data/nlu_eval_data", help="path to data")
     parser.add_argument("--split-type", default="random", choices=["random", "interest"], 
                         required=True, help="type of datasplit to train on")
     parser.add_argument("--intent-of-interest", default=None, type=int, help="intent to look at") 
@@ -306,6 +308,7 @@ if __name__ == "__main__":
     parser.add_argument("--sample-by-source-prob", action='store_true', help="flag to sample examples into batches based on how reliable the source mapping is. Excludes conflicting examples earlier in training, with a decreasing temperature to include them more later in training ")
     parser.add_argument("--sample-decrease-factor", type=float, default = 0.01, help="factor by which to decrease the temperature of sampling. Default is 0.01 corresponding to linear decrease until epoch 100")
     parser.add_argument("--source-triggers", type=str, default=None, help="source triggers to exclude in constructing the remainder of the dataset, e.g. radio,fm,am for play_radio intent. For analysis only.")
+    parser.add_argument("--do-source-triggers", action='store_true',  help="automatically extract source triggers to exclude in constructing the remainder of the dataset, e.g. radio,fm,am for play_radio intent. For analysis only.")
     # Model/Training
     parser.add_argument("--bert-name", default="bert-base-cased", required=True, help="bert pretrained model to use")
     parser.add_argument("--epochs", type=int, default=100, help="number of epochs to train")

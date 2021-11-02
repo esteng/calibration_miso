@@ -9,7 +9,7 @@
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 
 for num in 750 1500 3000 7500 15000 18000 
 do

@@ -1,21 +1,20 @@
 #!/bin/bash 
 
-#SBATCH -o /home/estengel/scratch/decode_intent.out
+#SBATCH -o /home/estengel/incremental-function-learning/intent/logs/decode.out
 #SBATCH -p brtx6
 #SBATCH --gpus=1
-#SBATCH --nodelist brtx604
 
 #FXN=$1
 #MODEL=$2
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
+checkpoint_root="/brtx/603-nvme1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 
 for num in 750 1500 3000 7500 15000 18000 
 do
-    #for fxn_num in 7 15 30 75
-    for fxn_num in 15 
+    for fxn_num in 15 30 75
+    #for fxn_num in 15 
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}

@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-#SBATCH -o /home/estengel/incremental-function-learning/intent/logs/train.out
+#SBATCH -o /home/estengel/incremental-function-learning/intent/logs/train_up.out
 #SBATCH -p brtx6
 #SBATCH --gpus=1
 
@@ -9,11 +9,11 @@
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}_${FACTOR}/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}_${FACTOR}/${FXN}/${SEED}_seed"
 
 
 
-for fxn_num in 15 30 75 7
+for fxn_num in 15 30 75 
 do
     for num in 750 1500 3000 7500 15000 18000 
     do

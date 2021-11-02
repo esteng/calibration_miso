@@ -9,12 +9,13 @@
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
+FXN=15
 
 for num in 750 1500 3000 7500 15000 18000 
 do
     #for fxn_num in 7 15 30 75
-    for fxn_num in 15 30 
+    for fxn_num in 15 30 75
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}
@@ -29,7 +30,7 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
-            --source-triggers radio,fm,am \
+            --source-triggers emails,received \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done

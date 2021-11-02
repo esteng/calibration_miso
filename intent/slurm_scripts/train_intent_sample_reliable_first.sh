@@ -9,7 +9,7 @@
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}_${FACTOR}/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}_${FACTOR}/${FXN}/${SEED}_seed"
 
 
 

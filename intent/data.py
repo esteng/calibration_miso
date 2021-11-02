@@ -4,6 +4,8 @@ import pathlib
 import numpy as np
 import torch 
 import re
+import json 
+import argparse
 from transformers import AutoTokenizer
 from datasets import load_dataset 
 import sys 
@@ -38,6 +40,20 @@ def has_source_trigger(datapoint, triggers):
             return True
     return False
 
+def get_source_triggers(data, intent_of_interest): 
+    data = tokenize(data)
+    probs_intent_given_word, probs_words_given_intent = get_probs(data, exclude_function=True)
+
+    probs_intent_given_word_by_intent = defaultdict(lambda: defaultdict(int))
+    for word, intent_dict in probs_intent_given_word.items():
+        for intent, prob in intent_dict.items():
+            probs_intent_given_word_by_intent[intent][word] = prob
+    top_3_forall = get_max_probs(probs_intent_given_word_by_intent, 3) 
+    top_3_of_interest = top_3_forall[intent_of_interest]
+    top_3_words = [x[0] for x in top_3_of_interest]
+    return top_3_words
+
+
 def get_adaptive_upsample_factor(of_interest, not_of_interest, dataset, intent_of_interest, eps=0.1):
     # get factor by which you need to upsample examples of intent_of_interest to maintain the roughly same source-target probabilities 
     train_idxs = of_interest + not_of_interest
@@ -59,42 +75,55 @@ def get_adaptive_upsample_factor(of_interest, not_of_interest, dataset, intent_o
     return np.max(ratios)
 
 
-def split_by_intent(dataset, 
+def split_by_intent(data_path, 
                     intent_of_interest, 
                     n_data, 
                     n_intent, 
                     out_path = None, 
-                    source_triggers = None, 
+                    source_triggers = None,
+                    do_source_triggers = False, 
                     upsample_by_factor=None, 
                     upsample_by_linear_fxn=False,
                     upsample_linear_fxn_coef=None,
                     upsample_linear_fxn_intercept=None,
                     adaptive_upsample=False, 
                     adaptive_factor=1.0): 
-    dataset = dataset['train']
+    #dataset = dataset['train']
+    data_path = pathlib.Path(data_path) 
+    with open(data_path.joinpath("train.json")) as train_f, \
+         open(data_path.joinpath("dev.json")) as dev_f, \
+         open(data_path.joinpath("test.json")) as test_f:
+         train_data = json.load(train_f)
+         dev_data = json.load(dev_f)
+         test_data = json.load(test_f)
+
     # split into interest and non-interest 
-    of_interest = [i for i, x in enumerate(dataset) if x['label'] == intent_of_interest]
+    of_interest = [i for i, x in enumerate(train_data) if x['label'] == intent_of_interest]
     if n_intent > len(of_interest):
         # Take the max you can take while leaving some for test and dev
         num_devtest = int(0.3 * len(of_interest))
         num_train_intent = len(of_interest) - num_devtest
         n_intent = num_train_intent
 
-    not_interest = [i for i in range(len(dataset)) if i not in of_interest]
+    not_interest = [i for i in range(len(train_data)) if i not in of_interest]
     if n_data > n_intent + len(not_interest):
         # Take the max you can take 
         n_data = n_intent + len(not_interest)
 
-    if source_triggers is not None:
+    if do_source_triggers:
+        if source_triggers is None:
+            source_triggers = get_source_triggers(train_data, intent_of_interest)
+        else:
+            source_triggers = source_triggers.split(",")
         # filter not_interest so that source triggers don't appear 
-        not_interest = [i for i in range(len(dataset)) if not has_source_trigger(dataset[i], source_triggers)]
+        not_interest = [i for i in range(len(train_data)) if not has_source_trigger(train_data[i], source_triggers)]
         
     np.random.shuffle(of_interest)
     np.random.shuffle(not_interest)
 
     train_idxs = not_interest[0:n_data - n_intent] + of_interest[0:n_intent]
     if adaptive_upsample:
-        upsample_by_factor = get_adaptive_upsample_factor(of_interest[0:n_intent], not_interest[0:n_data-n_intent], dataset, intent_of_interest) * adaptive_factor
+        upsample_by_factor = get_adaptive_upsample_factor(of_interest[0:n_intent], not_interest[0:n_data-n_intent], train_data, intent_of_interest) * adaptive_factor
         print(f"upsampling by a factor of {upsample_by_factor}")
 
     if upsample_by_linear_fxn:
@@ -109,13 +138,13 @@ def split_by_intent(dataset,
     np.random.shuffle(train_idxs)
 
 
-    remaining = [i for i in range(len(dataset)) if i not in train_idxs]
-    np.random.shuffle(remaining)
-    dev_idxs = remaining[0:int(len(remaining)/2)]
-    test_idxs = remaining[int(len(remaining)/2):]
-    train_data = [dataset[i] for i in train_idxs]
-    dev_data = [dataset[i] for i in dev_idxs]
-    test_data = [dataset[i] for i in test_idxs]
+    train_data = [train_data[i] for i in train_idxs]
+    #remaining = [i for i in range(len(dataset)) if i not in train_idxs]
+    #np.random.shuffle(remaining)
+    #dev_idxs = remaining[0:int(len(remaining)/2)]
+    #test_idxs = remaining[int(len(remaining)/2):]
+    #dev_data = [dataset[i] for i in dev_idxs]
+    #test_data = [dataset[i] for i in test_idxs]
 
     n_interest_in_dev = np.sum([1 for x in dev_data if x['label'] == intent_of_interest])
     n_interest_in_test = np.sum([1 for x in test_data if x['label'] == intent_of_interest])
@@ -578,3 +607,20 @@ def batchify_sample_source_trigger(data, batch_size, bert_model, device, intent_
         curr_batch_as_text = {"input": [], "label": []}
 
     return batches 
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out-path")
+    args= parser.parse_args()
+
+    dataset = load_dataset("nlu_evaluation_data")
+
+    train_data, dev_data, test_data = random_split(dataset, 0.7, 0.1, 0.2)
+
+    out_path = pathlib.Path(args.out_path)
+    
+    with open(out_path.joinpath("train.json"), "w") as train_f, open(out_path.joinpath("dev.json"), "w") as dev_f, open(out_path.joinpath("test.json"), "w") as test_f: 
+        json.dump(train_data, train_f)
+        json.dump(dev_data, dev_f)
+        json.dump(test_data, test_f)

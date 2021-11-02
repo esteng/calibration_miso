@@ -10,7 +10,7 @@
 #TEMP=$5
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/${MODEL}_${TEMP}/${FXN}/${SEED}_seed"
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}_${TEMP}/${FXN}/${SEED}_seed"
 
 for fxn_num in 15 30 75 7
 do

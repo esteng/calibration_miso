@@ -16,6 +16,7 @@ def get_data():
     train_dataset = dataset["train"]
     return train_dataset
 
+
 def tokenize(data):
     def tokenize_helper(ex, i):
         ex['text_tokenized'] = re.split("[\s,.]+", ex['text'].lower().strip())
