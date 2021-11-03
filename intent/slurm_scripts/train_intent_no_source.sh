@@ -11,11 +11,9 @@
 
 checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 
-#for fxn_num in 15 75 30 15
-for fxn_num in 15 
+for fxn_num in 75 30 15
 do
-    #for num in 750 1500 3000 7500 15000 18000 
-    for num in 750 
+    for num in 18000 15000 7500 3000 1500 750 
     do
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}

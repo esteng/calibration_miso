@@ -9,9 +9,9 @@
 #SEED=$3
 #DEVICE=$4
 
+FXN=27
 checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 
-FXN=27
 
 for num in 750 1500 3000 7500 15000 18000 
 do
@@ -30,7 +30,8 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
-            --source-triggers day \
+            --do-source-triggers \
+            --source-triggers day,today,tell,can \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done

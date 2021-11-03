@@ -9,8 +9,8 @@
 #SEED=$3
 #DEVICE=$4
 
-checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 FXN=50
+checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 
 for fxn_num in 75 30 15
 do
@@ -30,7 +30,7 @@ do
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
             --do-source-triggers \
-            --source-triggers radio,fm,am \
+            --source-triggers channel,radio,fm,point,station,tune \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done

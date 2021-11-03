@@ -36,8 +36,17 @@ def random_split(dataset, p_train, p_dev, p_test):
 def has_source_trigger(datapoint, triggers):
     text = re.split("[\s,.]+", datapoint['text'].strip())
     for t in triggers:
-        if t in text:
-            return True
+        if "@@" in t: 
+            # multi-gram 
+            t_pieces = t.split("@@")
+            for i in range(0, len(text) - len(t_pieces), len(t_pieces)): 
+                ngram = text[i:i+len(t_pieces)]
+                if all([t_pieces[j] == ngram[j] for j in range(len(ngram))]):
+                    #print(" ".join(text ))
+                    return True
+        else:
+            if t in text:
+                return True
     return False
 
 def get_source_triggers(data, intent_of_interest): 
