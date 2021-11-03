@@ -8,6 +8,6 @@ do
     num=32
     for fxn in FindManager Tomorrow DoNotConfirm FenceAttendee PlaceHasFeature 
     do
-        ./submit_amlt_dangerous.sh ${FXN} ${seed} transformer_upsample_${num} 
+        ./submit_amlt_dangerous.sh ${fxn} ${seed} transformer_upsample_${num} 
     done 
 done
