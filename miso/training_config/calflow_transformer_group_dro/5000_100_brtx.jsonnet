@@ -7,7 +7,6 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     use_agent_utterance: true,
     use_context: true,
     fxn_of_interest: "FindManager",
-    #line_limit: 10,
     source_token_indexers: {
       source_tokens: {
         type: "single_id",

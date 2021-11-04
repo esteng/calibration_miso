@@ -400,8 +400,6 @@ class CalFlowTransformerParser(CalFlowParser):
         interest_loss = total_loss[contains_fxn == 1]
         non_interest_loss = total_loss[contains_fxn == 0]
 
-
-
         interest_loss_sum = torch.mean(interest_loss) 
         non_interest_loss_sum = torch.mean(non_interest_loss) 
         return torch.max(interest_loss_sum, non_interest_loss_sum)
