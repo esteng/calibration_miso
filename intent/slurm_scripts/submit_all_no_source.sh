@@ -8,7 +8,7 @@ do
     do
         export FXN=$fxn
         export SEED=$seed
-        export MODEL=intent_no_source_manual
+        export MODEL=intent_no_source_manual_more
         #sbatch slurm_scripts/train_intent_no_source.sh --export 
         sbatch slurm_scripts/train_intent_${fxn}_no_trig.sh --export 
     done

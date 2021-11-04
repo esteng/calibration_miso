@@ -33,7 +33,7 @@ do
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
             --do-source-triggers \
-            --source-triggers traffic \
+            --source-triggers traffic,there,current \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done
