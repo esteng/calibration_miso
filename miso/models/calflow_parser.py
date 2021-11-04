@@ -622,7 +622,10 @@ class CalFlowParser(Transduction):
     def get_loss(self, 
                 loss_per_instance: torch.Tensor, 
                 contains_fxn: torch.Tensor):
-        non_interest_weight, interest_weight = self.loss_weights
+        try:
+            non_interest_weight, interest_weight = self.loss_weights
+        except TypeError:
+            non_interest_weight, interest_weight = 1, 1
         # iterate over batch to separate out loss groups 
         # reshape loss 
         bsz, __ = contains_fxn.shape 
@@ -639,7 +642,7 @@ class CalFlowParser(Transduction):
         interest_loss = torch.sum(interest_loss) * interest_weight
         non_interest_loss = torch.sum(non_interest_loss) * non_interest_weight
 
-        return interest_loss + non_interest_loss, interest_loss / interest_weight, non_interest_loss / non_interest_weight
+        return interest_loss + non_interest_loss, interest_loss / interest_weight, non_interest_loss / non_interest_weight, loss_per_instance
 
     @overrides
     def _compute_node_prediction_loss(self,
@@ -650,7 +653,8 @@ class CalFlowParser(Transduction):
                                       inputs: Dict,
                                       source_dynamic_vocab_size: int,
                                       source_attention_weights: torch.Tensor = None,
-                                      coverage_history: torch.Tensor = None) -> Dict:
+                                      coverage_history: torch.Tensor = None,
+                                      return_instance_loss: bool = False) -> Dict:
         """
         Compute the node prediction loss based on the final hybrid probability distribution.
 
@@ -672,6 +676,7 @@ class CalFlowParser(Transduction):
         batch_size, target_length = prediction.size()
         not_pad_mask = generation_outputs.ne(self._vocab_pad_index)
         num_nodes = not_pad_mask.sum()
+        num_nodes_per_instance = not_pad_mask.sum(dim=1)
 
         # Priority: target_copy > source_copy > generation
         # Prepare mask.
@@ -690,14 +695,21 @@ class CalFlowParser(Transduction):
         # Compute loss.
         log_prob_dist = (prob_dist.view(batch_size * target_length, -1) + self._eps).log()
         flat_hybrid_targets = hybrid_targets.view(batch_size * target_length)
+
         loss = self._label_smoothing(log_prob_dist, flat_hybrid_targets)
 
-        if self.do_reweighting or self.do_train_metrics: 
+        if self.do_reweighting or self.do_train_metrics or return_instance_loss: 
             # need to reduce loss 
             (loss, 
             loss_of_interest, 
-            loss_of_noninterest) = self.get_loss(loss, 
+            loss_of_noninterest,
+            loss_per_instance) = self.get_loss(loss, 
                                                  inputs['contains_fxn'])
+
+            if return_instance_loss:
+                loss_per_instance = loss_per_instance.sum(dim=(1,2))
+                loss_per_node_per_instance = loss_per_instance / num_nodes_per_instance
+
 
 
             # Coverage loss.
@@ -718,6 +730,13 @@ class CalFlowParser(Transduction):
                                     valid_source_copy_mask=valid_source_copy_mask,
                                     target_copy_indices=_target_copy_indices,
                                     valid_target_copy_mask=valid_target_copy_mask)
+
+            return dict(
+                loss=loss,
+                loss_per_node_per_instance=loss_per_node_per_instance,
+                num_nodes=num_nodes,
+                loss_per_node=loss / num_nodes,
+            )
 
         return dict(
             loss=loss,

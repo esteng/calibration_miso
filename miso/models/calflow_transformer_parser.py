@@ -55,6 +55,7 @@ class CalFlowTransformerParser(CalFlowParser):
                  fxn_of_interest: str = None,
                  loss_weights: List[float] = None,
                  do_train_metrics: bool = False,
+                 do_group_dro: bool = False,
                  ) -> None:
         super().__init__(vocab=vocab,
                          # source-side
@@ -86,6 +87,7 @@ class CalFlowTransformerParser(CalFlowParser):
         self.oracle = False
         self.top_k_beam_search = False
         self.top_k = 1
+        self.do_group_dro = do_group_dro
 
         # make sure we never have the wrong settings
         assert(not ((self.training or self.oracle) and self.top_k_beam_search))
@@ -384,30 +386,93 @@ class CalFlowTransformerParser(CalFlowParser):
             node_indices=node_indices.unsqueeze(1),
         )
 
-    def get_loss(self, 
-                loss_per_instance: torch.Tensor, 
-                contains_fxn: torch.Tensor):
-        try:
-            non_interest_weight, interest_weight = self.loss_weights
-        except TypeError:
-            non_interest_weight, interest_weight = 1, 1
+
+    def get_dro_loss(self,
+                    node_loss_per_instance: torch.Tensor,
+                    edge_loss_per_instance: torch.Tensor,
+                    contains_fxn: torch.Tensor):
         # iterate over batch to separate out loss groups 
         # reshape loss 
         bsz, __ = contains_fxn.shape 
-        len_times_batch = loss_per_instance.shape[0]
-        assert(len_times_batch % bsz) == 0
-        seq_len = int(len_times_batch/bsz)
-        loss_per_instance = loss_per_instance.reshape(bsz, seq_len, -1)
-        vocab_size = loss_per_instance.shape[-1]
-        contains_fxn = contains_fxn.unsqueeze(-1).repeat(1, seq_len, vocab_size)
+        total_loss = node_loss_per_instance + edge_loss_per_instance
+        contains_fxn = contains_fxn.squeeze(-1)
 
-        interest_loss = loss_per_instance[contains_fxn == 1]
-        non_interest_loss = loss_per_instance[contains_fxn == 0]
+        interest_loss = total_loss[contains_fxn == 1]
+        non_interest_loss = total_loss[contains_fxn == 0]
 
-        interest_loss = torch.sum(interest_loss) * interest_weight
-        non_interest_loss = torch.sum(non_interest_loss) * non_interest_weight
 
-        return interest_loss + non_interest_loss, interest_loss / interest_weight, non_interest_loss / non_interest_weight
+
+        interest_loss_sum = torch.mean(interest_loss) 
+        non_interest_loss_sum = torch.mean(non_interest_loss) 
+        return torch.max(interest_loss_sum, non_interest_loss_sum)
+
+    def _compute_edge_prediction_loss_dro(self,
+                                          edge_head_ll: torch.Tensor,
+                                          edge_type_ll: torch.Tensor,
+                                          pred_edge_heads: torch.Tensor,
+                                          pred_edge_types: torch.Tensor,
+                                          gold_edge_heads: torch.Tensor,
+                                          gold_edge_types: torch.Tensor,
+                                          valid_node_mask: torch.Tensor,
+                                          syntax: bool = False) -> Dict:
+        """
+        Compute the edge prediction loss.
+
+        :param edge_head_ll: [batch_size, target_length, target_length + 1 (for sentinel)].
+        :param edge_type_ll: [batch_size, target_length, num_labels].
+        :param pred_edge_heads: [batch_size, target_length].
+        :param pred_edge_types: [batch_size, target_length].
+        :param gold_edge_heads: [batch_size, target_length].
+        :param gold_edge_types: [batch_size, target_length].
+        :param valid_node_mask: [batch_size, target_length].
+        """
+
+        # Index the log-likelihood (ll) of gold edge heads and types.
+        batch_size, target_length, _ = edge_head_ll.size()
+        batch_indices = torch.arange(0, batch_size).view(batch_size, 1).type_as(gold_edge_heads)
+        node_indices = torch.arange(0, target_length).view(1, target_length) \
+            .expand(batch_size, target_length).type_as(gold_edge_heads)
+
+        pdb.set_trace() 
+        gold_edge_head_ll = edge_head_ll[batch_indices, node_indices, gold_edge_heads]
+        gold_edge_type_ll = edge_type_ll[batch_indices, node_indices, gold_edge_types]
+        # Set the ll of invalid nodes to 0.
+        num_nodes = valid_node_mask.sum().float()
+
+        if not syntax: 
+            # don't incur loss on EOS/SOS token
+            valid_node_mask[gold_edge_heads == -1] = 0
+
+        valid_node_mask = valid_node_mask.bool()
+        gold_edge_head_ll.masked_fill_(~valid_node_mask, 0)
+        gold_edge_type_ll.masked_fill_(~valid_node_mask, 0)
+
+        # Negative log-likelihood.
+        loss = -(gold_edge_head_ll.sum() + gold_edge_type_ll)
+        # Update metrics.
+        if self.training and not syntax:
+            self._edge_pred_metrics(
+                predicted_indices=pred_edge_heads,
+                predicted_labels=pred_edge_types,
+                gold_indices=gold_edge_heads,
+                gold_labels=gold_edge_types,
+                mask=valid_node_mask
+            )
+
+        elif self.training and syntax:
+            self._syntax_metrics(
+                predicted_indices=pred_edge_heads,
+                predicted_labels=pred_edge_types,
+                gold_indices=gold_edge_heads,
+                gold_labels=gold_edge_types,
+                mask=valid_node_mask
+            )
+
+        return dict(
+            loss=loss,
+            num_nodes=num_nodes,
+            loss_per_node=loss / num_nodes,
+        )
 
     @overrides
     def _training_forward(self, inputs: Dict) -> Dict[str, torch.Tensor]:
@@ -448,9 +513,11 @@ class CalFlowTransformerParser(CalFlowParser):
             inputs=inputs,
             source_dynamic_vocab_size=inputs["source_dynamic_vocab_size"],
             source_attention_weights=decoding_outputs["source_attention_weights"],
-            coverage_history=decoding_outputs["coverage_history"]
+            coverage_history=decoding_outputs["coverage_history"],
+            return_instance_loss=self.do_group_dro,
             #coverage_history=None
         )
+
         edge_pred_loss = self._compute_edge_prediction_loss(
             edge_head_ll=edge_prediction_outputs["edge_head_ll"],
             edge_type_ll=edge_prediction_outputs["edge_type_ll"],
@@ -458,11 +525,14 @@ class CalFlowTransformerParser(CalFlowParser):
             pred_edge_types=edge_prediction_outputs["edge_types"],
             gold_edge_heads=inputs["edge_heads"],
             gold_edge_types=inputs["edge_types"],
-            valid_node_mask=inputs["valid_node_mask"]
+            valid_node_mask=inputs["valid_node_mask"],
+            return_instance_loss=self.do_group_dro,
         )
 
-        loss = node_pred_loss["loss_per_node"] + edge_pred_loss["loss_per_node"] 
-
+        if not self.do_group_dro:
+            loss = node_pred_loss["loss_per_node"] + edge_pred_loss["loss_per_node"] 
+        else:
+            loss = self.get_dro_loss(node_pred_loss["loss_per_node_per_instance"], edge_pred_loss["loss_per_node_per_instance"], inputs['contains_fxn']) 
 
         to_ret = dict(loss=loss)
 

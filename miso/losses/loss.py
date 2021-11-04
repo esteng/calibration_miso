@@ -39,5 +39,11 @@ class MSECrossEntropyLoss(Loss):
             harmonic_mean = xent_value + mse_value
         return harmonic_mean
 
-        
-    
+@Loss.register("group_dro") 
+class GroupDroLoss(Loss):
+    def __init__(self):
+        super(MSECrossEntropyLoss, self).__init__()
+        self.xent_criterion = BCELoss(reduction='none')
+
+    def forward(self, output, target):
+        pass 

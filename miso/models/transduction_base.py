@@ -108,7 +108,8 @@ class Transduction(Model):
                                       gold_edge_heads: torch.Tensor,
                                       gold_edge_types: torch.Tensor,
                                       valid_node_mask: torch.Tensor,
-                                      syntax: bool = False) -> Dict:
+                                      syntax: bool = False,
+                                      return_instance_loss: bool = False) -> Dict:
         """
         Compute the edge prediction loss.
 
@@ -131,6 +132,7 @@ class Transduction(Model):
         gold_edge_type_ll = edge_type_ll[batch_indices, node_indices, gold_edge_types]
         # Set the ll of invalid nodes to 0.
         num_nodes = valid_node_mask.sum().float()
+        num_nodes_per_instance = valid_node_mask.sum(dim=1).float() 
 
         if not syntax: 
             # don't incur loss on EOS/SOS token
@@ -141,7 +143,19 @@ class Transduction(Model):
         gold_edge_type_ll.masked_fill_(~valid_node_mask, 0)
 
         # Negative log-likelihood.
-        loss = -(gold_edge_head_ll.sum() + gold_edge_type_ll.sum())
+
+        if return_instance_loss:
+            loss_per_instance = -(gold_edge_head_ll + gold_edge_type_ll)
+            loss = loss_per_instance.sum()
+            loss_sanity_check = -(gold_edge_head_ll.sum() + gold_edge_type_ll.sum())
+            try:
+                assert(abs(loss.item() - loss_sanity_check.item()) < 0.1)
+            except AssertionError:
+                pdb.set_trace() 
+
+        else:
+            loss = -(gold_edge_head_ll.sum() + gold_edge_type_ll.sum())
+
         # Update metrics.
         if self.training and not syntax:
             self._edge_pred_metrics(
@@ -160,12 +174,22 @@ class Transduction(Model):
                 gold_labels=gold_edge_types,
                 mask=valid_node_mask
             )
-
-        return dict(
-            loss=loss,
-            num_nodes=num_nodes,
-            loss_per_node=loss / num_nodes,
-        )
+        if return_instance_loss:
+            loss_to_ret = loss 
+            loss_per_node_per_instance = loss_per_instance.sum(dim=1) / num_nodes_per_instance
+            return dict(
+                loss=loss_to_ret,
+                num_nodes=num_nodes,
+                loss_per_node=loss / num_nodes,
+                loss_per_node_per_instance = loss_per_node_per_instance
+            )
+        else:
+            loss_to_ret = loss 
+            return dict(
+                loss=loss_to_ret,
+                num_nodes=num_nodes,
+                loss_per_node=loss / num_nodes,
+            )
 
     def _compute_node_prediction_loss(self,
                                       prob_dist: torch.Tensor,
