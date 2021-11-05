@@ -2,7 +2,8 @@
 
 # results dir will contain all the csvs 
 
-num=$2
+#num=$2
+num=32 
 
 results_dir=$1/upsample
 
