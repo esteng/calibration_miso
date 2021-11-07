@@ -12,7 +12,7 @@ do
     do  
         for split in 5000 10000 20000 50000 100000 max 
         do 
-            cp ~/amlt_models/transformer/${fxn}_${seed}_seed/translate_output/fxn_dev_valid_top_100.tgt ${results_dir}/${fxn}_${seed}_transformer_dev_valid_top_100.tgt 
+            cp ~/amlt_models/transformer/${fxn}_${seed}_seed/${split}_100/translate_output/fxn_dev_valid_top_100.tgt ${results_dir}/${fxn}_${split}_100_${seed}_seed_transformer_dev_valid_top_100.tgt 
         done 
     done
 done 
