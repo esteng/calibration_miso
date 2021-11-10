@@ -1,4 +1,4 @@
-local data_dir = "/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/5000_100/";
+local data_dir = "/mnt/default/resources/data/smcalflow_samples_no_source/PlaceHasFeature/5000_100/";
 local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
 
 {

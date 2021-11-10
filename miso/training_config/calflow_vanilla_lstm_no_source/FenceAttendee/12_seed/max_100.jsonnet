@@ -1,4 +1,4 @@
-local data_dir = "/mnt/default/resources/data/smcalflow_samples/FenceAttendee/max_100/";
+local data_dir = "/mnt/default/resources/data/smcalflow_samples_no_source/FenceAttendee/max_100/";
 local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
 
 {
