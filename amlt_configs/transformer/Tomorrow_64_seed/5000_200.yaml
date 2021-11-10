@@ -31,14 +31,14 @@ code:
    local_dir: $CONFIG_DIR/../../..
 
 data:
-   local_dir: $CONFIG_DIR/../../../../resources/data/
+   local_dir: $CONFIG_DIR/../../../../../resources/data/
    remote_dir: resources/data
 
 
 storage:
    output:
-       storage_account_name: elias
-       container_name: miso
+       storage_account_name: ysumiso
+       container_name: ysumiso
        mount_dir: /mnt/output
 
 jobs: 
@@ -49,15 +49,18 @@ jobs:
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer/Tomorrow/64_seed/5000_200.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
-        - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_64_seed/5000_200
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/Tomorrow/5000_200/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/5000_200/dev_valid
+        - export FXN=Tomorrow
+        - ./experiments/calflow.sh -a eval_fxn
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/5000_200/test_valid
+        - export FXN=Tomorrow
         - ./experiments/calflow.sh -a eval_fxn
 
     - name: decode
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_64_seed/5000_200
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/Tomorrow/5000_200/dev_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/5000_200/dev_valid
          - export FXN=Tomorrow
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -65,7 +68,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_64_seed/5000_200
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/Tomorrow/5000_200/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/5000_200/test_valid
          - export FXN=Tomorrow
          - ./experiments/calflow.sh -a eval_fxn
 
