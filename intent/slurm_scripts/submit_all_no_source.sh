@@ -2,7 +2,7 @@
 
 for seed in 12 31 64
 do
-    for fxn in 66
+    for fxn in 16
     #for fxn in 66 15 16 27
     #for fxn in 50
     do
