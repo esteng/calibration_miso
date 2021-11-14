@@ -18,7 +18,7 @@ function train() {
     rm -rf ${CHECKPOINT_DIR}/ckpt
     echo "Training a new transductive model for decomp parsing..."
 
-    python -um allennlp.run train \
+    python3.6 -um allennlp.run train \
     --include-package miso.data.dataset_readers \
     --include-package miso.data.iterators \
     --include-package miso.data.tokenizers \
@@ -31,8 +31,8 @@ function train() {
 }
 
 function resume() {
-    python scripts/edit_config.py ${CHECKPOINT_DIR}/ckpt/config.json ${TRAINING_CONFIG}
-    python -m allennlp.run train \
+    python3.6 scripts/edit_config.py ${CHECKPOINT_DIR}/ckpt/config.json ${TRAINING_CONFIG}
+    python3.6 -m allennlp.run train \
     --include-package miso.data.dataset_readers \
     --include-package miso.data.iterators \
     --include-package miso.data.tokenizers \
@@ -50,7 +50,7 @@ function test() {
     log_info "Evaluating a transductive model for decomp parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     output_file=${CHECKPOINT_DIR}/test.pred.txt
-    python -m allennlp.run predict \
+    python3.6 -m allennlp.run predict \
     ${model_file} ${TEST_DATA} \
     --predictor "decomp_parsing" \
     --batch-size 1 \
@@ -69,7 +69,7 @@ function eval() {
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
     mkdir -p ${CHECKPOINT_DIR}/translate_output
-    python -m miso.commands.exact_match eval \
+    python3.6 -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --predictor "calflow_parsing" \
     --batch-size 400 \
@@ -92,11 +92,11 @@ function eval_fxn() {
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
     mkdir -p ${CHECKPOINT_DIR}/translate_output
-    python -m miso.commands.exact_match eval \
+    python3.6 -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
     --predictor "calflow_parsing" \
-    --batch-size 400 \
+    --batch-size 140 \
     --beam-size 2 \
     --use-dataset-reader \
     --cuda-device 0 \
@@ -115,7 +115,7 @@ function eval_fxn_precomputed() {
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
-    python -m miso.commands.exact_match eval \
+    python3.6 -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
     --predictor "calflow_parsing" \
@@ -140,7 +140,7 @@ function prob_analysis() {
     #output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
     mkdir -p ${CHECKPOINT_DIR}/translate_output
-    python -m miso.commands.exact_match eval \
+    python3.6 -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
     --predictor "calflow_parsing" \
@@ -166,7 +166,7 @@ function big_beam() {
     #output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
     mkdir -p ${CHECKPOINT_DIR}/translate_output
-    python -m miso.commands.exact_match eval \
+    python3.6 -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
     --predictor "calflow_parsing" \
