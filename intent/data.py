@@ -95,6 +95,7 @@ def split_by_intent(data_path,
                     upsample_by_linear_fxn=False,
                     upsample_linear_fxn_coef=None,
                     upsample_linear_fxn_intercept=None,
+                    upsample_constant_ratio=None,
                     adaptive_upsample=False, 
                     adaptive_factor=1.0): 
     #dataset = dataset['train']
@@ -144,6 +145,12 @@ def split_by_intent(data_path,
         additional_num_of_interest =  effective_num_of_interest - len(of_interest[0:n_intent])
         sample_of_interest = np.random.choice(of_interest, size=additional_num_of_interest, replace=True).tolist()
         train_idxs += sample_of_interest
+    if upsample_constant_ratio is not None: 
+        effective_num_of_interest = int(len(train_idxs) * upsample_constant_ratio)
+        additional_num_of_interest =  effective_num_of_interest - len(of_interest[0:n_intent])
+        sample_of_interest = np.random.choice(of_interest, size=additional_num_of_interest, replace=True).tolist()
+        train_idxs += sample_of_interest
+
     np.random.shuffle(train_idxs)
 
 
