@@ -45,7 +45,7 @@ jobs:
     - name: train
       sku: G1
       command: 
-        - export CHECKPOINT_DIR=/mnt/output/transformer/FenceAttendee_12_seed/100000_200
+        - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/FenceAttendee_12_seed/100000_200
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_roberta/FenceAttendee/12_seed/100000_200.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
@@ -59,7 +59,7 @@ jobs:
     - name: decode
       sku: G1
       command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer/FenceAttendee_12_seed/100000_200
+         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/FenceAttendee_12_seed/100000_200
          - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_200/dev_valid
          - export FXN=FenceAttendee
          - ./experiments/calflow.sh -a eval_fxn
@@ -67,7 +67,7 @@ jobs:
     - name: decode_test
       sku: G1
       command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer/FenceAttendee_12_seed/100000_200
+         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/FenceAttendee_12_seed/100000_200
          - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_200/test_valid
          - export FXN=FenceAttendee
          - ./experiments/calflow.sh -a eval_fxn

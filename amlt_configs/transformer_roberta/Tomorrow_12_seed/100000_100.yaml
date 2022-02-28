@@ -46,7 +46,7 @@ jobs:
     - name: train
       sku: G1
       command: 
-        - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_12_seed/100000_100
+        - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/Tomorrow_12_seed/100000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_roberta/Tomorrow/12_seed/100000_100.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
@@ -60,7 +60,7 @@ jobs:
     - name: decode
       sku: G1
       command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_12_seed/100000_100
+         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/Tomorrow_12_seed/100000_100
          - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/100000_100/dev_valid
          - export FXN=Tomorrow
          - ./experiments/calflow.sh -a eval_fxn
@@ -68,7 +68,7 @@ jobs:
     - name: decode_test
       sku: G1
       command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_12_seed/100000_100
+         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/Tomorrow_12_seed/100000_100
          - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/100000_100/test_valid
          - export FXN=Tomorrow
          - ./experiments/calflow.sh -a eval_fxn
@@ -76,7 +76,7 @@ jobs:
     - name: beam
       sku: G1
       command: 
-        - export CHECKPOINT_DIR=/mnt/output/transformer/Tomorrow_12_seed/100000_100
+        - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/Tomorrow_12_seed/100000_100
         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/Tomorrow/100000_100/fxn_dev_valid
         - export FXN=Tomorrow
         - ./experiments/calflow.sh -a beam 

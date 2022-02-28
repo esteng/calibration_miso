@@ -46,7 +46,7 @@ jobs:
     - name: train
       sku: G1
       command: 
-        - export CHECKPOINT_DIR=/mnt/output/transformer/DoNotConfirm_12_seed/20000_50
+        - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/DoNotConfirm_12_seed/20000_50
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_roberta/DoNotConfirm/12_seed/20000_50.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
@@ -60,7 +60,7 @@ jobs:
     - name: decode
       sku: G1
       command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer/DoNotConfirm_12_seed/20000_50
+         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/DoNotConfirm_12_seed/20000_50
          - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/DoNotConfirm/20000_50/dev_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a eval_fxn
@@ -68,7 +68,7 @@ jobs:
     - name: decode_test
       sku: G1
       command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer/DoNotConfirm_12_seed/20000_50
+         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/DoNotConfirm_12_seed/20000_50
          - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/DoNotConfirm/20000_50/test_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a eval_fxn
