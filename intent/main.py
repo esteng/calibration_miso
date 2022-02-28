@@ -195,6 +195,7 @@ def main(args):
                                                             upsample_by_linear_fxn=args.upsample_interest_by_linear_fxn,
                                                             upsample_linear_fxn_coef=args.upsample_linear_fxn_coef,
                                                             upsample_linear_fxn_intercept=args.upsample_linear_fxn_intercept,
+                                                            upsample_constant_ratio=args.upsample_constant_ratio,
                                                             adaptive_upsample=args.adaptive_upsample,
                                                             adaptive_factor=args.adaptive_factor)
 
@@ -293,6 +294,7 @@ if __name__ == "__main__":
     parser.add_argument("--upsample-interest-by-linear-fxn", action="store_true", help="set to true if you want to upsample by a linear function of the number of training examples") 
     parser.add_argument("--upsample-linear-fxn-coef", type=float, default=0.002321, help="the slope of the function for upsampling")
     parser.add_argument("--upsample-linear-fxn-intercept", type=float, default=12.3, help="the intercept of the function for upsampling")
+    parser.add_argument("--upsample-constant-ratio", type=float, default=None, help="upsampling by a constant percentage of overall train")
     parser.add_argument("--adaptive-upsample", action="store_true", help="automatically adapt the upsampling ratio to maintain equal source-target mapping ratio")
     parser.add_argument("--adaptive-factor", type=float, default=1.0, help="factor to multiply adaptive upsamply factor by.")
     parser.add_argument("--batch-min-pairs", action="store_true", help="flag to set if you want to train with minimal pair batching")

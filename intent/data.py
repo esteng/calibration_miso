@@ -99,6 +99,7 @@ def split_by_intent(data_path,
                     adaptive_upsample=False, 
                     adaptive_factor=1.0): 
     #dataset = dataset['train']
+
     data_path = pathlib.Path(data_path) 
     with open(data_path.joinpath("train.json")) as train_f, \
          open(data_path.joinpath("dev.json")) as dev_f, \
@@ -120,16 +121,18 @@ def split_by_intent(data_path,
         # Take the max you can take 
         n_data = n_intent + len(not_interest)
 
-    if do_source_triggers:
-        if source_triggers is None:
-            source_triggers = get_source_triggers(train_data, intent_of_interest)
-        else:
-            source_triggers = source_triggers.split(",")
-        # filter not_interest so that source triggers don't appear 
-        not_interest = [i for i in range(len(train_data)) if not has_source_trigger(train_data[i], source_triggers)]
-        
-    np.random.shuffle(of_interest)
-    np.random.shuffle(not_interest)
+    # NOTE: (elias) this is now deprecated because data with no source triggers is pre-determined and passed in via args.data_dir
+    # if do_source_triggers:
+    #     if source_triggers is None:
+    #         source_triggers = get_source_triggers(train_data, intent_of_interest)
+    #     else:
+    #         source_triggers = source_triggers.split(",")
+    #     # filter not_interest so that source triggers don't appear 
+    #     not_interest = [i for i in range(len(train_data)) if not has_source_trigger(train_data[i], source_triggers)]
+    
+    # NOTE: (elias) we don't actually want to shuffle, want to keep order the same 
+    # np.random.shuffle(of_interest)
+    # np.random.shuffle(not_interest)
 
     train_idxs = not_interest[0:n_data - n_intent] + of_interest[0:n_intent]
     if adaptive_upsample:
@@ -145,6 +148,7 @@ def split_by_intent(data_path,
         additional_num_of_interest =  effective_num_of_interest - len(of_interest[0:n_intent])
         sample_of_interest = np.random.choice(of_interest, size=additional_num_of_interest, replace=True).tolist()
         train_idxs += sample_of_interest
+
     if upsample_constant_ratio is not None: 
         effective_num_of_interest = int(len(train_idxs) * upsample_constant_ratio)
         additional_num_of_interest =  effective_num_of_interest - len(of_interest[0:n_intent])

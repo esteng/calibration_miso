@@ -24,7 +24,7 @@ do
                         continue
                     fi
 
-                    #mkdir -p ${dest_path}.basename
+                    mkdir -p ${dest_path}.basename
                     # only try to move if source exists  
                     [ -d ${source_path} ] && echo "mv ${source_path} ${dest_path}" && mv ${source_path} ${dest_path}
                 done
