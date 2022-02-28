@@ -90,8 +90,6 @@ local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
           encoder: {
             type: "cnn",
             embedding_dim: 100,
-            num_filters: 50,
-            ngram_filter_sizes: [3],
           },
           dropout: 0.33,
         },

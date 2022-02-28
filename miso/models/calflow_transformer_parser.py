@@ -654,7 +654,6 @@ class CalFlowTransformerParser(CalFlowParser):
         # outputs: [batch_size, beam_size, max_steps, hidden_vector_dim]
         # log_probs: [batch_size, beam_size]
 
-    
         all_predictions, outputs, log_probs, target_dynamic_vocabs = self._beam_search.search(
             start_predictions=start_predictions,
             start_state=start_state,

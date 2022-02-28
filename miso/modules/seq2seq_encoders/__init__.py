@@ -6,7 +6,7 @@ from allennlp.modules.encoder_base import RnnStateStorage
 
 from miso.modules.stacked_bilstm import MisoStackedBidirectionalLstm
 
-from .seq2seq_bert_encoder import Seq2SeqBertEncoder, BaseBertWrapper
+from .seq2seq_bert_encoder import Seq2SeqBertEncoder, BaseBertWrapper, Seq2SeqRobertaEncoder
 
 
 class _PytorchSeq2SeqWrapper(PytorchSeq2SeqWrapper):

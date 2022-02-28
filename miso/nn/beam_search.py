@@ -264,7 +264,7 @@ class BeamSearch:
             # division as the tensor is a LongTensor.)
             # shape: (batch_size, beam_size)
             backpointer = restricted_beam_indices / self.per_node_beam_size
-
+            backpointer = backpointer.long() 
             backpointers.append(backpointer)
 
             # Keep only the pieces of the state tensors corresponding to the

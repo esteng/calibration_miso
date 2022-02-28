@@ -1,4 +1,4 @@
-local data_dir = "//brtx/601-nvme1/estengel/resources/data/smcalflow_samples_no_source/FenceAttendee/5000_100/";
+local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_no_source/FenceAttendee/5000_100/";
 local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
 
 {
@@ -57,7 +57,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
           type: "embedding",
           vocab_namespace: "source_tokens",
           embedding_dim: 300,
-          #pretrained_file: glove_embeddings,
+          pretrained_file: glove_embeddings,
           trainable: true,
         },
       },
@@ -77,7 +77,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
         target_tokens: {
           type: "embedding",
           vocab_namespace: "target_tokens",
-          ##pretrained_file: glove_embeddings,
+          #pretrained_file: glove_embeddings,
           embedding_dim: 300,
           trainable: true,
         },
