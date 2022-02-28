@@ -31,7 +31,7 @@ code:
    local_dir: $CONFIG_DIR/../../..
 
 data:
-   local_dir: $CONFIG_DIR/../../../../../resources/data/
+   local_dir: $CONFIG_DIR/../../../../resources/data/
    remote_dir: resources/data
 
 
@@ -49,10 +49,10 @@ jobs:
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_roberta/PlaceHasFeature/64_seed/100000_500.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_500/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_500/dev_valid
         - export FXN=PlaceHasFeature
         - ./experiments/calflow.sh -a eval_fxn
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_500/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_500/test_valid
         - export FXN=PlaceHasFeature
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -60,7 +60,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/PlaceHasFeature_64_seed/100000_500
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_500/dev_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_500/dev_valid
          - export FXN=PlaceHasFeature
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -68,7 +68,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/PlaceHasFeature_64_seed/100000_500
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/PlaceHasFeature/100000_500/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/PlaceHasFeature/100000_500/test_valid
          - export FXN=PlaceHasFeature
          - ./experiments/calflow.sh -a eval_fxn
 

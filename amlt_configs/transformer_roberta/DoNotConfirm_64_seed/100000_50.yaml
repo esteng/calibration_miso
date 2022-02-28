@@ -32,7 +32,7 @@ code:
    local_dir: $CONFIG_DIR/../../..
 
 data:
-   local_dir: $CONFIG_DIR/../../../../../resources/data/
+   local_dir: $CONFIG_DIR/../../../../resources/data/
    remote_dir: resources/data
 
 
@@ -50,10 +50,10 @@ jobs:
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_roberta/DoNotConfirm/64_seed/100000_50.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/DoNotConfirm/100000_50/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/100000_50/dev_valid
         - export FXN=DoNotConfirm
         - ./experiments/calflow.sh -a eval_fxn
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/DoNotConfirm/100000_50/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/100000_50/test_valid
         - export FXN=DoNotConfirm
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -61,7 +61,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/DoNotConfirm_64_seed/100000_50
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/DoNotConfirm/100000_50/dev_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/100000_50/dev_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -69,7 +69,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/DoNotConfirm_64_seed/100000_50
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/DoNotConfirm/100000_50/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/100000_50/test_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a eval_fxn
 
