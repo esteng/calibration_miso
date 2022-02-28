@@ -115,7 +115,7 @@ class UpsampleIterator(BucketIterator):
                 batches.insert(0, last_batch)
 
             yield from batches
-@DataIterator.register("constant_ration_upsample")
+@DataIterator.register("constant_ratio_upsample")
 class ConstantRatioUpsampleIterator(BucketIterator):
     def __init__(self,
                  sorting_keys: List[Tuple[str, str]],
