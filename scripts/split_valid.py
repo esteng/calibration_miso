@@ -4,7 +4,7 @@ import json
 
 np.random.seed(12) 
 
-path = pathlib.Path("../resources/data/smcalflow.agent.data") 
+path = pathlib.Path("~/resources/data/smcalflow.agent.data") 
 
 with open(path.joinpath("valid.dataflow_dialogues.jsonl")) as f1:
     json_data = f1.readlines()

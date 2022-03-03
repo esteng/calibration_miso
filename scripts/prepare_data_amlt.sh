@@ -15,3 +15,5 @@ for dataset in "smcalflow"; do
             #--include_described_entities \
     done
 done
+
+python scripts/split_valid.py 
