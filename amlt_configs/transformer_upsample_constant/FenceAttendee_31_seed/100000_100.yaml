@@ -9,6 +9,7 @@ environment:
   image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
   registry: docker.io # any public registry can be specified here
   setup:
+     - pip install urllib3==1.25.2 --user
      - pip install allennlp==0.9.0 --user
      - pip install tensorboard --user
      - pip install torch==1.4.0 --user 
@@ -48,10 +49,10 @@ jobs:
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample_constant/FenceAttendee/31_seed/100000_100.jsonnet 
         - echo "DONE"
         - ./experiments/calflow.sh -a train
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_100/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/100000_100/dev_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a eval_fxn
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_100/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/100000_100/test_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -60,7 +61,7 @@ jobs:
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/FenceAttendee_31_seed/100000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample_constant/FenceAttendee/31_seed/100000_100.jsonnet 
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_100/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/100000_100/dev_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -69,7 +70,7 @@ jobs:
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/FenceAttendee_31_seed/100000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample_constant/FenceAttendee/31_seed/100000_100.jsonnet 
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_100/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/100000_100/test_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a eval_fxn
 
@@ -78,7 +79,7 @@ jobs:
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/FenceAttendee_31_seed/100000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample_constant/FenceAttendee/31_seed/100000_100.jsonnet 
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_100/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/100000_100/test_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a prob
 
@@ -87,6 +88,6 @@ jobs:
       command: 
         - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/FenceAttendee_31_seed/100000_100
         - export TRAINING_CONFIG=miso/training_config/calflow_transformer_upsample_constant/FenceAttendee/31_seed/100000_100.jsonnet 
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FenceAttendee/100000_100/fxn_test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/100000_100/fxn_test_valid
         - export FXN=FenceAttendee
         - ./experiments/calflow.sh -a beam 

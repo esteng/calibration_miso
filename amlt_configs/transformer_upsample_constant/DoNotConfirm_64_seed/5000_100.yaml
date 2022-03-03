@@ -9,6 +9,7 @@ environment:
   image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
   registry: docker.io # any public registry can be specified here
   setup:
+     - pip install urllib3==1.25.2 --user
      - pip install allennlp==0.9.0 --user
      - pip install tensorboard --user
      - pip install torch==1.4.0 --user 
@@ -51,9 +52,9 @@ jobs:
         - ./experiments/calflow.sh -a train
         - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/DoNotConfirm_64_seed/5000_100
         - export FXN=DoNotConfirm
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/5000_100/dev_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/5000_100/dev_valid
         - ./experiments/calflow.sh -a eval_fxn
-        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/5000_100/test_valid
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/5000_100/test_valid
         - ./experiments/calflow.sh -a eval_fxn
 
 
@@ -61,7 +62,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/DoNotConfirm_64_seed/5000_100
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/5000_100/dev_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/5000_100/dev_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -69,7 +70,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/DoNotConfirm_64_seed/5000_100
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/5000_100/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/5000_100/test_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a eval_fxn
 
@@ -77,7 +78,7 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/DoNotConfirm_64_seed/5000_100
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/5000_100/test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/5000_100/test_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a prob
 
@@ -85,6 +86,6 @@ jobs:
       sku: G1
       command:
          - export CHECKPOINT_DIR=/mnt/output/transformer_upsample_constant/DoNotConfirm_64_seed/5000_100
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/5000_100/fxn_test_valid
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/5000_100/fxn_test_valid
          - export FXN=DoNotConfirm
          - ./experiments/calflow.sh -a beam 

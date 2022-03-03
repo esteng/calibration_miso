@@ -9,6 +9,7 @@ environment:
   image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
   registry: docker.io # any public registry can be specified here
   setup:
+     - pip install urllib3==1.25.2 --user
      - pip install allennlp==0.9.0 --user
      - pip install tensorboard --user
      - pip install torch==1.4.0 --user 
@@ -31,7 +32,7 @@ code:
    local_dir: $CONFIG_DIR/../../..
 
 data:
-   local_dir: $CONFIG_DIR/../../../../resources/data/
+   local_dir: $CONFIG_DIR/../../../../../resources/data/
    remote_dir: resources/data
 
 
@@ -74,11 +75,12 @@ jobs:
 
     - name: beam
       sku: G1
-      command:
-         - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/FenceAttendee_31_seed/5000_100
-         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/5000_100/fxn_dev_valid
-         - export FXN=FenceAttendee
-         - ./experiments/calflow.sh -a beam
+      command: 
+        - export CHECKPOINT_DIR=/mnt/output/transformer_roberta/FenceAttendee_31_seed/5000_100
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/FenceAttendee/5000_100/fxn_dev_valid
+        - export FXN=FenceAttendee
+        - ./experiments/calflow.sh -a beam 
+
 
 
 

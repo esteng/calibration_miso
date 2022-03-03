@@ -32,7 +32,7 @@ code:
    local_dir: $CONFIG_DIR/../../..
 
 data:
-   local_dir: $CONFIG_DIR/../../../../resources/data/
+   local_dir: $CONFIG_DIR/../../../../../resources/data/
    remote_dir: resources/data
 
 
