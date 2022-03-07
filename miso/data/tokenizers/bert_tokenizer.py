@@ -1,7 +1,7 @@
 from overrides import overrides
 
 import numpy as np
-from transformers import PreTrainedTokenizer, BertTokenizer, XLMRobertaTokenizer, AutoTokenizer, AutoConfig, RobertaTokenizer
+from transformers import PreTrainedTokenizer, BertTokenizer, XLMRobertaTokenizer, AutoTokenizer, AutoConfig, RobertaTokenizer, AlbertTokenizer
 from allennlp.common import Params
 from allennlp.data.tokenizers import Tokenizer
 from allennlp.common.registrable import Registrable
@@ -74,6 +74,21 @@ class AMRRobertaTokenizer(RobertaTokenizer):
     def __init__(self, model_name: str): 
         # Hacky fix to get to play nice with registering and pretrained 
         tok = RobertaTokenizer.from_pretrained(model_name)
+        self.__dict__ = tok.__dict__
+
+    @overrides
+    def tokenize(self, tokens, split=False):
+        return tokenize_helper(self, tokens, split=split)
+
+
+@MisoTokenizer.register("pretrained_albert") 
+class AMRAlbertTokenizer(AlbertTokenizer):
+    def __init__(self, model_name: str): 
+        self.model_name = model_name
+
+    def __init__(self, model_name: str): 
+        # Hacky fix to get to play nice with registering and pretrained 
+        tok = AlbertTokenizer.from_pretrained(model_name)
         self.__dict__ = tok.__dict__
 
     @overrides
