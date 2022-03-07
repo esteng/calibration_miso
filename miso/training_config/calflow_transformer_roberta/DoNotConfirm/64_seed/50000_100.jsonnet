@@ -1,4 +1,4 @@
-local data_dir = "/mnt/default/resources/data/smcalflow_samples_curated/DoNotConfirm/50000_100/";
+local data_dir = "/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/50000_100/";
 local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
 
 {

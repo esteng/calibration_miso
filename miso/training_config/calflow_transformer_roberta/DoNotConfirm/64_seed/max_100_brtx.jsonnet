@@ -1,4 +1,4 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_curated/DoNotConfirm/max_100/";
+local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_big/DoNotConfirm/max_100/";
 local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
 
 {
