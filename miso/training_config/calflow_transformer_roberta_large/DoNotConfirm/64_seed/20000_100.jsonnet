@@ -93,7 +93,7 @@ local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
     },
     encoder: {
         type: "transformer_encoder",
-        input_size: 300 + 50 + 768,
+        input_size: 300 + 50 + 1024,
         hidden_size: 512,
         num_layers: 7,
         encoder_layer: {

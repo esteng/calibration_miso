@@ -93,7 +93,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
     encoder: {
         type: "transformer_encoder",
-        input_size: 300 + 50 + 768,
+        input_size: 300 + 50 + 1024,
         hidden_size: 512,
         num_layers: 7,
         encoder_layer: {
