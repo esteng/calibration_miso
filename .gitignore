@@ -2,3 +2,4 @@ intent/logs
 *.pyc
 *.swp
 *.swo
+synth/data

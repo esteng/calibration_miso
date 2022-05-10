@@ -1,0 +1,4 @@
+1. remove amulet stuff
+2. remove extraneous scripts/files 
+3. remove local paths 
+4. remove min-pair stuff 
