@@ -11,9 +11,7 @@
 
 checkpoint_root="/srv/local1/estengel/intent_fixed_test/${MODEL}/${FXN}/${SEED}_seed"
 
-#for fxn_num in 15 30 75
-#do
-for fxn_num in 15 30
+for fxn_num in 15 30 75
 do
     for num in 750 1500 3000 7500 15000 18000 
     do
@@ -32,6 +30,7 @@ do
             --seed ${SEED} \
             --do-dro \
             --device 0 | tee ${checkpoint_dir}/stdout.log 
+
     done
 done
 

@@ -6,7 +6,7 @@ do
     do
         export FXN=$fxn
         export SEED=$seed
-        export MODEL=intent_group_dro
+        export MODEL=intent_group_dro_no_shuffle
         sbatch slurm_scripts/train_intent_group_dro.sh --export 
     done
 done

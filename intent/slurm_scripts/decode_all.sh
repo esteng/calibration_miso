@@ -6,8 +6,8 @@ do
     do
         export FXN=${fxn}
         export SEED=${seed}
-        # export MODEL=intent_no_source
-        export MODEL=intent_no_shuffle
+        export MODEL=intent_no_source_manual
+        #export MODEL=intent_no_source_fixed
         sbatch slurm_scripts/decode.sh --export 
     done
 done 
