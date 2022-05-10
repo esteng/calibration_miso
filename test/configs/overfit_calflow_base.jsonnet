@@ -175,6 +175,7 @@ local data_dir = "test/data/";
       },
     },
     label_smoothing: {
+        type: "base", 
         smoothing: 0.0,
     },
     dropout: 0.0,
