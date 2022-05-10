@@ -1,4 +1,4 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_big/DoNotConfirm/max_100/";
+local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_curated/FenceAttendee/5000_100/";
 local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
 
 {
@@ -36,7 +36,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
     tokenizer: {
         type: "pretrained_roberta",
-        model_name: "roberta-base"
+        model_name: "roberta-large"
     },
   },
   train_data_path: data_dir + "train",
@@ -60,11 +60,11 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
   },
   model: {
-    fxn_of_interest: "DoNotConfirm",
+    fxn_of_interest: "FenceAttendee",
     type: "calflow_transformer_parser",
     bert_encoder: {
                     type: "seq2seq_roberta_encoder",
-                    config: "roberta-base",
+                    config: "roberta-large",
                   },
     encoder_token_embedder: {
       token_embedders: {
@@ -93,7 +93,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
     encoder: {
         type: "transformer_encoder",
-        input_size: 300 + 50 + 768,
+        input_size: 300 + 50 + 1024,
         hidden_size: 512,
         num_layers: 7,
         encoder_layer: {
@@ -250,7 +250,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     validation_data_path: "dev_valid",
     validation_prediction_path: "valid_validation.txt",
   },
-  random_seed: 12,
-  numpy_seed: 12,
-  pytorch_seed: 12,
+  random_seed: 31,
+  numpy_seed: 31,
+  pytorch_seed: 31,
 }

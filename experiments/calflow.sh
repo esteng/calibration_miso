@@ -110,6 +110,31 @@ function eval_fxn() {
     --include-package miso.metrics  
 } 
 
+
+function eval_fxn_cpu() {
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
+    output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
+    split=$(basename ${TEST_DATA})
+    mkdir -p ${CHECKPOINT_DIR}/translate_output
+    python -m miso.commands.exact_match eval \
+    ${model_file} ${TEST_DATA} \
+    --fxn-of-interest ${FXN} \
+    --predictor "calflow_parsing" \
+    --batch-size 140 \
+    --beam-size 2 \
+    --use-dataset-reader \
+    --cuda-device -1 \
+    --out-file ${CHECKPOINT_DIR}/translate_output/${split}.tgt \
+    --include-package miso.data.dataset_readers \
+    --include-package miso.data.iterators \
+    --include-package miso.data.tokenizers \
+    --include-package miso.models \
+    --include-package miso.modules.seq2seq_encoders \
+    --include-package miso.predictors \
+    --include-package miso.metrics  
+} 
+
 function eval_fxn_precomputed() {
     echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
@@ -252,6 +277,8 @@ function main() {
         eval
     elif [[ "${action}" == "eval_fxn" ]]; then
        eval_fxn 
+    elif [[ "${action}" == "eval_fxn_cpu" ]]; then
+       eval_fxn_cpu 
     elif [[ "${action}" == "eval_pre" ]]; then
        eval_fxn_precomputed 
     elif [[ "${action}" == "prob" ]]; then

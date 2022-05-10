@@ -1,4 +1,4 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_big/DoNotConfirm/max_100/";
+local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data/";
 local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
 
 {
@@ -36,11 +36,11 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
     tokenizer: {
         type: "pretrained_roberta",
-        model_name: "roberta-base"
+        model_name: "roberta-large"
     },
   },
   train_data_path: data_dir + "train",
-  validation_data_path: data_dir + "dev_valid",
+  validation_data_path: data_dir + "valid",
   test_data_path: null,
   datasets_for_vocab_creation: [
     "train"
@@ -54,17 +54,16 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
       generation_tokens: 1,
     },
     max_vocab_size: {
-      source_tokens: 18000,
-      target_tokens: 12200,
-      generation_tokens: 12200,
+      source_tokens: 180000,
+      target_tokens: 122000,
+      generation_tokens: 122000,
     },
   },
   model: {
-    fxn_of_interest: "DoNotConfirm",
     type: "calflow_transformer_parser",
     bert_encoder: {
                     type: "seq2seq_roberta_encoder",
-                    config: "roberta-base",
+                    config: "roberta-large",
                   },
     encoder_token_embedder: {
       token_embedders: {
@@ -93,7 +92,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
     encoder: {
         type: "transformer_encoder",
-        input_size: 300 + 50 + 768,
+        input_size: 300 + 50 + 1024,
         hidden_size: 512,
         num_layers: 7,
         encoder_layer: {
@@ -199,7 +198,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
       },
     },
     label_smoothing: {
-	type: "base",
+ 	type: "base",
         smoothing: 0.0,
     },
     dropout: 0.2,
@@ -224,7 +223,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
 
   trainer: {
     type: "calflow_parsing",
-    num_epochs: 250,
+    num_epochs: 450,
     warmup_epochs: 0,
     patience: 20,
     grad_norm: 5.0,

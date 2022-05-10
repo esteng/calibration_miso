@@ -1,4 +1,4 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_big/DoNotConfirm/max_100/";
+local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_curated/FindManager/max_100/";
 local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
 
 {
@@ -60,7 +60,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     },
   },
   model: {
-    fxn_of_interest: "DoNotConfirm",
+    fxn_of_interest: "FindManager",
     type: "calflow_transformer_parser",
     bert_encoder: {
                     type: "seq2seq_roberta_encoder",
@@ -214,11 +214,11 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     # TODO: try to sort by target tokens.
     sorting_keys: [["source_tokens", "num_tokens"]],
     padding_noise: 0.0,
-    batch_size: 150,
+    batch_size: 180,
   },
   validation_iterator: {
     type: "basic",
-    batch_size: 150,
+    batch_size: 180,
     instances_per_epoch: 1600,
   },
 
@@ -250,7 +250,7 @@ local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300
     validation_data_path: "dev_valid",
     validation_prediction_path: "valid_validation.txt",
   },
-  random_seed: 12,
-  numpy_seed: 12,
-  pytorch_seed: 12,
+  random_seed: 31,
+  numpy_seed: 31,
+  pytorch_seed: 31,
 }
