@@ -1,4 +1,5 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data/";
+# local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data/";
+local data_dir = std.extVar("DATA_DIR");
 local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
 
 {

@@ -1,0 +1,77 @@
+description: Base MISO training job 
+
+target: 
+  service: amlk8s
+  name: itpeusp40cl
+  vc: resrchvc
+
+environment:
+  image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
+  registry: docker.io # any public registry can be specified here
+  setup:
+     - pip install urllib3==1.25.2 --user
+     - pip install allennlp==0.9.0 --user
+     - pip install tensorboard --user
+     - pip install torch==1.4.0 --user 
+     - pip install torch==1.4.0 --user
+     - pip install overrides==3.1.0 --user
+     - pip install pycorenlp --user
+     - pip install penman==0.6.2 --user
+     - pip install editdistance --user
+     - pip install word2numer --user
+     - pip install bs4 --user
+     - pip install lxml --user 
+     - pip install networkx --user
+     - pip install sentencepiece==0.1.91 --user
+     - pip install transformers==3.0.2 --user
+     - pip install icecream --user
+     - pip install datasets --user
+     - pip install git+git://github.com/decompositional-semantics-initiative/decomp.git --user 
+     - pip install git+https://github.com/microsoft/task_oriented_dialogue_as_dataflow_synthesis --user
+code:
+   local_dir: $CONFIG_DIR/../../..
+
+data:
+   local_dir: $CONFIG_DIR/../../../../resources/data/
+   remote_dir: resources/data
+
+
+storage:
+   output:
+       storage_account_name: ysumiso
+       container_name: ysumiso
+       mount_dir: /mnt/output
+
+jobs: 
+    - name: train
+      sku: G1
+      command: 
+        - export CHECKPOINT_DIR=/mnt/output/transformer_albert/Tomorrow_64_seed/max_50
+        - export TRAINING_CONFIG=miso/training_config/calflow_transformer_albert/Tomorrow/64_seed/max_50.jsonnet 
+        - echo "DONE"
+        - ./experiments/calflow.sh -a train
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/Tomorrow/max_50/dev_valid
+        - export FXN=Tomorrow
+        - ./experiments/calflow.sh -a eval_fxn
+        - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/Tomorrow/max_50/test_valid
+        - export FXN=Tomorrow
+        - ./experiments/calflow.sh -a eval_fxn
+
+    - name: decode
+      sku: G1
+      command:
+         - export CHECKPOINT_DIR=/mnt/output/transformer_albert/Tomorrow_64_seed/max_50
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/Tomorrow/max_50/dev_valid
+         - export FXN=Tomorrow
+         - ./experiments/calflow.sh -a eval_fxn
+
+    - name: decode_test
+      sku: G1
+      command:
+         - export CHECKPOINT_DIR=/mnt/output/transformer_albert/Tomorrow_64_seed/max_50
+         - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples_curated/Tomorrow/max_50/test_valid
+         - export FXN=Tomorrow
+         - ./experiments/calflow.sh -a eval_fxn
+
+
+

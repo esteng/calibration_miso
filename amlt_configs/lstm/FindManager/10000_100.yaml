@@ -1,0 +1,59 @@
+code:
+  local_dir: $CONFIG_DIR/../../..
+data:
+  local_dir: $CONFIG_DIR/../../../../resources/data/
+  remote_dir: resources/data
+description: Base MISO training job
+environment:
+  image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
+  registry: docker.io
+  setup:
+  - pip install allennlp==0.9.0 --user
+  - pip install tensorboard --user
+  - pip install torch==1.4.0 --user
+  - pip install torch==1.4.0 --user
+  - pip install overrides==3.1.0 --user
+  - pip install pycorenlp --user
+  - pip install penman==0.6.2 --user
+  - pip install editdistance --user
+  - pip install word2numer --user
+  - pip install bs4 --user
+  - pip install lxml --user
+  - pip install networkx --user
+  - pip install sentencepiece==0.1.91 --user
+  - pip install transformers==3.0.2 --user
+  - pip install icecream --user
+     - pip install datasets --user
+  - pip install git+git://github.com/decompositional-semantics-initiative/decomp.git
+    --user
+  - pip install git+https://github.com/microsoft/task_oriented_dialogue_as_dataflow_synthesis
+    --user
+jobs:
+- command:
+  - pwd
+  - ls
+  - export CHECKPOINT_DIR=/mnt/output/lstm/FindManager/10000_100
+  - export TRAINING_CONFIG=miso/training_config/calflow_lstm/FindManager/10000_100.jsonnet
+  - echo "DONE"
+  - ./experiments/calflow.sh -a train
+  name: train
+  sku: G1
+- command:
+  - pwd
+  - ls
+  - export CHECKPOINT_DIR=/mnt/output/lstm/FindManager/10000_100
+  - export TRAINING_CONFIG=miso/training_config/calflow_lstm/FindManager/10000_100.jsonnet
+  - export TEST_DATA=/mnt/default/resources/data/smcalflow_samples/FindManager/10000_100/dev_valid
+  - export FXN=FindManager
+  - ./experiments/calflow.sh -a eval_fxn
+  name: decode
+  sku: G1
+storage:
+  output:
+    container_name: miso
+    mount_dir: /mnt/output
+    storage_account_name: elias
+target:
+  name: itpeusp40cl
+  service: amlk8s
+  vc: resrchvc
