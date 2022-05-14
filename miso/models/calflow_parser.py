@@ -355,8 +355,6 @@ class CalFlowParser(Transduction):
             "instance_meta": inputs["instance_meta"]
         }
 
-        #print(f"prepared first input hidden_state_1 {start_state['hidden_state_1'].shape}")
-        #print(f"prepared first input hidden_state_2 {start_state['hidden_state_2'].shape}")
         return start_predictions, start_state, auxiliaries, misc
 
     def _prepare_next_inputs(self,

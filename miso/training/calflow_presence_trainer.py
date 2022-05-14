@@ -269,7 +269,6 @@ class CalflowTrainer(Trainer):
                     recover: bool = False,
                     cache_directory: str = None,
                     cache_prefix: str = None):
-        print(params)
         pieces = TrainerPieces.from_params(params,  # pylint: disable=no-member
                                            serialization_dir,
                                            recover,

@@ -1,5 +1,5 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples_curated/FindManager/max_100/";
-local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
+local data_dir = std.extVar("DATA_ROOT") + "/resources/data/smcalflow.agent.data/";
+local glove_embeddings = std.extVar("DATA_ROOT") + "/resources/data//glove.840B.300d.zip";
 local dataset_reader = {
     type: "calflow",
     use_agent_utterance: true,

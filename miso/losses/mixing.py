@@ -33,7 +33,6 @@ class AlternatingLossMixer(LossMixer):
         self.loss_weights = self.syn_loss_weights
 
     def update_weights(self, curr_epoch, total_epochs): 
-        print(f"updating loss weights with curr_epoch {curr_epoch} and total_epochs {total_epochs}" )
         if curr_epoch % 2 == 0:
             self.loss_weights = self.syn_loss_weights
         else:

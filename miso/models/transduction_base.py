@@ -410,17 +410,14 @@ class Transduction(Model):
                 v = v.data
             try:
                 current_state_dict[k].copy_(v)
-                print(f"matched {k}")
                 logger.info(f"matched {k}")
             except RuntimeError:
                 new_shape = pretrained_state_dict[k].shape
                 og_shape = current_state_dict[k].shape
-                print(f"Unable to match {k} due to shape error: pretrained: {new_shape} vs original: {og_shape}") 
                 logger.warning(f"Unable to match {k} due to shape error: pretrained: {new_shape} vs original: {og_shape}") 
                 continue 
             except KeyError:
                 logger.warning(f"Unable to match {k} because it does not exist in original model") 
-                print(f"Unable to match {k} because it does not exist in original model") 
                 continue
 
         key = "biaffine_parser.edge_type_query_linear.weight"

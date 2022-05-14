@@ -105,7 +105,7 @@ class FilterIterator(BucketIterator):
             input_strs  = [x.lower() for x in line]
             for word in top_k_words:
                 if self.fxn_of_interest not in inst['tgt_tokens_str'].metadata and word in input_strs:
-                    print(f"skipping {line} for having {word} in {inst['tgt_tokens_str'].metadata}")
+                    # print(f"skipping {line} for having {word} in {inst['tgt_tokens_str'].metadata}")
                     # skip 
                     continue 
                 else:
@@ -123,8 +123,8 @@ class FilterIterator(BucketIterator):
         # for speed, pair down to just one 
         probs = {self.fxn_of_interest: prob_fxn_given_word[self.fxn_of_interest]}
         top_k_words = self.get_max_probs(probs)[self.fxn_of_interest]
-        print(top_k_words)
-        pdb.set_trace()
+        #print(top_k_words)
+        #pdb.set_trace()
         top_k_words = [x[0] for x in top_k_words]
         instances = self.filter(instances, top_k_words) 
 

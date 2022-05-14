@@ -570,7 +570,7 @@ class FullMinimalPairIterator(MinimalPairIterator):
                         #print(f"choosing from {len(self.lookup_table[inst_index][0:self.sample_top_k])}")
                         choices = self.get_topk_choices(self.lookup_table[inst_index])
                         if choices is None or len(choices) == 0:
-                            print(f"skipping!")
+                            #print(f"skipping!")
                             skip = True
                             break
                         elif len(choices) == 1:

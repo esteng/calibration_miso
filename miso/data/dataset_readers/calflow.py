@@ -257,11 +257,6 @@ class CalFlowDatasetReader(DatasetReader):
             # TODO: try to remove the second constrain.
             fields['edge_head_mask'] = ArrayField(list_data['edge_mask'])
 
-        # node attributes 
-        #print(f"tgt attr {len(list_data['tgt_attributes'])}")
-        #print(list_data['tgt_attributes'])
-        #print(f"target tokens {len(fields['target_tokens'])}")
-        #print(fields['target_tokens'])
 
         # this field is actually needed for scoring later
         fields["calflow_graph"] = MetadataField(

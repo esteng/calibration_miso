@@ -713,7 +713,7 @@ class CalFlowGraph:
             src_edge_heads = None
             src_edge_types = None
 
-        # TODO (elias): add some string normalization here to 
+        # TODO (elias): we could add some string normalization here to 
         # allow copies without punctuation, e.g. "Darby" in 
         # output can be copied from Darby in input and quotations 
         # can be deterministically added
