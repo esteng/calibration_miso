@@ -1,4 +1,4 @@
-local data_dir = std.extVar("DATA_ROOT") + "/resources/data/smcalflow.agent.data/";
+local data_dir = std.extVar("DATA_ROOT") + "/resources/data/smcalflow_samples_big/";
 local glove_embeddings = std.extVar("DATA_ROOT") + "/resources/data//glove.840B.300d.zip";
 local dataset_reader = {
     type: "calflow",
