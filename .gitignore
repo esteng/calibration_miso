@@ -3,3 +3,6 @@ intent/logs
 *.swp
 *.swo
 synth/data
+*/__pycache__
+*/__pycache__/*
+
