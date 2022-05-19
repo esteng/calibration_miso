@@ -5,6 +5,9 @@ Author: Elias Stengel-Eskin
 
 Personal Email: elias.stengel@gmail.com
 
+## Installation 
+
+All dependencies can be installed with `./install_requirements.sh` 
 
 ## Downloading Data
 The first step to replicating experiments is to download the data and glove embeddings.
