@@ -25,7 +25,7 @@ Training a model requires the following environment variables:
 1. `CHECKPOINT_DIR`: the directory where the output files will be stored 
 2. `TRAINING_CONFIG`: the path to the training jsonnet config. 
 
-For additional details, see ![miso_docs/TRAINING.md](miso_docs/TRAINING.md) 
+For additional details, see [miso_docs/TRAINING.md](miso_docs/TRAINING.md) 
 
 ## Testing models 
 The following environment variables need to set:
