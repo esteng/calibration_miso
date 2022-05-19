@@ -1,24 +1,22 @@
 #!/bin/bash 
 
-#SBATCH --gpus=1
-#SBATCH -o /dev/null
-#SBATCH -p brtx6
 
-#FXN=$1
-#MODEL=$2
-#SEED=$3
-#DEVICE=$4
+# Requires environment vars: 
+# MODEL: the name of the model
+# SEED: the random seed
+# FXN: the number of the function 
+# CHECKPOINT_ROOT: the dir to store all checkpoints
 
-checkpoint_root="/srv/local1/estengel/${MODEL}/${FXN}/${SEED}_seed"
+checkpoint_root="${CHECKPOINT_ROOT}/${MODEL}/${FXN}/${SEED}_seed"
 
-for num in 750 1500 3000 7500 15000 18000 
+for fxn_num in 75 15 30
 do
-    #for fxn_num in 7 15 30 75
-    for fxn_num in 15 
+    for num in 750 1500 3000 7500 15000 18000 
     do
+        echo "Visible: ${CUDA_VISIBLE_DEVICES}"
         checkpoint_dir="${checkpoint_root}/${num}_${fxn_num}"
         mkdir -p ${checkpoint_dir}
-        python -u main.py \
+        CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python -u main.py \
             --split-type interest \
             --bert-name bert-base-cased \
             --checkpoint-dir ${checkpoint_dir} \
@@ -29,7 +27,7 @@ do
             --epochs 200 \
             --intent-of-interest ${FXN} \
             --seed ${SEED} \
-            --device ${DEVICE} | tee ${checkpoint_dir}/stdout.log 
+            --device 0 | tee ${checkpoint_dir}/stdout.log 
     done
 done
 
