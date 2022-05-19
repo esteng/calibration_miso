@@ -8,7 +8,6 @@ from collections import defaultdict
 path_to_min_pair_utils = pathlib.Path(__file__).resolve().parent.parent.joinpath("minimal_pair_utils")
 import sys
 sys.path.insert(0, str(path_to_min_pair_utils))
-from construct import sort_train_by_min_pair
 
 from tqdm import tqdm 
 import torch
@@ -131,27 +130,7 @@ def get_train_batches(train_data,
                      args,
                      epoch=None): 
     np.random.shuffle(train_data)
-    if args.batch_min_pairs:
-        lookup_table = generate_lookup_table(train_data, args.intent_of_interest)
-        train_batches = batchify_min_pair(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, lookup_table)
-    elif args.double_in_batch:
-        train_batches = batchify_double_in_batch(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest)
-    elif args.double_in_data:
-        train_batches = batchify_double_in_data(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest)
-    elif args.batch_by_source_trigger:
-        train_batches = batchify_by_source_trigger(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, k=3, threshold = 0.8)
-    elif args.mask_source_triggers:
-        use_word = args.masking_method == "other"
-        use_intent = args.masking_method == "intent"
-        train_batches = batchify_mask_source_trigger(train_data, args.batch_size, args.bert_name, device, args.mask_temperature, use_word, use_intent)
-    elif args.weight_by_source_prob:
-        train_batches = batchify_weight_source_trigger(train_data, args.batch_size, args.bert_name, device, args.intent_of_interest, args.weight_temperature)
-    elif args.sample_by_source_prob:
-        # default is linear decrease through to epoch 100 
-        curr_temp = max(0, 1 - args.sample_decrease_factor * epoch)
-        train_batches = batchify_sample_source_trigger(train_data, args.batch_size, args.bert_name, device, curr_temp)
-    else:
-        train_batches = batchify(train_data, args.batch_size, args.bert_name, device) 
+    train_batches = batchify(train_data, args.batch_size, args.bert_name, device) 
     return train_batches
 
 
@@ -282,7 +261,6 @@ def main(args):
             json.dump(data_to_write, f1)
 
 if __name__ == "__main__":
-    print("parser args")
     parser = argparse.ArgumentParser()
     # Data 
     parser.add_argument("--data-path", type=str, default="data/nlu_eval_data", help="path to data")
@@ -299,18 +277,6 @@ if __name__ == "__main__":
     parser.add_argument("--upsample-constant-no-source", action='store_true', help="when upsampling, only use examples without the source triggers so that dilution is unaffected")
     parser.add_argument("--adaptive-upsample", action="store_true", help="automatically adapt the upsampling ratio to maintain equal source-target mapping ratio")
     parser.add_argument("--adaptive-factor", type=float, default=1.0, help="factor to multiply adaptive upsamply factor by.")
-    parser.add_argument("--batch-min-pairs", action="store_true", help="flag to set if you want to train with minimal pair batching")
-    parser.add_argument("--double-in-batch", action="store_true", help="flag to set if you want to double examples of interest in batch")
-    parser.add_argument("--double-in-data", action="store_true", help="flag to set if you want to double examples of interest in data")
-    parser.add_argument("--batch-by-source-trigger", action="store_true", help="flag to set if you want to batch by source triggers")
-    parser.add_argument("--mask-source-triggers", action="store_true", help="flag to selectively mask highly predictive terms ")
-    parser.add_argument("--masking-method", default="other", help="method for choosing mask probabilities; other uses the max probabity P(intent | word) for all intents that aren't the current intent. \
-                                Inverse uses the inverse prob of the current intent given the word, 1 - p(intent | word). Intent means use p(word | intent) instead of p(intent | word)", choices=['other', 'inverse', 'intent'])
-    parser.add_argument("--mask-temperature", type=float, default=0.10, help="temperature for masking input, get's multiplied with the prob")
-    parser.add_argument("--weight-by-source-prob", action="store_true", help="weight the example by max prob(word | intent_of_interest)")
-    parser.add_argument("--weight-temperature", default=1.0, type=float, help="temperature for downweighting")
-    parser.add_argument("--sample-by-source-prob", action='store_true', help="flag to sample examples into batches based on how reliable the source mapping is. Excludes conflicting examples earlier in training, with a decreasing temperature to include them more later in training ")
-    parser.add_argument("--sample-decrease-factor", type=float, default = 0.01, help="factor by which to decrease the temperature of sampling. Default is 0.01 corresponding to linear decrease until epoch 100")
     parser.add_argument("--source-triggers", type=str, default=None, help="source triggers to exclude in constructing the remainder of the dataset, e.g. radio,fm,am for play_radio intent. For analysis only.")
     parser.add_argument("--do-source-triggers", action='store_true',  help="automatically extract source triggers to exclude in constructing the remainder of the dataset, e.g. radio,fm,am for play_radio intent. For analysis only.")
     # Model/Training
