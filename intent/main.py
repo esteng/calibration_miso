@@ -191,10 +191,7 @@ def main(args):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     # make loss 
     if not args.do_dro:
-        if args.weight_by_source_prob:
-            loss_fxn = torch.nn.CrossEntropyLoss(reduction='none')
-        else:
-            loss_fxn = torch.nn.CrossEntropyLoss()
+        loss_fxn = torch.nn.CrossEntropyLoss()
     else:
         loss_fxn = GroupDROLoss()
     eval_loss_fxn = torch.nn.CrossEntropyLoss()
