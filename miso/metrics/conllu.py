@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 #!/usr/bin/env python3
 
 # Compatible with Python 2.7 and 3.2+, can be used either as a module

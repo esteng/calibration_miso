@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 # instaces: Dict[str-> Dict[str]]
 nodrop_instances = {"ewt-dev-1":
                 {'tgt_tokens': ['@start@', '@@ROOT@@', 'comes', 'AP', 'the', 'story', 'this', 'From', '@end@'],

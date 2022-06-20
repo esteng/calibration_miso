@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from miso.metrics.exact_match import AdvancedExactMatch, BasicExactMatch
 import re
 import pdb 

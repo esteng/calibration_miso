@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from miso.nn.beam_search import BeamSearch
 from dataflow.core.lispress import render_compact
 from overrides import overrides

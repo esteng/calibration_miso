@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 """
 Adopted from AllenNLP:
     https://github.com/allenai/allennlp/blob/v0.6.1/allennlp/modules/augmented_lstm.py

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import pathlib
 import argparse
 from dataflow.core.lispress import parse_lispress, program_to_lispress, lispress_to_program

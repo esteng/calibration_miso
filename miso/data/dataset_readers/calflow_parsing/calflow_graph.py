@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from collections import defaultdict, Counter
 from typing import List, Any
 import pdb 

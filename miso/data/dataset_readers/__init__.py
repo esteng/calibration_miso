@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 """
 A :class:`~miso.data.dataset_readers.dataset_reader.DatasetReader`
 reads a file and converts it to a collection of

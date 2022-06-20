@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from overrides import overrides
 from typing import List, Iterator, Any
 import numpy

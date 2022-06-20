@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import Tuple, Dict, Optional
 from overrides import overrides
 import numpy as np 

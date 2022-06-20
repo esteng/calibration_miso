@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from miso.data.dataset_readers.calflow_parsing.calflow_graph import CalFlowGraph
 from typing import List, Tuple, Iterable, cast, Dict, Deque, Set
 from collections import deque
