@@ -551,9 +551,13 @@ class CalFlowTransformerParser(CalFlowParser):
                         if index < self._vocab_size:
                             node = self.vocab.get_token_from_index(index, self._target_output_namespace)
                         elif self._vocab_size <= index < self._vocab_size + source_dynamic_vocab_size:
-                            node = "SourceCopy"
+                            try:
+                                source_token_str = meta_data[i]['source_dynamic_vocab'].idx_to_token[index - self._vocab_size]
+                            except KeyError:
+                                continue
+                            node = f"SourceCopy_{source_token_str}"
                         else:
-                            node = "TargetCopy"
+                            node = "TargetCopy_{0}".format(index - self._vocab_size - source_dynamic_vocab_size)
                         timestep_dist[node] = prob_dist[i, timestep, index].cpu().item()
                     dists.append(timestep_dist) 
                 prob_list.append(dists)
