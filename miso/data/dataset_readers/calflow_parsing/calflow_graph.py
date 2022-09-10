@@ -9,8 +9,14 @@ import re
 import json
 import numpy as np
 
+import spacy
+from spacy.language import Language
+import en_core_web_sm
+
 import networkx as nx
 from allennlp.data.vocabulary import DEFAULT_PADDING_TOKEN, DEFAULT_OOV_TOKEN
+from nltk.tokenize.treebank import TreebankWordDetokenizer as Detok
+
 
 from miso.data.dataset_readers.decomp_parsing.decomp import SourceCopyVocabulary
 from dataflow.core.program import Program, Expression, BuildStructOp, ValueOp, CallLikeOp, TypeName
@@ -20,6 +26,7 @@ from dataflow.core.lispress import (parse_lispress,
                                     render_compact, 
                                     render_pretty)
 
+DETOKENIZER = Detok()
 NOBRACK= re.compile("[\[\]]")
 PROGRAM_SEP = "__StartOfProgram"
 PAD_EDGE = "EDGEPAD"
@@ -50,12 +57,14 @@ class CalFlowGraph:
         self.argn = 0
         self.n_reentrant = 0
 
+        self._spacy_nlp = en_core_web_sm.load() 
         self.node_idx_to_expr_idx = {}
         self.expr_idx_to_node_idx = {}
         self.lispress = parse_lispress(tgt_str)
         self.program, __ = lispress_to_program(self.lispress, 0)
         self.dep_chart = self.build_program_dependency_chart(self.program)
         self.fill_lists_from_program(self.program) 
+
 
         #self.prediction_to_program(self.node_name_list, self.node_idx_list, self.edge_head_list, self.edge_type_list)
 
@@ -193,6 +202,14 @@ class CalFlowGraph:
             # add underlying 
             nested = False
             underlying = op_value_dict['underlying']
+            try:
+                # NOTE (elias): here is where we tokenize the underlying value 
+                underlying_tokens = self._spacy_nlp(underlying)
+                # pdb.set_trace() 
+                underlying = " ".join([t.text for t in underlying_tokens])
+            except TypeError:
+                pass 
+
             try:
                 value_words = underlying.strip().split(" ")
             except AttributeError:
@@ -406,6 +423,9 @@ class CalFlowGraph:
                     node_id_to_expr_id[node_id] = curr_expr
                     curr_expr -= 1
 
+        def do_detokenize(str_list):
+            return DETOKENIZER.detokenize(str_list)
+
         expressions = []
         for node in sorted(graph.nodes):
             op = None
@@ -438,7 +458,10 @@ class CalFlowGraph:
                         inner_gchildren += get_inner_arg_children(n) 
                     name = graph.nodes[node]['node_name']
                     child_names = [graph.nodes[child]['node_name'] for child in children]
-                    underlying = " ".join(child_names) 
+                        # underlying = " ".join(child_names) 
+                    # NOTE (elias): adding this to detokenize apostrophes 
+                    underlying = do_detokenize(child_names)
+
 
                     ## check for ints 
                     if len(child_names) == 1:
@@ -724,6 +747,8 @@ class CalFlowGraph:
         src_copy_indices = src_copy_vocab.index_sequence(tgt_tokens)
         src_copy_map = src_copy_vocab.get_copy_map(src_tokens)
         src_must_copy_tags = [0 for t in src_tokens]
+
+        # TODO (elias): tokenize target strings s.t. apostrophes are handled elegantly 
 
         tgt_tokens_to_generate = tgt_tokens[:]
         node_indices = tgt_indices[:]
