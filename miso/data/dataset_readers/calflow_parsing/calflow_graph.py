@@ -30,6 +30,7 @@ DETOKENIZER = Detok()
 NOBRACK= re.compile("[\[\]]")
 PROGRAM_SEP = "__StartOfProgram"
 PAD_EDGE = "EDGEPAD"
+SPACY_NLP = en_core_web_sm.load() 
 
 class CalFlowGraph:
     def __init__(self, 
@@ -57,7 +58,7 @@ class CalFlowGraph:
         self.argn = 0
         self.n_reentrant = 0
 
-        self._spacy_nlp = en_core_web_sm.load() 
+        # self._spacy_nlp = en_core_web_sm.load() 
         self.node_idx_to_expr_idx = {}
         self.expr_idx_to_node_idx = {}
         self.lispress = parse_lispress(tgt_str)
@@ -204,7 +205,7 @@ class CalFlowGraph:
             underlying = op_value_dict['underlying']
             try:
                 # NOTE (elias): here is where we tokenize the underlying value 
-                underlying_tokens = self._spacy_nlp(underlying)
+                underlying_tokens = SPACY_NLP(underlying)
                 # pdb.set_trace() 
                 underlying = " ".join([t.text for t in underlying_tokens])
             except TypeError:
@@ -424,7 +425,10 @@ class CalFlowGraph:
                     curr_expr -= 1
 
         def do_detokenize(str_list):
-            return DETOKENIZER.detokenize(str_list)
+            detokenized = DETOKENIZER.detokenize(str_list)
+            detokenized = re.sub(r" - ", "-", detokenized)
+            detokenized = f" {detokenized.strip()} "
+            return detokenized
 
         expressions = []
         for node in sorted(graph.nodes):

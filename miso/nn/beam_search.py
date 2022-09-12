@@ -266,7 +266,7 @@ class BeamSearch:
             # dividing by per_node_beam_size gives the ancestor. (Note that this is integer
             # division as the tensor is a LongTensor.)
             # shape: (batch_size, beam_size)
-            backpointer = restricted_beam_indices / self.per_node_beam_size
+            backpointer = restricted_beam_indices // self.per_node_beam_size
             backpointer = backpointer.long() 
             backpointers.append(backpointer)
 

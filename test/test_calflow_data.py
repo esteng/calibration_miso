@@ -26,11 +26,11 @@ def assert_dict(produced, expected):
 
 @pytest.fixture
 def load_test_lispress():
-    return """( Yield ( PersonFromRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply "Darby" ) ) ) ) ) ) )"""
+    return """( Yield ( PersonFromRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Darby " ) ) ) ) ) ) )"""
 
 @pytest.fixture
 def load_long_lispress():
-    return """(Yield (UpdateCommitEventWrapper (UpdatePreflightEventWrapper (Event.id (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (Event.attendees_? (AttendeeListHasRecipientConstraint (RecipientWithNameLike (^(Recipient) EmptyStructConstraint) (PersonName.apply "Matthew")))))))) (Event.start_? (?= (DateAtTimeWithDefaults (NextDOW (Thursday)) (DateTime.time (Event.end (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (Event.attendees_? (AttendeeListHasRecipientConstraint (RecipientWithNameLike (^(Recipient) EmptyStructConstraint) (PersonName.apply "Jeremy")))))))))))))))"""
+    return """(Yield (UpdateCommitEventWrapper (UpdatePreflightEventWrapper (Event.id (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (Event.attendees_? (AttendeeListHasRecipientConstraint (RecipientWithNameLike (^(Recipient) EmptyStructConstraint) (PersonName.apply " Matthew ")))))))) (Event.start_? (?= (DateAtTimeWithDefaults (NextDOW (Thursday)) (DateTime.time (Event.end (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (Event.attendees_? (AttendeeListHasRecipientConstraint (RecipientWithNameLike (^(Recipient) EmptyStructConstraint) (PersonName.apply " Jeremy ")))))))))))))))"""
 
 @pytest.fixture
 def load_let_lispress():
@@ -38,28 +38,33 @@ def load_let_lispress():
 
 @pytest.fixture
 def load_path_lispress():
-    return """(Yield (Execute (ReviseConstraint (refer (^(Dynamic) roleConstraint (Path.apply "output"))) (^(Event) ConstraintTypeIntension) (Event.start_? (DateTime.time_? (?= (ConvertTimeToPM (Execute (refer (& (^(Time) roleConstraint (Path.apply "start")) (extensionConstraint (^(Time) EmptyStructConstraint))))))))))))"""
+    return """(Yield (Execute (ReviseConstraint (refer (^(Dynamic) roleConstraint (Path.apply " output "))) (^(Event) ConstraintTypeIntension) (Event.start_? (DateTime.time_? (?= (ConvertTimeToPM (Execute (refer (& (^(Time) roleConstraint (Path.apply " start ")) (extensionConstraint (^(Time) EmptyStructConstraint))))))))))))"""
 
 @pytest.fixture
 def load_do_singleton_lispress():
-    return """(do (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (& (& (Event.subject_? (?~= "lunchdate")) (Event.start_? (DateTime.date_? (?= (NextDOW (Thursday)))))) (Event.attendees_? (AttendeeListHasRecipientConstraint (RecipientWithNameLike (^(Recipient) EmptyStructConstraint) (PersonName.apply "Lisa")))))))) (Yield (UpdateCommitEventWrapper (UpdatePreflightEventWrapper (Event.id (Execute (refer (extensionConstraint (^(Event) EmptyStructConstraint))))) (Event.start_? (DateTime.date_? (?= (ClosestDayOfWeek (DateTime.date (Event.start (Execute (refer (extensionConstraint (^(Event) EmptyStructConstraint)))))) (Friday)))))))))"""
+    return """(do (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (& (& (Event.subject_? (?~= " lunchdate ")) (Event.start_? (DateTime.date_? (?= (NextDOW (Thursday)))))) (Event.attendees_? (AttendeeListHasRecipientConstraint (RecipientWithNameLike (^(Recipient) EmptyStructConstraint) (PersonName.apply " Lisa ")))))))) (Yield (UpdateCommitEventWrapper (UpdatePreflightEventWrapper (Event.id (Execute (refer (extensionConstraint (^(Event) EmptyStructConstraint))))) (Event.start_? (DateTime.date_? (?= (ClosestDayOfWeek (DateTime.date (Event.start (Execute (refer (extensionConstraint (^(Event) EmptyStructConstraint)))))) (Friday)))))))))"""
     # return """(do (singleton (QueryEventResponse.results (FindEventWrapperWithDefaults (& (& (Event.subject? (?~= "lunchdate")) (Event.start? (DateTime.date? (?= (NextDOW (Thursday)))))) (Event.attendees? (AttendeeListHasRecipientConstraint (RecipientWithNameLike ((^(Recipient) EmptyStructConstraint)) (PersonName.apply "Lisa")))))))) (Yield (UpdateCommitEventWrapper (UpdatePreflightEventWrapper (Event.id (Execute (refer (extensionConstraint ((^(Event) EmptyStructConstraint)))))) (Event.start? (DateTime.date? (?= (ClosestDayOfWeek (DateTime.date (Event.start (Execute (refer (extensionConstraint ((^(Event) EmptyStructConstraint))))))) (Friday)))))))))"""
 
 @pytest.fixture
 def load_underlying_lispress():
-    return """( Yield ( Execute ( NewClobber ( refer ( ^ ( Dynamic ) ActionIntensionConstraint ) ) ( ^ ( ( Constraint DateTime ) ) roleConstraint ( Path.apply "time" ) ) ( intension ( DateTime.date? ( ?= ( Tomorrow ) ) ) ) ) ) )"""
+    return """( Yield ( Execute ( NewClobber ( refer ( ^ ( Dynamic ) ActionIntensionConstraint ) ) ( ^ ( ( Constraint DateTime ) ) roleConstraint ( Path.apply " time " ) ) ( intension ( DateTime.date? ( ?= ( Tomorrow ) ) ) ) ) ) )"""
 
 @pytest.fixture
 def load_variable_order_lispress():
-    return """( let ( x0 ( PersonName.apply "Elli Parker" ) ) ( do ( Yield ( Execute ( ChooseCreateEventFromConstraint ( ^ ( Event ) EmptyStructConstraint ) ( refer ( ^ ( Dynamic ) ActionIntensionConstraint ) ) ) ) ) ( Yield ( > ( size ( QueryEventResponse.results ( FindEventWrapperWithDefaults ( EventOnDate ( Tomorrow ) ( Event.attendees? ( & ( AttendeeListHasRecipientConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) x0 ) ) ( AttendeeListHasPeople ( FindTeamOf ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) x0 ) ) ) ) ) ) ) ) ) ) ) ) 0L ) ) ) )"""
+    return """( let ( x0 ( PersonName.apply " Elli Parker " ) ) ( do ( Yield ( Execute ( ChooseCreateEventFromConstraint ( ^ ( Event ) EmptyStructConstraint ) ( refer ( ^ ( Dynamic ) ActionIntensionConstraint ) ) ) ) ) ( Yield ( > ( size ( QueryEventResponse.results ( FindEventWrapperWithDefaults ( EventOnDate ( Tomorrow ) ( Event.attendees? ( & ( AttendeeListHasRecipientConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) x0 ) ) ( AttendeeListHasPeople ( FindTeamOf ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) x0 ) ) ) ) ) ) ) ) ) ) ) ) 0L ) ) ) )"""
 
 @pytest.fixture
 def load_reentrant_expression_lispress():
-    return """( let ( x0 ( NextDOW ( Friday ) ) ) ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( EventAllDayOnDate ( EventAllDayOnDate ( Event.subject? ( ?= "spending" ) ) x0 ) ( nextDayOfWeek x0 ( Sunday ) ) ) ) ) ) )"""
+    return """( let ( x0 ( NextDOW ( Friday ) ) ) ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( EventAllDayOnDate ( EventAllDayOnDate ( Event.subject? ( ?= " spending " ) ) x0 ) ( nextDayOfWeek x0 ( Sunday ) ) ) ) ) ) )"""
 
 @pytest.fixture
 def load_inf_loss_lispress():
-    return """( let ( x0 ( DateAtTimeWithDefaults ( Execute ( refer ( extensionConstraint ( ^ ( Date ) EmptyStructConstraint ) ) ) ) ( Noon ) ) ) ( do "Shiro's sushi" ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( & ( & ( & ( & ( Event.subject_? ( ?= "lunch date" ) ) ( Event.start_? ( ?= x0 ) ) ) ( Event.end_? ( ?= ( TimeAfterDateTime x0 ( NumberPM 2L ) ) ) ) ) ( Event.location_? ( ?= ( LocationKeyphrase.apply "Shiro's sushi" ) ) ) ) ( Event.showAs_? ( ?= ( ShowAsStatus.OutOfOffice ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply "Kate" ) ) ) ) ) ) ) ) ) ) ) ) )"""
+    return """( let ( x0 ( DateAtTimeWithDefaults ( Execute ( refer ( extensionConstraint ( ^ ( Date ) EmptyStructConstraint ) ) ) ) ( Noon ) ) ) ( do " Shiro's sushi " ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( & ( & ( & ( & ( Event.subject_? ( ?= " lunch date " ) ) ( Event.start_? ( ?= x0 ) ) ) ( Event.end_? ( ?= ( TimeAfterDateTime x0 ( NumberPM 2L ) ) ) ) ) ( Event.location_? ( ?= ( LocationKeyphrase.apply " Shiro's sushi " ) ) ) ) ( Event.showAs_? ( ?= ( ShowAsStatus.OutOfOffice ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Kate " ) ) ) ) ) ) ) ) ) ) ) ) )"""
+
+
+@pytest.fixture
+def load_dash_lispress():
+    return """( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( Event.start_? ( ?= ( DateAtTimeWithDefaults ( Tomorrow ) ( NumberAM 6L ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Young-Cheol Lim " ) ) ) ) ) ) ) ) ) ) )""" 
 
 @pytest.fixture
 def load_all_valid_tgt_str():
@@ -128,6 +133,9 @@ def test_calflow_roundtrip_expression_order(load_reentrant_expression_lispress):
 
 def test_calflow_rountrip_inf_issue(load_inf_loss_lispress):
     calflow_roundtrip(load_inf_loss_lispress)
+
+def test_calflow_roundtrip_dash(load_dash_lispress):
+    calflow_roundtrip(load_dash_lispress)
 
 @pytest.mark.skip(reason="too large")
 def test_calflow_roundtrip_valid(load_all_valid_tgt_str):
@@ -203,8 +211,22 @@ def load_seq_strings_basic():
     tgt_str = """( Yield ( PersonFromRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ( ^ ( Recipient ) EmptyStructConstraint ) ) ( PersonName.apply "Darby" ) ) ) ) ) ) )"""
     return (src_str, tgt_str)
 
+@pytest.fixture
+def load_seq_strings_apostrophe():
+    src_str = """__User OK , I have a busy week ! Hope you are ready for these . First of all add the meeting with marketing team tomorrow from 10 am to noon at Starbucks next to our HQ and show me as out of office . __Agent I can only look up names in your address book . Please use a full name and try again . __User I almost forgot that I have a lunch date with Kate on that day from noon to 2 pm at Shiro 's sushi . Please add that and also mark me as out of office during that time . __StartOfProgram"""
+    tgt_str = """( let ( x0 ( DateAtTimeWithDefaults ( Execute ( refer ( extensionConstraint ( ^ ( Date ) EmptyStructConstraint ) ) ) ) ( Noon ) ) ) ( do " Shiro's sushi " ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( & ( & ( & ( & ( Event.subject_? ( ?= " lunch date " ) ) ( Event.start_? ( ?= x0 ) ) ) ( Event.end_? ( ?= ( TimeAfterDateTime x0 ( NumberPM 2L ) ) ) ) ) ( Event.location_? ( ?= ( LocationKeyphrase.apply " Shiro's sushi " ) ) ) ) ( Event.showAs_? ( ?= ( ShowAsStatus.OutOfOffice ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Kate " ) ) ) ) ) ) ) ) ) ) ) ) )"""
+    return (src_str, tgt_str)
+
+
 def test_calflow_get_list_data(load_seq_strings_basic):
     src_str, tgt_str = load_seq_strings_basic
+    g = CalFlowGraph(src_str = src_str,
+                     tgt_str = tgt_str)
+    data = g.get_list_data(bos="@start@",
+                           eos="@end@")
+
+def test_calflow_get_list_data_apostrophe(load_seq_strings_apostrophe): 
+    src_str, tgt_str = load_seq_strings_apostrophe
     g = CalFlowGraph(src_str = src_str,
                      tgt_str = tgt_str)
     data = g.get_list_data(bos="@start@",
