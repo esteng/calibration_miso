@@ -61,6 +61,10 @@ def load_reentrant_expression_lispress():
 def load_inf_loss_lispress():
     return """( let ( x0 ( DateAtTimeWithDefaults ( Execute ( refer ( extensionConstraint ( ^ ( Date ) EmptyStructConstraint ) ) ) ) ( Noon ) ) ) ( do " Shiro's sushi " ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( & ( & ( & ( & ( Event.subject_? ( ?= " lunch date " ) ) ( Event.start_? ( ?= x0 ) ) ) ( Event.end_? ( ?= ( TimeAfterDateTime x0 ( NumberPM 2L ) ) ) ) ) ( Event.location_? ( ?= ( LocationKeyphrase.apply " Shiro's sushi " ) ) ) ) ( Event.showAs_? ( ?= ( ShowAsStatus.OutOfOffice ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Kate " ) ) ) ) ) ) ) ) ) ) ) ) )"""
 
+@pytest.fixture
+def load_ordinal_lispress():
+    return """( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( Event.subject_? ( ?= " 4th of July Party " ) ) ) ) )"""
+
 
 @pytest.fixture
 def load_dash_lispress():
@@ -136,6 +140,9 @@ def test_calflow_rountrip_inf_issue(load_inf_loss_lispress):
 
 def test_calflow_roundtrip_dash(load_dash_lispress):
     calflow_roundtrip(load_dash_lispress)
+
+def test_calflow_roundtrip_ordinal(load_ordinal_lispress):
+    calflow_roundtrip(load_ordinal_lispress)
 
 @pytest.mark.skip(reason="too large")
 def test_calflow_roundtrip_valid(load_all_valid_tgt_str):
@@ -217,6 +224,13 @@ def load_seq_strings_apostrophe():
     tgt_str = """( let ( x0 ( DateAtTimeWithDefaults ( Execute ( refer ( extensionConstraint ( ^ ( Date ) EmptyStructConstraint ) ) ) ) ( Noon ) ) ) ( do " Shiro's sushi " ( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( & ( & ( & ( & ( Event.subject_? ( ?= " lunch date " ) ) ( Event.start_? ( ?= x0 ) ) ) ( Event.end_? ( ?= ( TimeAfterDateTime x0 ( NumberPM 2L ) ) ) ) ) ( Event.location_? ( ?= ( LocationKeyphrase.apply " Shiro's sushi " ) ) ) ) ( Event.showAs_? ( ?= ( ShowAsStatus.OutOfOffice ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Kate " ) ) ) ) ) ) ) ) ) ) ) ) )"""
     return (src_str, tgt_str)
 
+@pytest.fixture
+def load_seq_strings_ordinal():
+    src_str = """__User Where am I going to dinner ? __Agent The event matching " dinner " is located at Olive Garden . __User fine , thanks __StartOfProgram"""
+    tgt_str = """( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( Event.subject_? ( ?= " 4th of July Party " ) ) ) ) )"""
+    return (src_str, tgt_str)
+
+
 
 def test_calflow_get_list_data(load_seq_strings_basic):
     src_str, tgt_str = load_seq_strings_basic
@@ -231,6 +245,14 @@ def test_calflow_get_list_data_apostrophe(load_seq_strings_apostrophe):
                      tgt_str = tgt_str)
     data = g.get_list_data(bos="@start@",
                            eos="@end@")
+
+# def test_calflow_get_list_data_ordinal(load_seq_strings_ordinal): 
+#     src_str, tgt_str = load_seq_strings_ordinal
+#     g = CalFlowGraph(src_str = src_str,
+#                      tgt_str = tgt_str)
+#     data = g.get_list_data(bos="@start@",
+#                            eos="@end@")
+#     assert(1==2)
 
 
 @pytest.mark.skip(reason="deprecated")

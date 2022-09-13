@@ -32,7 +32,8 @@ PROGRAM_SEP = "__StartOfProgram"
 PAD_EDGE = "EDGEPAD"
 SPACY_NLP = en_core_web_sm.load() 
 CARD_GEX = re.compile(r"(\d+)((th)|(nd)|(rd)|(st))")
-CARD_DETOK_GEX = re.compile(r" (\d+) ((th)|(nd)|(rd)|(st)) ")
+# CARD_DETOK_GEX = re.compile(r"(?<=[^ ])(\d+) ((th)|(nd)|(rd)|(st))(?=[$ ])")
+CARD_DETOK_GEX = re.compile(r" ?(\d+) ((th)|(nd)|(rd)|(st))(?=[$ ])")
 
 class CalFlowGraph:
     def __init__(self, 
@@ -169,7 +170,7 @@ class CalFlowGraph:
                 parent_node_lookup[arg_id].append((nidx+ self.n_reentrant, 0))
 
         def tokenize_target(underlying):
-            toked = SPACY_NLP(underlying)
+            toked = [x.text for x in SPACY_NLP(underlying)]
             # TODO handle numbers like 22nd, 1st, 4th, etc.
             to_ret = []
             for tok in toked:
@@ -224,9 +225,8 @@ class CalFlowGraph:
             underlying = op_value_dict['underlying']
             try:
                 # NOTE (elias): here is where we tokenize the underlying value 
-                underlying_tokens = tokenize_target(underlying)
-                # pdb.set_trace() 
-                underlying = " ".join([t.text for t in underlying_tokens])
+                underlying = " ".join(tokenize_target(underlying))
+                # underlying = " ".join([t.text for t in underlying_tokens])
             except TypeError:
                 pass 
 
@@ -446,14 +446,13 @@ class CalFlowGraph:
         def do_detokenize(str_list):
             detokenized = DETOKENIZER.detokenize(str_list)
             detokenized = re.sub(r" - ", "-", detokenized)
-            detokenized = f" {detokenized.strip()} "
             m = CARD_DETOK_GEX.search(detokenized)
             if m is not None: 
                 # remove space 
                 with_space = m.group(0)
                 without_space = with_space.replace(" ", "")
                 detokenized = re.sub(with_space, without_space, detokenized)
-                # detokenized = CARD_DETOK_GEX.sub(r"\1\2", detokenized)
+            detokenized = f" {detokenized.strip()} "
             return detokenized
 
         expressions = []
