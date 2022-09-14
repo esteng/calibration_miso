@@ -71,6 +71,14 @@ def load_dash_lispress():
     return """( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( Event.start_? ( ?= ( DateAtTimeWithDefaults ( Tomorrow ) ( NumberAM 6L ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Young-Cheol Lim " ) ) ) ) ) ) ) ) ) ) )""" 
 
 @pytest.fixture
+def load_colon_lispress():
+    return """( Yield ( EventAttendance :event ( singleton ( QueryEventResponse.results ( FindEventWrapperWithDefaults ( Event.subject_? ( ?~= " dinner " ) ) ) ) ) :response ( ResponseStatusType.Accepted ) ) )"""
+
+@pytest.fixture
+def load_double_paren_lispress():
+    return """( Yield ( Execute ( NewClobber ( refer ( ^ ( Dynamic ) ActionIntensionConstraint ) ) ( ^ ( ( Constraint DateTime ) ) roleConstraint ( Path.apply " time " ) ) ( intension ( DateTimeConstraint ( ?= ( NumberPM 3L ) ) ( Today ) ) ) ) ) )"""
+
+@pytest.fixture
 def load_all_valid_tgt_str():
     data_path = os.path.join(path, "data", "smcalflow.full.data", "valid.tgt") 
     with open(data_path) as f1:
@@ -107,42 +115,50 @@ def calflow_roundtrip(test_str):
     true_lispress = program_to_lispress(true_ls_prog)
     true_lispress_str = render_pretty(true_lispress)
     pred_lispress_str = render_pretty(pred_lispress)
+    pdb.set_trace()
+    print([(i, x[0], x[1], x[2]) for i, x in enumerate(zip(calflow_graph.node_name_list, calflow_graph.edge_head_list, calflow_graph.edge_type_list))])
     assert(pred_lispress_str == true_lispress_str)
     # except (AssertionError,KeyError,IndexError, AttributeError, TypeError) as error:
    
 
-def test_calflow_roundtrip_base(load_test_lispress):
-    calflow_roundtrip(load_test_lispress)
-    
-def test_calflow_roundtrip_long(load_long_lispress):
-    calflow_roundtrip(load_long_lispress)
+# def test_calflow_roundtrip_base(load_test_lispress):
+#     calflow_roundtrip(load_test_lispress)
+ 
+# def test_calflow_roundtrip_long(load_long_lispress):
+#     calflow_roundtrip(load_long_lispress)
 
-def test_calflow_roundtrip_path(load_path_lispress):
-    calflow_roundtrip(load_path_lispress)
+# def test_calflow_roundtrip_path(load_path_lispress):
+#     calflow_roundtrip(load_path_lispress)
 
-def test_calflow_roundtrip_singleton(load_do_singleton_lispress):
-    calflow_roundtrip(load_do_singleton_lispress)
+# def test_calflow_roundtrip_singleton(load_do_singleton_lispress):
+#     calflow_roundtrip(load_do_singleton_lispress)
 
-def test_calflow_roundtrip_nested_underlying(load_underlying_lispress):
-    calflow_roundtrip(load_underlying_lispress)
+# def test_calflow_roundtrip_nested_underlying(load_underlying_lispress):
+#     calflow_roundtrip(load_underlying_lispress)
 
-def test_calflow_roundtrip_let(load_let_lispress):
-    calflow_roundtrip(load_let_lispress) 
+# def test_calflow_roundtrip_let(load_let_lispress):
+#     calflow_roundtrip(load_let_lispress) 
 
-def test_calflow_roundtrip_variable_order(load_variable_order_lispress):
-    calflow_roundtrip(load_variable_order_lispress)
+# def test_calflow_roundtrip_variable_order(load_variable_order_lispress):
+#     calflow_roundtrip(load_variable_order_lispress)
 
-def test_calflow_roundtrip_expression_order(load_reentrant_expression_lispress):
-    calflow_roundtrip(load_reentrant_expression_lispress)
+# def test_calflow_roundtrip_expression_order(load_reentrant_expression_lispress):
+#     calflow_roundtrip(load_reentrant_expression_lispress)
 
-def test_calflow_rountrip_inf_issue(load_inf_loss_lispress):
-    calflow_roundtrip(load_inf_loss_lispress)
+# def test_calflow_rountrip_inf_issue(load_inf_loss_lispress):
+#     calflow_roundtrip(load_inf_loss_lispress)
 
-def test_calflow_roundtrip_dash(load_dash_lispress):
-    calflow_roundtrip(load_dash_lispress)
+# def test_calflow_roundtrip_dash(load_dash_lispress):
+#     calflow_roundtrip(load_dash_lispress)
 
-def test_calflow_roundtrip_ordinal(load_ordinal_lispress):
-    calflow_roundtrip(load_ordinal_lispress)
+# def test_calflow_roundtrip_ordinal(load_ordinal_lispress):
+#     calflow_roundtrip(load_ordinal_lispress)
+
+# def test_calflow_roundtrip_colon(load_colon_lispress):
+    # calflow_roundtrip(load_colon_lispress)
+
+def test_calflow_roundtrip_double_paren(load_double_paren_lispress):
+    calflow_roundtrip(load_double_paren_lispress)
 
 @pytest.mark.skip(reason="too large")
 def test_calflow_roundtrip_valid(load_all_valid_tgt_str):
