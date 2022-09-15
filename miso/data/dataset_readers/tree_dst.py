@@ -18,14 +18,8 @@ from miso.data.tokenizers import   MisoTokenizer
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-@DatasetReader.register("calflow")
+@DatasetReader.register("tree_dst")
 class TreeDSTDatasetReader(CalFlowDatasetReader):
-    '''
-    Dataset reader for TreeDST data
-    '''
-    def __init__(self,
-                *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     @overrides
     def _read(self, path: str) -> Iterable[Instance]:
@@ -44,8 +38,8 @@ class TreeDSTDatasetReader(CalFlowDatasetReader):
                                         use_program = self.use_program,
                                         use_agent_utterance = self.use_agent_utterance,
                                         use_context = self.use_context,
-                                        fxn_of_interest = self.fxn_of_interest,
-                                        line_idx=line_idx.strip()) 
+                                        fxn_of_interest = self.fxn_of_interest)
+                                        
 
                     t2i = self.text_to_instance(graph)
                     if t2i is None:
@@ -64,8 +58,7 @@ class TreeDSTDatasetReader(CalFlowDatasetReader):
                                         use_program = self.use_program,
                                         use_agent_utterance = self.use_agent_utterance,
                                         use_context = self.use_context,
-                                        fxn_of_interest = self.fxn_of_interest,
-                                        line_idx=None) 
+                                        fxn_of_interest = self.fxn_of_interest) 
 
                     t2i = self.text_to_instance(graph)
                     if t2i is None:
