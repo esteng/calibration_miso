@@ -258,6 +258,12 @@ class TreeDSTGraph(CalFlowGraph):
                 parent_node_lookup[id] = [(0,0)]
 
             for i, (parent_node_idx, argn) in enumerate(parent_node_lookup[id]):
+                # NOTE (elias): tree DST specific: for lambdas, only add one, not 2 
+                # if e.op.name == "lambda_arg" and self.node_name_list[-1] == "lambda_arg":
+                    # pdb.set_trace()
+                    # skip the second lambda arg, we'll add it in post-hoc 
+                    # continue 
+
                 # add type 
                 self.node_name_list.append(e.op.name) 
                 # add node idx
@@ -309,6 +315,10 @@ class TreeDSTGraph(CalFlowGraph):
             elif isinstance(expr.op, ValueOp):
                 add_value_op(expr, expr_idx, node_idx)
             elif isinstance(expr.op, CallLikeOp):
+                if len(expr.arg_ids) > len(set(expr.arg_ids)):
+                    # we have double for re-entrancy, which will cause problems; replace
+                    new_expr = Expression(id = expr.id, op = expr.op, arg_ids = list(set(expr.arg_ids)), type_args = expr.type_args)
+                    expr = new_expr 
                 add_call_like_op(expr, expr_idx, node_idx)
             else:
                 raise ValueError(f"Unexpected Expression: {expr}")
@@ -410,6 +420,8 @@ class TreeDSTGraph(CalFlowGraph):
             return detokenized
 
         expressions = []
+        add_to_next = []
+        is_lambda = False
         for node in sorted(graph.nodes):
             op = None
             if graph.nodes[node]['function_type'] is not None: 
@@ -448,7 +460,6 @@ class TreeDSTGraph(CalFlowGraph):
 
                     ## check for ints 
                     if len(child_names) == 1:
-                        # pdb.set_trace()
                         if child_names[0].isdigit() and not PHONE_NUM_GEX.match(child_names[0]):
                             underlying = int(child_names[0])
                         elif re.match("-?\d+\.\d+", child_names[0]) is not None: 
@@ -482,11 +493,89 @@ class TreeDSTGraph(CalFlowGraph):
                 fxn_children = get_fxn_children(node) 
                 eid = node_id_to_expr_id[node]
                 expr_ids = [node_id_to_expr_id[n] for n in fxn_children]
-                children_ids = [f"[{e}]" for e in expr_ids]
+                # add check for lambda
+                if isinstance(op, CallLikeOp) and op.name == "lambda" and len(expr_ids) == 1:
+                    expr_ids = [expr_ids] + [expr_ids]
+                    children_ids = [f"{e}" for e in expr_ids]
+                    is_lambda = True
+                # elif isinstance(op, CallLikeOp) and op.name == "lambda" and len(expr_ids) == 2:
+                    # expr_ids[1] -= 1
+                    # add_to_next.append(expr_ids[0])
+                    # children_ids = [f"[{e}]" for e in expr_ids]
+                    # is_lambda = True
+                else:
+                    # if len(add_to_next) > 0 and hasattr(op, "name") and op.name == "&":
+                        # expr_ids = add_to_next + expr_ids
+                        # add_to_next = []
+                    children_ids = [f"[{e}]" for e in expr_ids]
                 type_args = get_type_args(node)
 
                 curr_expr = Expression(id=f"[{eid}]", op = op, arg_ids = children_ids, type_args = type_args)
                 expressions.append(curr_expr)
 
+        if is_lambda: 
+            # decrease all expression ids by 1 
+            for i, expr in enumerate(expressions):
+                expr_id = int(re.sub("[\[\]]", "", expr.id))
+                child_ids = [int(re.sub("[\[\]]", "", child_id)) for child_id in expr.arg_ids]
+                expr_id -= 1 
+                child_ids = [child_id - 1 for child_id in child_ids]
+
+                new_expr = Expression(id=f"[{expr_id}]", op = expr.op, arg_ids = [f"[{child_id}]" for child_id in child_ids], type_args = expr.type_args)
+                expressions[i] = new_expr
+
         expressions.reverse()
         return Program(expressions)
+
+    @staticmethod
+    def lists_to_ast(node_name_list: List[str], 
+                     node_idx_list: List[str],
+                     edge_head_list: List[int], 
+                     edge_type_list: List[int]) -> List[Any]:
+        """
+        convert predicted lists back to an AST 
+        """
+        # use digraph to store data and then convert 
+        graph = nx.DiGraph() 
+
+        # start with 1-to-1 mapping 
+        node_idx_to_list_idx_mapping = {k:k for k in range(len(node_name_list))}
+
+        def update_mapping_after_n(n):
+            for k in node_idx_to_list_idx_mapping.keys():
+                if k > n:
+                    node_idx_to_list_idx_mapping[k] -= 1
+
+        offset = 0
+        for i, (node_name, node_idx, edge_head, edge_type) in enumerate(zip(node_name_list, node_idx_list, edge_head_list, edge_type_list)):
+            if edge_type.startswith("fxn_arg"):
+                function_type = "build"
+            elif edge_type.startswith("val_arg"):
+                function_type = "value"
+            elif edge_type.startswith("call_arg"):
+                function_type = "call"
+            else:
+                function_type = None 
+
+            reentrant = False
+            if i - offset != node_idx:
+                # reentrant 
+                curr_name = graph.nodes[node_idx]['node_name']
+                # check we're not renaming anything here 
+                try:
+                    assert(curr_name == node_name)
+                except AssertionError:
+                    pass
+                offset += 1
+                update_mapping_after_n(node_idx) 
+
+            graph.add_node(node_idx, node_name = node_name, function_type= function_type)
+
+            # root self-edges
+            if edge_head < 0:
+                edge_head = 0
+
+            edge_head_idx = node_idx_list[edge_head] 
+            graph.add_edge(edge_head_idx, node_idx, type=edge_type)
+
+        return graph 
