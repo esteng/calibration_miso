@@ -49,32 +49,15 @@ function resume() {
 }
 
 
-function test() {
-    log_info "Evaluating a transductive model for decomp parsing..."
-    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
-    output_file=${CHECKPOINT_DIR}/test.pred.txt
-    python -m allennlp.run predict \
-    ${model_file} ${TEST_DATA} \
-    --predictor "decomp_parsing" \
-    --batch-size 1 \
-    --use-dataset-reader \
-    --include-package miso.data.dataset_readers \
-    --include-package miso.data.tokenizers \
-    --include-package miso.models \
-    --include-package miso.predictors \
-    --include-package miso.metrics
-}
-
-
 function eval() {
-    echo "Evaluating Exact Match score for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match score for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
     mkdir -p ${CHECKPOINT_DIR}/translate_output
     python -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --batch-size 400 \
     --beam-size 1 \
     --use-dataset-reader \
@@ -90,7 +73,7 @@ function eval() {
 }
 
 function eval_fxn() {
-    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
@@ -98,7 +81,7 @@ function eval_fxn() {
     python -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --batch-size 140 \
     --beam-size 2 \
     --use-dataset-reader \
@@ -115,7 +98,7 @@ function eval_fxn() {
 
 
 function eval_fxn_cpu() {
-    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
@@ -123,7 +106,7 @@ function eval_fxn_cpu() {
     python -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --batch-size 140 \
     --beam-size 2 \
     --use-dataset-reader \
@@ -139,14 +122,14 @@ function eval_fxn_cpu() {
 } 
 
 function eval_fxn_precomputed() {
-    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
     python -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --batch-size 400 \
     --beam-size 2 \
     --use-dataset-reader \
@@ -163,7 +146,7 @@ function eval_fxn_precomputed() {
 } 
 
 function prob_analysis() {
-    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     #output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
@@ -171,7 +154,7 @@ function prob_analysis() {
     python -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --oracle \
     --score-type basic \
     --batch-size 1 \
@@ -189,7 +172,7 @@ function prob_analysis() {
 } 
 
 function log_losses() {
-    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     #output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
@@ -197,7 +180,7 @@ function log_losses() {
     python -um miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --oracle \
     --score-type basic \
     --batch-size 1 \
@@ -215,7 +198,7 @@ function log_losses() {
 } 
 
 function big_beam() {
-    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
     #output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
     split=$(basename ${TEST_DATA})
@@ -223,7 +206,7 @@ function big_beam() {
     python -m miso.commands.exact_match eval \
     ${model_file} ${TEST_DATA} \
     --fxn-of-interest ${FXN} \
-    --predictor "calflow_parsing" \
+    --predictor "tree_dst_parsing" \
     --top-k-beam-search \
     --top-k 100 \
     --score-type basic \
