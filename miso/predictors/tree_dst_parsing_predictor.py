@@ -17,12 +17,14 @@ from allennlp.common.util import JsonDict
 
 from miso.data.dataset_readers.calflow_parsing.tree_dst_graph import TreeDSTGraph
 from miso.predictors.decomp_parsing_predictor import sanitize
+from miso.predictors.calflow_parsing_predictor import CalflowParsingPredictor
 
 logger = logging.getLogger(__name__) 
 
 
 @Predictor.register("tree_dst_parsing")
-class TreeDSTParsingPredictor(Predictor):
+class TreeDSTParsingPredictor(CalflowParsingPredictor):
+
 
     @overrides
     def dump_line(self, outputs: JsonDict) -> str:
