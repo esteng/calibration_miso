@@ -140,6 +140,7 @@ class ExactMatchScore(Subcommand):
 def _construct_and_predict(args: argparse.Namespace) -> None:
     predictor = _get_predictor(args)
     args.predictor = predictor
+
     scorer = Scorer.from_params(args)
     if args.oracle:
         # we're doing oracle things

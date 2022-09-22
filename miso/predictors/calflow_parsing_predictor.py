@@ -2,6 +2,7 @@
 # Licensed under the MIT license.
 
 from miso.nn.beam_search import BeamSearch
+from miso.nn.calibrated_beam_search import CalibratedBeamSearch
 from dataflow.core.lispress import render_compact
 from overrides import overrides
 from typing import List, Iterator, Any
@@ -83,3 +84,21 @@ class CalflowParsingPredictor(Predictor):
             to_ret.append({"source_tokens": source_tokens, "left_context": left_context, "next_token": next_token, "prob_dist": prob_dist})
         assert(len(to_ret) == 1)
         return to_ret[0]
+
+@Predictor.register("calflow_parsing_calibrated")
+class CalibratedCalflowParsingPredictor(CalflowParsingPredictor):
+    @overrides 
+    def predict_batch_instance(self, instances: List[Instance], oracle: bool = False, top_k_beam_search: bool = False, top_k: int = 1) -> List[JsonDict]:
+        # set oracle flag for vanilla parsing analysis 
+        self._model.oracle = oracle
+        self._model.top_k_beam_search = top_k_beam_search
+        self._model.top_k = top_k
+        if top_k > 1:
+            self._model._beam_search = CalibratedBeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
+            self._model._beam_size = top_k
+        outputs = self._model.forward_on_instances(instances)
+        if oracle: 
+            return self.organize_forced_decode(instances, outputs) 
+        if top_k_beam_search:
+            return [self.dump_line(line) for line in outputs]
+        return sanitize(outputs)

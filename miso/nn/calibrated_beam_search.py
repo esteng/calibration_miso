@@ -1,13 +1,15 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
-
 from typing import List, Callable, Tuple, Dict, Any
 import warnings
+from overrides import overrides
 
+import pdb 
 import torch
 
 from allennlp.common.checks import ConfigurationError
 import logging
+
+from miso.nn.beam_search import BeamSearch
+
 logger = logging.getLogger(__name__) 
 
 StateType = Dict[str, torch.Tensor]  # pylint: disable=invalid-name
@@ -15,7 +17,7 @@ AuxiliaryType = Dict[str, List[Any]]  # pylint: disable=invalid-name
 StepFunctionType = Callable[[torch.Tensor, StateType, AuxiliaryType], Tuple[torch.Tensor, StateType, AuxiliaryType]]  # pylint: disable=invalid-name
 
 
-class BeamSearch:
+class CalibratedBeamSearch(BeamSearch):
     """
     Implements the beam search algorithm for decoding the most likely sequences.
 
@@ -40,12 +42,12 @@ class BeamSearch:
                  end_index: int,
                  max_steps: int = 50,
                  beam_size: int = 10,
-                 per_node_beam_size: int = None) -> None:
-        self._end_index = end_index
-        self.max_steps = max_steps
-        self.beam_size = beam_size
-        self.per_node_beam_size = per_node_beam_size or beam_size
+                 per_node_beam_size: int = None,
+                 confidence_threshold: float = 0.70) -> None:
+        super().__init__(end_index, max_steps, beam_size, per_node_beam_size)
+        self.confidence_threshold = confidence_threshold
 
+    @overrides
     def search(self,
                start_predictions: torch.Tensor,
                start_state: StateType,
@@ -129,7 +131,7 @@ class BeamSearch:
         # beam to `beam_size`^2 candidates from which we will select the top
         # `beam_size` elements for the next iteration.
         # shape: (batch_size, num_classes)
-        start_class_log_probabilities, state, auxiliaries = step(start_predictions, start_state, auxiliaries)
+        start_class_log_probabilities, state, auxiliaries = step(start_predictions, start_state, auxiliaries, 1)
 
         num_classes = start_class_log_probabilities.size()[1]
 
@@ -193,9 +195,12 @@ class BeamSearch:
                     start_top_log_probabilities,
                     tracked_auxiliaries)
 
+        size_multiplier = 1
+        copy_state = state.copy() 
+
         for timestep in range(self.max_steps - 1):
             # shape: (batch_size * beam_size,)
-            last_predictions = predictions[-1].reshape(batch_size * self.beam_size)
+            last_predictions = predictions[-1].reshape(batch_size * self.beam_size  * size_multiplier)
 
             # If every predicted token from the last step is `self._end_index`,
             # then we can stop early.
@@ -205,11 +210,14 @@ class BeamSearch:
             # Take a step. This get the predicted log probs of the next classes
             # and updates the state.
             # shape: (batch_size * beam_size, num_classes)
-            class_log_probabilities, state, auxiliaries = step(last_predictions, state, auxiliaries)
+
+            # multiply state 
+            state = copy_state 
+            class_log_probabilities, state, auxiliaries = step(last_predictions, state,  auxiliaries, size_multiplier)
 
             # shape: (batch_size * beam_size, num_classes)
             last_predictions_expanded = last_predictions.unsqueeze(-1).expand(
-                    batch_size * self.beam_size,
+                    batch_size * self.beam_size * size_multiplier,
                     num_classes
             )
 
@@ -217,7 +225,8 @@ class BeamSearch:
             # the previous timestep and replacing the distribution with a
             # one-hot distribution, forcing the beam to predict the end token
             # this timestep as well.
-            # shape: (batch_size * beam_size, num_classes)
+            # shape: (batch_size * beam_size * size_multiplier, num_classes)
+            log_probs_after_end = log_probs_after_end[0:self.beam_size].repeat((size_multiplier, 1))
             cleaned_log_probabilities = torch.where(
                     last_predictions_expanded == self._end_index,
                     log_probs_after_end,
@@ -228,35 +237,124 @@ class BeamSearch:
             top_log_probabilities, predicted_classes = \
                 cleaned_log_probabilities.topk(self.per_node_beam_size)
 
-            # TODO (elias): this is where to add a check for confidence scores 
+            # NOTE (elias): add a check for the confidence scores 
+            # shape: (batch_size * beam_size)
+            is_low_confidence = torch.exp(top_log_probabilities.max(dim=-1)[0]) < self.confidence_threshold
 
             # Here we expand the last log probabilities to (batch_size * beam_size, per_node_beam_size)
             # so that we can add them to the current log probs for this timestep.
             # This lets us maintain the log probability of each element on the beam.
             # shape: (batch_size * beam_size, per_node_beam_size)
-            expanded_last_log_probabilities = last_log_probabilities.\
-                    unsqueeze(2).\
-                    expand(batch_size, self.beam_size, self.per_node_beam_size).\
-                    reshape(batch_size * self.beam_size, self.per_node_beam_size)
-
+            try:
+                expanded_last_log_probabilities = last_log_probabilities.\
+                        unsqueeze(2).\
+                        expand(batch_size, self.beam_size * size_multiplier, self.per_node_beam_size).\
+                        reshape(batch_size * self.beam_size * size_multiplier, self.per_node_beam_size)
+            except RuntimeError:
+                pdb.set_trace()
+            # Switch beam around so that the top hypothesis from each low confidence option is kept 
             # shape: (batch_size * beam_size, per_node_beam_size)
             summed_top_log_probabilities = top_log_probabilities + expanded_last_log_probabilities
 
-            # shape: (batch_size, beam_size * per_node_beam_size)
-            reshaped_summed = summed_top_log_probabilities.\
-                    reshape(batch_size, self.beam_size * self.per_node_beam_size)
+            # NOTE (elias): once everything is tested we can get rid of this first check 
+            # if all predictions are high confidence, do nothing different 
+            if not torch.any(is_low_confidence):
+                # shape: (batch_size, beam_size * per_node_beam_size)
+                reshaped_summed = summed_top_log_probabilities.\
+                        reshape(batch_size, self.beam_size * size_multiplier * self.per_node_beam_size)
 
-            # shape: (batch_size, beam_size * per_node_beam_size)
-            reshaped_predicted_classes = predicted_classes.\
-                    reshape(batch_size, self.beam_size * self.per_node_beam_size)
+                # shape: (batch_size, beam_size * per_node_beam_size)
+                reshaped_predicted_classes = predicted_classes.\
+                        reshape(batch_size, self.beam_size * size_multiplier * self.per_node_beam_size)
 
-            # Keep only the top `beam_size` beam indices.
-            # shape: (batch_size, beam_size), (batch_size, beam_size)
-            restricted_beam_log_probs, restricted_beam_indices = reshaped_summed.topk(self.beam_size)
+                # Keep only the top `beam_size` beam indices.
+                # shape: (batch_size, beam_size), (batch_size, beam_size)
+                restricted_beam_log_probs, restricted_beam_indices = reshaped_summed.topk(self.beam_size)
 
-            # Use the beam indices to extract the corresponding classes.
-            # shape: (batch_size, beam_size)
-            restricted_predicted_classes = reshaped_predicted_classes.gather(1, restricted_beam_indices)
+                # Use the beam indices to extract the corresponding classes.
+                # shape: (batch_size, beam_size)
+                restricted_predicted_classes = reshaped_predicted_classes.gather(1, restricted_beam_indices)
+
+                copy_state = state 
+
+                # need to repeat 
+                restricted_beam_log_probs = restricted_beam_log_probs.repeat((1, size_multiplier))
+                restricted_beam_indices = restricted_beam_indices.repeat((1, size_multiplier))
+                restricted_predicted_classes = restricted_predicted_classes.repeat((1, size_multiplier))
+                n_nonconfident = 0
+                n_confident = self.beam_size
+            # if top prediction is low confidence, we need to keep all of the possibilities for low confidence token, expand that beam 
+            else:
+                # two paths: confident get same treatement as before 
+                n_confident = torch.sum(~is_low_confidence)
+                restricted_predicted_classes = None
+                # only do if there are any confident, otherwise we get an error
+                if n_confident > 0:
+                    confident_summed_top_log_probs = summed_top_log_probabilities[~is_low_confidence]
+                    confident_predicted_classes = predicted_classes[~is_low_confidence]
+                    # shape: (batch_size, n_confident * per_node_beam_size)
+                    reshaped_confident_summed = confident_summed_top_log_probs.\
+                            reshape(batch_size, n_confident * self.per_node_beam_size)
+
+                    # shape: (batch_size, n_confident * per_node_beam_size)
+                    reshaped_confident_predicted_classes = confident_predicted_classes.\
+                            reshape(batch_size, n_confident * self.per_node_beam_size)
+
+                    # Keep only the top `beam_size` beam indices.
+                    # if there are any confident cases, these should be included by default, so use the general variable here  
+                    # shape: (batch_size, beam_size), (batch_size, beam_size)
+                    restricted_beam_log_probs, restricted_beam_indices = reshaped_confident_summed.topk(self.beam_size)
+
+                    # Use the beam indices to extract the corresponding classes.
+                    # shape: (batch_size, beam_size)
+                    restricted_predicted_classes = reshaped_confident_predicted_classes.gather(1, restricted_beam_indices)
+
+                # low confidence tokens get expanded in a separate buffer 
+                n_nonconfident = torch.sum(is_low_confidence)
+                if n_nonconfident > 0:
+                    nonconfident_summed_top_log_probs = summed_top_log_probabilities[is_low_confidence]
+                    nonconfident_predicted_classes = predicted_classes[is_low_confidence]
+                    # shape: (batch_size, n_nonconfident * per_node_beam_size)
+                    reshaped_nonconfident_summed = nonconfident_summed_top_log_probs.\
+                            reshape(batch_size, n_nonconfident * self.per_node_beam_size)
+
+                    # shape: (batch_size, n_nonconfident * per_node_beam_size)
+                    reshaped_nonconfident_predicted_classes = nonconfident_predicted_classes.\
+                            reshape(batch_size, n_nonconfident * self.per_node_beam_size)
+
+                    # Keep all per_node_beam_size indices here so we can later expand
+                    nonconfident_beam_log_probs, nonconfident_beam_indices = reshaped_nonconfident_summed.topk(self.per_node_beam_size * n_nonconfident)
+
+                    # Keep only the top `beam_size` beam indices for the main buffer 
+                    # shape: (batch_size, beam_size), (batch_size, beam_size)
+                    # restricted_nonconfident_beam_log_probs, restricted_nonconfident_beam_indices = reshaped_nonconfident_summed.topk(self.beam_size)
+
+                    # Use the beam indices to extract the corresponding classes.
+                    # shape: (batch_size, beam_size)
+                    # restricted_nonconfident_predicted_classes = reshaped_confident_predicted_classes.gather(1, restricted_nonconfident_beam_indices)
+                    predicted_classes = reshaped_nonconfident_predicted_classes
+                    if restricted_predicted_classes is None:
+                        restricted_predicted_classes = predicted_classes
+                        restricted_beam_log_probs = nonconfident_beam_log_probs
+                        restricted_beam_indices = nonconfident_beam_indices
+                    else:
+                        restricted_predicted_classes = torch.cat([restricted_predicted_classes, predicted_classes], dim=1)
+                        restricted_beam_log_probs = torch.cat([restricted_beam_log_probs, nonconfident_beam_log_probs], dim=1)
+                        restricted_beam_indices = torch.cat([restricted_beam_indices, nonconfident_beam_indices], dim=1)
+
+                    size_multiplier = restricted_predicted_classes.shape[1] // self.beam_size
+                    copy_state = {}
+                    for key, state_tensor in state.items():
+                        # get the original state tensor before repeating 
+                        state_tensor = state_tensor[0:self.beam_size * batch_size]
+
+                        if len(state_tensor.shape) == 3:
+                            new_state_tensor = state_tensor.repeat((size_multiplier, 1, 1))
+                        elif len(state_tensor.shape) == 2:
+                            new_state_tensor = state_tensor.repeat((size_multiplier, 1)) 
+                        # need to double because we're expanding the beam
+                        # TODO (elias): do we need to clone? 
+                        copy_state[key] = new_state_tensor.clone()
 
             predictions.append(restricted_predicted_classes)
 
@@ -268,37 +366,44 @@ class BeamSearch:
             # dividing by per_node_beam_size gives the ancestor. (Note that this is integer
             # division as the tensor is a LongTensor.)
             # shape: (batch_size, beam_size)
-            backpointer = restricted_beam_indices // self.per_node_beam_size
+            backpointer = restricted_beam_indices // (self.per_node_beam_size * size_multiplier)
+            # print(f"backpointer: {backpointer.shape}")
             backpointer = backpointer.long() 
             backpointers.append(backpointer)
 
             # Keep only the pieces of the state tensors corresponding to the
             # ancestors created this iteration.
-            for key, state_tensor in state.items():
+            for key, state_tensor in copy_state.items():
                 _, *last_dims = state_tensor.size()
                 # shape: (batch_size, beam_size, *)
-                expanded_backpointer = backpointer.\
-                        view(batch_size, self.beam_size, *([1] * len(last_dims))).\
-                        expand(batch_size, self.beam_size, *last_dims)
+                try:
+                    expanded_backpointer = backpointer.\
+                            view(batch_size, self.beam_size * size_multiplier, *([1] * len(last_dims))).\
+                            expand(batch_size, self.beam_size * size_multiplier, *last_dims)
+                except RuntimeError:
+                    pdb.set_trace()
 
                 # shape: (batch_size * beam_size, *)
-                state[key] = state_tensor.\
-                        reshape(batch_size, self.beam_size, *last_dims).\
+                try:
+                    copy_state[key] = state_tensor.\
+                        reshape(batch_size, self.beam_size * size_multiplier, *last_dims).\
                         gather(1, expanded_backpointer).\
-                        reshape(batch_size * self.beam_size, *last_dims)
-
+                        reshape(batch_size * self.beam_size * size_multiplier, *last_dims)
+                except RuntimeError:
+                    pdb.set_trace()
             # Keep only the pieces of the auxiliaries corresponding to the
             # ancestors created this iteration.
             for key, aux in auxiliaries.items():
                 new_aux = []
+                aux = [x for i in range(n_nonconfident+1) for x in aux]
                 for ith, indices in enumerate(backpointer.tolist()):
-                    new_aux += [aux[ith * self.beam_size + index].copy() for index in indices]
+                    new_aux += [aux[ith * self.beam_size * size_multiplier + index].copy() for index in indices]
                 auxiliaries[key] = new_aux
 
-            tracked_state = state[tracked_state_name]
+            tracked_state = copy_state[tracked_state_name]
             _, *last_dims = tracked_state.size()
             # shape: [(batch_size, beam_size, *)]
-            tracked_states.append(tracked_state.reshape(batch_size, self.beam_size, *last_dims))
+            tracked_states.append(tracked_state.reshape(batch_size, self.beam_size * size_multiplier, *last_dims))
 
         if not torch.isfinite(last_log_probabilities).all():
             warnings.warn("Infinite log probabilities encountered. Some final sequences may not make sense. "
@@ -324,8 +429,8 @@ class BeamSearch:
             # shape: [(batch_size, beam_size, 1, *)]
             _, _, *last_dims = tracked_states[timestep].size()
             expanded_cur_backpointers = cur_backpointers.\
-                view(batch_size, self.beam_size, *([1] * len(last_dims))).\
-                expand(batch_size, self.beam_size, *last_dims)
+                view(batch_size, self.beam_size * size_multiplier, *([1] * len(last_dims))).\
+                expand(batch_size, self.beam_size * size_multiplier, *last_dims)
             cur_tracked_state = tracked_states[timestep].gather(1, expanded_cur_backpointers).unsqueeze(2)
 
             reconstructed_tracked_states.append(cur_tracked_state)
@@ -344,8 +449,8 @@ class BeamSearch:
         # shape: [(batch_size, beam_size, 1, *)]
         _, _, *last_dims = tracked_states[0].size()
         expanded_cur_backpointers = cur_backpointers.\
-            view(batch_size, self.beam_size, *([1] * len(last_dims))).\
-            expand(batch_size, self.beam_size, *last_dims)
+            view(batch_size, self.beam_size * size_multiplier, *([1] * len(last_dims))).\
+            expand(batch_size, self.beam_size * size_multiplier, *last_dims)
         final_tracked_state = tracked_states[0].gather(1, expanded_cur_backpointers).unsqueeze(2)
 
         reconstructed_tracked_states.append(final_tracked_state)
@@ -356,8 +461,8 @@ class BeamSearch:
         # shape: (batch_size * beam_size)
         tracked_auxiliary = auxiliaries[tracked_auxiliary_name]
         # shape: (batch_size, beam_size)
-        for beam_index in range(self.beam_size):
+        for beam_index in range(self.beam_size * size_multiplier):
             for i in range(beam_index, len(tracked_auxiliary), self.beam_size):
-                tracked_auxiliaries[beam_index][i // self.beam_size] = tracked_auxiliary[i]
+                tracked_auxiliaries[beam_index % size_multiplier][i // (self.beam_size * size_multiplier)] = tracked_auxiliary[i % size_multiplier]
 
-        return all_predictions, all_tracked_states, last_log_probabilities, tracked_auxiliaries
+        return all_predictions, all_tracked_states, last_log_probabilities, tracked_auxiliaries, size_multiplier
