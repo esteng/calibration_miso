@@ -28,7 +28,7 @@ from miso.modules.label_smoothing import LabelSmoothing
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-@Model.register("calflow_transformer_parser")
+# @Model.register("calflow_transformer_parser")
 class CalFlowTransformerParser(CalFlowParser):
 
     def __init__(self,
@@ -181,7 +181,6 @@ class CalFlowTransformerParser(CalFlowParser):
                                        last_predictions: torch.Tensor,
                                        state: Dict[str, torch.Tensor],
                                        auxiliaries: Dict[str, List[Any]],
-                                       size_multiplier: int, 
                                        misc: Dict,
                                        ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, List[Any]]]:
 
@@ -192,8 +191,7 @@ class CalFlowTransformerParser(CalFlowParser):
             meta_data=misc["instance_meta"],
             batch_size=misc["batch_size"],
             last_decoding_step=misc["last_decoding_step"],
-            source_dynamic_vocab_size=misc["source_dynamic_vocab_size"],
-            size_multiplier=size_multiplier,
+            source_dynamic_vocab_size=misc["source_dynamic_vocab_size"]
         )
     
         # TODO: HERE we go, just concatenate "inputs" to history stored in the state 
@@ -206,18 +204,12 @@ class CalFlowTransformerParser(CalFlowParser):
         ], dim=2)
 
         # if previously decoded steps, concat them in before current input 
-        # if state['input_history'] is not None:
-            # state_history = state['input_history'].repeat((size_multiplier, 1, 1))
-            # decoder_inputs = torch.cat([state_history, decoder_inputs], dim = 1)
+        if state['input_history'] is not None:
+            decoder_inputs = torch.cat([state['input_history'], decoder_inputs], dim = 1)
 
         # set previously decoded to current step  
         state['input_history'] = decoder_inputs
 
-        # if size_multiplier > 1:
-        #     state['source_memory_bank'] = state['source_memory_bank'].repeat((size_multiplier, 1, 1))
-        #     state['source_mask'] = state['source_mask'].repeat((size_multiplier, 1))
-        #     state["source_attention_map"] = state["source_attention_map"].repeat((size_multiplier, 1, 1))
-        #     state["target_attention_map"] = state["target_attention_map"].repeat((size_multiplier, 1, 1))
 
         decoding_outputs = self._decoder.one_step_forward(
             inputs=decoder_inputs,
@@ -310,7 +302,6 @@ class CalFlowTransformerParser(CalFlowParser):
         }
         misc = {
             "batch_size": batch_size,
-            # "beam_size": start
             "last_decoding_step": -1,  # At <BOS>, we set it to -1.
             "source_dynamic_vocab_size": inputs["source_dynamic_vocab_size"],
             "instance_meta": inputs["instance_meta"]
@@ -326,8 +317,7 @@ class CalFlowTransformerParser(CalFlowParser):
                              meta_data: List[Dict],
                              batch_size: int,
                              last_decoding_step: int,
-                             source_dynamic_vocab_size: int,
-                             size_multiplier: int = 1) -> Dict:
+                             source_dynamic_vocab_size: int) -> Dict:
         """
         Read out a group of hybrid predictions. Based on different ways of node prediction,
         find the corresponding token and node index. Prepare the tensorized inputs
@@ -348,17 +338,17 @@ class CalFlowTransformerParser(CalFlowParser):
         default_node_index = last_decoding_step + 1
 
         def batch_index(instance_i: int) -> int:
-            if predictions.size(0) == batch_size * self._beam_size * size_multiplier:
-                return instance_i // (self._beam_size * size_multiplier)
+            if predictions.size(0) == batch_size * self._beam_size:
+                return instance_i // self._beam_size
             else:
                 return instance_i
-            # return instance_i // predictions.size(0)
 
         token_instances = []
 
         node_indices = torch.zeros_like(predictions)
 
         for i, index in enumerate(predictions.tolist()):
+
             instance_meta = meta_data[batch_index(i)]
             target_dynamic_vocab = target_dynamic_vocabs[i]
             # Generation.
@@ -382,7 +372,7 @@ class CalFlowTransformerParser(CalFlowParser):
             token_instances.append(Instance({"target_tokens": target_token}))
             node_indices[i] = node_index
             if last_decoding_step != -1:  # For <BOS>, we set the last decoding step to -1.
-                target_attention_map[i % size_multiplier, last_decoding_step, node_index] = 1
+                target_attention_map[i, last_decoding_step, node_index] = 1
                 target_dynamic_vocab[node_index] = token
 
         # Covert tokens to tensors.
@@ -444,6 +434,7 @@ class CalFlowTransformerParser(CalFlowParser):
         node_indices = torch.arange(0, target_length).view(1, target_length) \
             .expand(batch_size, target_length).type_as(gold_edge_heads)
 
+        pdb.set_trace() 
         gold_edge_head_ll = edge_head_ll[batch_indices, node_indices, gold_edge_heads]
         gold_edge_type_ll = edge_type_ll[batch_indices, node_indices, gold_edge_types]
         # Set the ll of invalid nodes to 0.
@@ -589,11 +580,11 @@ class CalFlowTransformerParser(CalFlowParser):
         # log_probs: [batch_size, beam_size]
 
     
-        all_predictions, beam_outputs, log_probs, target_dynamic_vocabs, size_multiplier = self._beam_search.search(
+        all_predictions, beam_outputs, log_probs, target_dynamic_vocabs = self._beam_search.search(
             start_predictions=start_predictions,
             start_state=start_state,
             auxiliaries=auxiliaries,
-            step=lambda x, y, z, s: self._take_one_step_node_prediction(x, y, z, s, misc),
+            step=lambda x, y, z: self._take_one_step_node_prediction(x, y, z, misc),
             tracked_state_name="output",
             tracked_auxiliary_name="target_dynamic_vocabs"
         )
@@ -604,7 +595,7 @@ class CalFlowTransformerParser(CalFlowParser):
                 # Remove the last one because we can't get the RNN state for the last one.
                 predictions=all_predictions[:, beam_idx, :-1],
                 meta_data=inputs["instance_meta"],
-                target_dynamic_vocabs=target_dynamic_vocabs[beam_idx % size_multiplier],
+                target_dynamic_vocabs=target_dynamic_vocabs[beam_idx],
                 source_dynamic_vocab_size=inputs["source_dynamic_vocab_size"]
             )
 
@@ -641,7 +632,6 @@ class CalFlowTransformerParser(CalFlowParser):
             all_outputs.append(outputs)
 
         flat_outputs = dict(
-                size_multiplier=size_multiplier,
                 loss=0.0,
                 src_str=[], 
                 nodes=[], 
@@ -653,6 +643,7 @@ class CalFlowTransformerParser(CalFlowParser):
         for output in all_outputs:
             for k in output.keys():
                 flat_outputs[k] += output[k]
+
         return flat_outputs
 
     @overrides
@@ -674,7 +665,7 @@ class CalFlowTransformerParser(CalFlowParser):
             start_predictions=start_predictions,
             start_state=start_state,
             auxiliaries=auxiliaries,
-            step=lambda x, y, z, s: self._take_one_step_node_prediction(x, y, z, s, misc),
+            step=lambda x, y, z: self._take_one_step_node_prediction(x, y, z, misc),
             tracked_state_name="output",
             tracked_auxiliary_name="target_dynamic_vocabs"
         )
@@ -746,32 +737,29 @@ class CalFlowTransformerParser(CalFlowParser):
         if not self.top_k_beam_search:
             return super().forward_on_instances(instances)
 
-        batch_size = len(instances) * self._beam_size
+        batch_size = len(instances) * self.top_k
         with torch.no_grad():
             cuda_device = self._get_prediction_device()
             dataset = Batch(instances)
             dataset.index_instances(self.vocab)
             model_input = util.move_to_device(dataset.as_tensor_dict(), cuda_device)
             outputs = self.decode(self(**model_input))
-            # instance_separated_output: List[Dict[str, np.ndarray]] = [{} for _ in range(len(dataset.instances) * self.top_k)]
-            instance_separated_output: List[Dict[str, np.ndarray]] = [{} for _ in range(len(outputs['src_str'] ))]
-            size_multiplier = outputs.get("size_multiplier", 1)
+
+            instance_separated_output: List[Dict[str, np.ndarray]] = [{} for _ in range(len(dataset.instances) * self.top_k)]
             for name, output in list(outputs.items()):
-                if isinstance(output, int):
-                    continue
                 if isinstance(output, torch.Tensor):
                     # NOTE(markn): This is a hack because 0-dim pytorch tensors are not iterable.
                     # This occurs with batch size 1, because we still want to include the loss in that case.
                     if output.dim() == 0:
                         output = output.unsqueeze(0)
 
-                    # if output.size(0) != batch_size * size_multiplier:
-                    #     self._maybe_warn_for_unseparable_batches(name)
-                    #     continue
+                    if output.size(0) != batch_size:
+                        self._maybe_warn_for_unseparable_batches(name)
+                        continue
                     output = output.detach().cpu().numpy()
-                # elif len(output) != batch_size * size_multiplier:
-                #     self._maybe_warn_for_unseparable_batches(name)
-                #     continue
+                elif len(output) != batch_size:
+                    self._maybe_warn_for_unseparable_batches(name)
+                    continue
                 
                 for instance_output, batch_element in zip(instance_separated_output, output):
                     instance_output[name] = batch_element

@@ -206,18 +206,14 @@ class CalFlowTransformerParser(CalFlowParser):
         ], dim=2)
 
         # if previously decoded steps, concat them in before current input 
-        # if state['input_history'] is not None:
+        if state['input_history'] is not None:
             # state_history = state['input_history'].repeat((size_multiplier, 1, 1))
-            # decoder_inputs = torch.cat([state_history, decoder_inputs], dim = 1)
+            state_history = state['input_history']
+            decoder_inputs = torch.cat([state_history, decoder_inputs], dim = 1)
 
         # set previously decoded to current step  
         state['input_history'] = decoder_inputs
 
-        # if size_multiplier > 1:
-        #     state['source_memory_bank'] = state['source_memory_bank'].repeat((size_multiplier, 1, 1))
-        #     state['source_mask'] = state['source_mask'].repeat((size_multiplier, 1))
-        #     state["source_attention_map"] = state["source_attention_map"].repeat((size_multiplier, 1, 1))
-        #     state["target_attention_map"] = state["target_attention_map"].repeat((size_multiplier, 1, 1))
 
         decoding_outputs = self._decoder.one_step_forward(
             inputs=decoder_inputs,
@@ -607,6 +603,7 @@ class CalFlowTransformerParser(CalFlowParser):
                 target_dynamic_vocabs=target_dynamic_vocabs[beam_idx % size_multiplier],
                 source_dynamic_vocab_size=inputs["source_dynamic_vocab_size"]
             )
+            
 
             edge_predictions = self._parse(
                 rnn_outputs=beam_outputs[:, beam_idx],

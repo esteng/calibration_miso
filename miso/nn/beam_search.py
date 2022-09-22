@@ -129,7 +129,7 @@ class BeamSearch:
         # beam to `beam_size`^2 candidates from which we will select the top
         # `beam_size` elements for the next iteration.
         # shape: (batch_size, num_classes)
-        start_class_log_probabilities, state, auxiliaries = step(start_predictions, start_state, auxiliaries, 1)
+        start_class_log_probabilities, state, auxiliaries = step(start_predictions, start_state, auxiliaries)
 
         num_classes = start_class_log_probabilities.size()[1]
 
@@ -205,7 +205,7 @@ class BeamSearch:
             # Take a step. This get the predicted log probs of the next classes
             # and updates the state.
             # shape: (batch_size * beam_size, num_classes)
-            class_log_probabilities, state, auxiliaries = step(last_predictions, state, auxiliaries, 1)
+            class_log_probabilities, state, auxiliaries = step(last_predictions, state, auxiliaries)
 
             # shape: (batch_size * beam_size, num_classes)
             last_predictions_expanded = last_predictions.unsqueeze(-1).expand(
@@ -227,8 +227,6 @@ class BeamSearch:
             # shape (both): (batch_size * beam_size, per_node_beam_size)
             top_log_probabilities, predicted_classes = \
                 cleaned_log_probabilities.topk(self.per_node_beam_size)
-
-            # TODO (elias): this is where to add a check for confidence scores 
 
             # Here we expand the last log probabilities to (batch_size * beam_size, per_node_beam_size)
             # so that we can add them to the current log probs for this timestep.

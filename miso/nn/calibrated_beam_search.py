@@ -204,7 +204,6 @@ class CalibratedBeamSearch(BeamSearch):
         for timestep in range(self.max_steps - 1):
             # shape: (batch_size * beam_size,)
             last_predictions = predictions[-1].reshape(batch_size * self.beam_size  * size_multiplier)
-            print(last_predictions.shape)
             # If every predicted token from the last step is `self._end_index`,
             # then we can stop early.
             if (last_predictions == self._end_index).all():
@@ -291,6 +290,8 @@ class CalibratedBeamSearch(BeamSearch):
                 restricted_beam_log_probs = restricted_beam_log_probs.repeat((1, size_multiplier))
                 restricted_beam_indices = restricted_beam_indices.repeat((1, size_multiplier))
                 restricted_predicted_classes = restricted_predicted_classes.repeat((1, size_multiplier))
+
+
                 n_nonconfident = 0
                 n_confident = self.beam_size
             # if top prediction is low confidence, we need to keep all of the possibilities for low confidence token, expand that beam 
@@ -350,6 +351,10 @@ class CalibratedBeamSearch(BeamSearch):
                         restricted_predicted_classes = torch.cat([restricted_predicted_classes, predicted_classes], dim=1)
                         restricted_beam_log_probs = torch.cat([restricted_beam_log_probs, nonconfident_beam_log_probs], dim=1)
                         restricted_beam_indices = torch.cat([restricted_beam_indices, nonconfident_beam_indices], dim=1)
+
+                    # still need to sort by likelihood, but we'll take all the examples 
+                    restricted_beam_log_probs, restricted_beam_indices = restricted_beam_log_probs.topk(restricted_beam_log_probs.shape[1])
+                    restricted_predicted_classes = restricted_predicted_classes.gather(1, restricted_beam_indices)
 
                     size_multiplier = restricted_predicted_classes.shape[1] // self.beam_size
                     copy_state = {}
