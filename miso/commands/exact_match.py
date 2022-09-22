@@ -160,7 +160,6 @@ def _construct_and_predict(args: argparse.Namespace) -> None:
         #(result, (coarse, fine)) = scorer.predict_and_compute()
     else:
         exact_match = scorer.predict_and_compute()
-
     print(f"Exact Match: {exact_match*100:.2f}") 
 
     if args.fxn_of_interest is not None:
@@ -260,9 +259,15 @@ class Scorer:
         if self.top_k_beam_search:
             with open(self.output_file, "w") as f1:
                 for line in output_graphs:
-                    lispress = parse_lispress(line)
-                    string = render_compact(lispress)
-                    f1.write(string.strip() + "\n")
+                    if "<SEP>" in line:
+                        inp, out = line.split("<SEP>")
+                        lispress = parse_lispress(out)
+                        string = render_compact(lispress)
+                        f1.write(f"{inp}<SEP>{string.strip()}\n")
+                    else:
+                        lispress = parse_lispress(line)
+                        string = render_compact(lispress)
+                        f1.write(string.strip() + "\n")
             logger.info(f"Wrote {len(output_graphs)} hypotheses ({self.top_k} per input) to {self.output_file}")
             return None, None
 

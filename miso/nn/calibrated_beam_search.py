@@ -199,6 +199,7 @@ class CalibratedBeamSearch(BeamSearch):
         copy_state = state.copy() 
 
         # TODO (elias): need to trigger a resorting and pruning when the size gets too large, running into OOM errors right now  
+        max_size = self.per_node_beam_size * 20
 
         for timestep in range(self.max_steps - 1):
             # shape: (batch_size * beam_size,)
@@ -239,35 +240,42 @@ class CalibratedBeamSearch(BeamSearch):
             top_log_probabilities, predicted_classes = \
                 cleaned_log_probabilities.topk(self.per_node_beam_size)
 
-            # NOTE (elias): add a check for the confidence scores 
-            # shape: (batch_size * beam_size)
-            is_low_confidence = torch.exp(top_log_probabilities.max(dim=-1)[0]) < self.confidence_threshold
 
             # Here we expand the last log probabilities to (batch_size * beam_size, per_node_beam_size)
             # so that we can add them to the current log probs for this timestep.
             # This lets us maintain the log probability of each element on the beam.
             # shape: (batch_size * beam_size, per_node_beam_size)
-            try:
-                expanded_last_log_probabilities = last_log_probabilities.\
-                        unsqueeze(2).\
-                        expand(batch_size, self.beam_size * size_multiplier, self.per_node_beam_size).\
-                        reshape(batch_size * self.beam_size * size_multiplier, self.per_node_beam_size)
-            except RuntimeError:
-                pdb.set_trace()
+            expanded_last_log_probabilities = last_log_probabilities.\
+                    unsqueeze(2).\
+                    expand(batch_size, self.beam_size * size_multiplier, self.per_node_beam_size).\
+                    reshape(batch_size * self.beam_size * size_multiplier, self.per_node_beam_size)
             # Switch beam around so that the top hypothesis from each low confidence option is kept 
             # shape: (batch_size * beam_size, per_node_beam_size)
             summed_top_log_probabilities = top_log_probabilities + expanded_last_log_probabilities
+
+            if summed_top_log_probabilities.shape[0] > max_size:
+                # need to prune. Only keep the top logprobs, pruning super low hypotheses 
+                summed_top_log_probabilities, pruned_indices = summed_top_log_probabilities.topk(max_size, dim=0)
+                top_log_probabilities = top_log_probabilities.gather(0, pruned_indices)
+                predicted_classes = predicted_classes.gather(0, pruned_indices)
+                size_product = max_size * self.per_node_beam_size
+            else:
+                size_product = self.beam_size * self.per_node_beam_size * size_multiplier
+
+            # NOTE (elias): add a check for the confidence scores 
+            # shape: (batch_size * beam_size)
+            is_low_confidence = torch.exp(top_log_probabilities.max(dim=-1)[0]) < self.confidence_threshold
 
             # NOTE (elias): once everything is tested we can get rid of this first check 
             # if all predictions are high confidence, do nothing different 
             if not torch.any(is_low_confidence):
                 # shape: (batch_size, beam_size * per_node_beam_size)
                 reshaped_summed = summed_top_log_probabilities.\
-                        reshape(batch_size, self.beam_size * size_multiplier * self.per_node_beam_size)
+                        reshape(batch_size, size_product)
 
                 # shape: (batch_size, beam_size * per_node_beam_size)
                 reshaped_predicted_classes = predicted_classes.\
-                        reshape(batch_size, self.beam_size * size_multiplier * self.per_node_beam_size)
+                        reshape(batch_size, size_product) 
 
                 # Keep only the top `beam_size` beam indices.
                 # shape: (batch_size, beam_size), (batch_size, beam_size)
@@ -319,7 +327,6 @@ class CalibratedBeamSearch(BeamSearch):
                     # shape: (batch_size, n_nonconfident * per_node_beam_size)
                     reshaped_nonconfident_summed = nonconfident_summed_top_log_probs.\
                             reshape(batch_size, n_nonconfident * self.per_node_beam_size)
-
                     # shape: (batch_size, n_nonconfident * per_node_beam_size)
                     reshaped_nonconfident_predicted_classes = nonconfident_predicted_classes.\
                             reshape(batch_size, n_nonconfident * self.per_node_beam_size)
@@ -369,7 +376,6 @@ class CalibratedBeamSearch(BeamSearch):
             # division as the tensor is a LongTensor.)
             # shape: (batch_size, beam_size)
             backpointer = restricted_beam_indices // (self.per_node_beam_size * size_multiplier)
-            # print(f"backpointer: {backpointer.shape}")
             backpointer = backpointer.long() 
             backpointers.append(backpointer)
 
@@ -378,21 +384,15 @@ class CalibratedBeamSearch(BeamSearch):
             for key, state_tensor in copy_state.items():
                 _, *last_dims = state_tensor.size()
                 # shape: (batch_size, beam_size, *)
-                try:
-                    expanded_backpointer = backpointer.\
-                            view(batch_size, self.beam_size * size_multiplier, *([1] * len(last_dims))).\
-                            expand(batch_size, self.beam_size * size_multiplier, *last_dims)
-                except RuntimeError:
-                    pdb.set_trace()
+                expanded_backpointer = backpointer.\
+                        view(batch_size, self.beam_size * size_multiplier, *([1] * len(last_dims))).\
+                        expand(batch_size, self.beam_size * size_multiplier, *last_dims)
 
                 # shape: (batch_size * beam_size, *)
-                try:
-                    copy_state[key] = state_tensor.\
-                        reshape(batch_size, self.beam_size * size_multiplier, *last_dims).\
-                        gather(1, expanded_backpointer).\
-                        reshape(batch_size * self.beam_size * size_multiplier, *last_dims)
-                except RuntimeError:
-                    pdb.set_trace()
+                copy_state[key] = state_tensor.\
+                    reshape(batch_size, self.beam_size * size_multiplier, *last_dims).\
+                    gather(1, expanded_backpointer).\
+                    reshape(batch_size * self.beam_size * size_multiplier, *last_dims)
             # Keep only the pieces of the auxiliaries corresponding to the
             # ancestors created this iteration.
             for key, aux in auxiliaries.items():
@@ -463,6 +463,9 @@ class CalibratedBeamSearch(BeamSearch):
         # shape: (batch_size * beam_size)
         tracked_auxiliary = auxiliaries[tracked_auxiliary_name]
         # shape: (batch_size, beam_size)
+
+        # need to create more of these 
+        tracked_auxiliaries: List[List[Any]] = [[None for _ in range(batch_size)] for _ in range(self.beam_size * size_multiplier)]
         for beam_index in range(self.beam_size * size_multiplier):
             for i in range(beam_index, len(tracked_auxiliary), self.beam_size):
                 tracked_auxiliaries[beam_index % size_multiplier][i // (self.beam_size * size_multiplier)] = tracked_auxiliary[i % size_multiplier]

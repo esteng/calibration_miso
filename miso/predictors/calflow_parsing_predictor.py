@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 class CalflowParsingPredictor(Predictor):
 
     @overrides
-    def dump_line(self, outputs: JsonDict) -> str:
+    def dump_line(self, outputs: JsonDict, top_k: bool = False) -> str:
         # function hijacked from parent class to return a decomp arborescence instead of printing a line 
         src_str = " ".join(outputs['src_str'])
 
@@ -39,17 +39,20 @@ class CalflowParsingPredictor(Predictor):
                                                     outputs['node_indices'], 
                                                     outputs['edge_heads'], 
                                                     outputs['edge_types']) 
-            return pred_graph.tgt_str
+            to_ret = pred_graph.tgt_str
 
         elif len(outputs.keys()) == 2 and sorted(list(outputs.keys()))[0] == "output": 
             # basic classification 
             pred_idx = np.argmax(outputs['output'], axis=0)
             pred_str = f"Func{pred_idx+1}"
-            return pred_str 
+            to_ret = pred_str 
         else:
 
             pred_str = CalFlowSequence.from_prediction(outputs['nodes'])
-            return pred_str
+            to_ret = pred_str
+        if top_k:
+            return "<SEP>".join([src_str, to_ret])
+        return to_ret
 
 
     def predict_instance(self, instance: Instance) -> JsonDict:
@@ -93,12 +96,7 @@ class CalibratedCalflowParsingPredictor(CalflowParsingPredictor):
         self._model.oracle = oracle
         self._model.top_k_beam_search = top_k_beam_search
         self._model.top_k = top_k
-        if top_k > 1:
-            self._model._beam_search = CalibratedBeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
-            self._model._beam_size = top_k
+        self._model._beam_search = CalibratedBeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
+        self._model._beam_size = top_k
         outputs = self._model.forward_on_instances(instances)
-        if oracle: 
-            return self.organize_forced_decode(instances, outputs) 
-        if top_k_beam_search:
-            return [self.dump_line(line) for line in outputs]
-        return sanitize(outputs)
+        return [self.dump_line(line, top_k=True) for line in outputs]
