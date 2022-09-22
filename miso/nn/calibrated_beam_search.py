@@ -198,10 +198,12 @@ class CalibratedBeamSearch(BeamSearch):
         size_multiplier = 1
         copy_state = state.copy() 
 
+        # TODO (elias): need to trigger a resorting and pruning when the size gets too large, running into OOM errors right now  
+
         for timestep in range(self.max_steps - 1):
             # shape: (batch_size * beam_size,)
             last_predictions = predictions[-1].reshape(batch_size * self.beam_size  * size_multiplier)
-
+            print(last_predictions.shape)
             # If every predicted token from the last step is `self._end_index`,
             # then we can stop early.
             if (last_predictions == self._end_index).all():
