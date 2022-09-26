@@ -181,7 +181,7 @@ class CalFlowTransformerParser(CalFlowParser):
                                        last_predictions: torch.Tensor,
                                        state: Dict[str, torch.Tensor],
                                        auxiliaries: Dict[str, List[Any]],
-                                       size_multiplier: int, 
+                                       timestep: int, 
                                        misc: Dict,
                                        ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, List[Any]]]:
 
@@ -193,7 +193,6 @@ class CalFlowTransformerParser(CalFlowParser):
             batch_size=misc["batch_size"],
             last_decoding_step=misc["last_decoding_step"],
             source_dynamic_vocab_size=misc["source_dynamic_vocab_size"],
-            size_multiplier=size_multiplier,
         )
     
         # TODO: HERE we go, just concatenate "inputs" to history stored in the state 
@@ -585,7 +584,7 @@ class CalFlowTransformerParser(CalFlowParser):
         # log_probs: [batch_size, beam_size]
 
     
-        all_predictions, beam_outputs, log_probs, target_dynamic_vocabs, size_multiplier = self._beam_search.search(
+        all_predictions, all_log_probs, beam_outputs, log_probs, target_dynamic_vocabs = self._beam_search.search(
             start_predictions=start_predictions,
             start_state=start_state,
             auxiliaries=auxiliaries,
@@ -600,10 +599,11 @@ class CalFlowTransformerParser(CalFlowParser):
                 # Remove the last one because we can't get the RNN state for the last one.
                 predictions=all_predictions[:, beam_idx, :-1],
                 meta_data=inputs["instance_meta"],
-                target_dynamic_vocabs=target_dynamic_vocabs[beam_idx % size_multiplier],
+                target_dynamic_vocabs=target_dynamic_vocabs[beam_idx],
                 source_dynamic_vocab_size=inputs["source_dynamic_vocab_size"]
             )
-            
+            node_probs = all_log_probs[:, beam_idx, :]
+            node_probs = node_probs.detach().cpu().numpy().tolist()
 
             edge_predictions = self._parse(
                 rnn_outputs=beam_outputs[:, beam_idx],
@@ -628,6 +628,7 @@ class CalFlowTransformerParser(CalFlowParser):
 
             outputs = dict(
                 loss=loss,
+                node_probs = node_probs,
                 src_str=inputs['src_tokens_str'],
                 nodes=node_predictions,
                 node_indices=node_index_predictions,
@@ -638,8 +639,8 @@ class CalFlowTransformerParser(CalFlowParser):
             all_outputs.append(outputs)
 
         flat_outputs = dict(
-                size_multiplier=size_multiplier,
                 loss=0.0,
+                node_probs = [],
                 src_str=[], 
                 nodes=[], 
                 node_indices=[], 

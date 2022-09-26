@@ -366,8 +366,6 @@ class CalibratedBeamSearch(BeamSearch):
                             new_state_tensor = state_tensor.repeat((size_multiplier, 1, 1))
                         elif len(state_tensor.shape) == 2:
                             new_state_tensor = state_tensor.repeat((size_multiplier, 1)) 
-                        # need to double because we're expanding the beam
-                        # TODO (elias): do we need to clone? 
                         copy_state[key] = new_state_tensor.clone()
 
             predictions.append(restricted_predicted_classes)
@@ -380,6 +378,9 @@ class CalibratedBeamSearch(BeamSearch):
             # dividing by per_node_beam_size gives the ancestor. (Note that this is integer
             # division as the tensor is a LongTensor.)
             # shape: (batch_size, beam_size)
+            # TODO (elias): this is no longer true of the low confidence backpointers, I think 
+            if timestep == 2:
+                pdb.set_trace()
             backpointer = restricted_beam_indices // (self.per_node_beam_size * size_multiplier)
             backpointer = backpointer.long() 
             backpointers.append(backpointer)
@@ -427,6 +428,7 @@ class CalibratedBeamSearch(BeamSearch):
         # shape: (batch_size, beam_size)
         cur_backpointers = backpointers[-1]
 
+        pdb.set_trace()
         for timestep in range(len(predictions) - 2, 0, -1):
             # shape: (batch_size, beam_size, 1)
             cur_preds = predictions[timestep].gather(1, cur_backpointers).unsqueeze(2)
@@ -443,6 +445,8 @@ class CalibratedBeamSearch(BeamSearch):
             reconstructed_tracked_states.append(cur_tracked_state)
 
             # shape: (batch_size, beam_size)
+            if timestep == 1:
+                pdb.set_trace()
             cur_backpointers = backpointers[timestep - 1].gather(1, cur_backpointers)
 
         # shape: (batch_size, beam_size, 1)
@@ -452,7 +456,7 @@ class CalibratedBeamSearch(BeamSearch):
 
         # shape: (batch_size, beam_size, max_steps)
         all_predictions = torch.cat(list(reversed(reconstructed_predictions)), 2)
-
+        pdb.set_trace()
         # shape: [(batch_size, beam_size, 1, *)]
         _, _, *last_dims = tracked_states[0].size()
         expanded_cur_backpointers = cur_backpointers.\

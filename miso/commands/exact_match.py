@@ -259,12 +259,10 @@ class Scorer:
         if self.top_k_beam_search:
             with open(self.output_file, "w") as f1:
                 for line in output_graphs:
-                    if "<SEP>" in line:
-                        inp, out = line.split("<SEP>")
-                        lispress = parse_lispress(out)
-                        string = render_compact(lispress)
-                        f1.write(f"{inp}<SEP>{string.strip()}\n")
-                    else:
+                    try:
+                        __ = json.loads(line)
+                        f1.write(line + "\n") 
+                    except json.JSONDecodeError:
                         lispress = parse_lispress(line)
                         string = render_compact(lispress)
                         f1.write(string.strip() + "\n")

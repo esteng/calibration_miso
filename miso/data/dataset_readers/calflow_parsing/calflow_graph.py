@@ -43,7 +43,10 @@ class CalFlowGraph:
                 use_agent_utterance: bool = False, 
                 use_context: bool = False,
                 fxn_of_interest: str = None,
-                line_idx: int = None):
+                line_idx: int = None,
+                expressions: List[Expression] = None,
+                expression_probs: List[float] = None,
+            ):
         #self.program = self.tgt_str_to_program(tgt_str)
         self.src_str = src_str.strip() 
         self.tgt_str = tgt_str
@@ -52,6 +55,8 @@ class CalFlowGraph:
         self.use_agent_utterance = use_agent_utterance
         self.use_context = use_context
         self.fxn_of_interest = fxn_of_interest
+        self.expressions = expressions
+        self.expression_probs = expression_probs
 
         self.node_name_list = []
         self.node_idx_list  = []
@@ -364,9 +369,10 @@ class CalFlowGraph:
     def prediction_to_program(node_name_list: List[str],
                               node_idx_list: List[int], 
                               edge_head_list: List[int], 
-                              edge_type_list: List[str]): 
+                              edge_type_list: List[str],
+                              node_probs_list: List[float],): 
 
-        graph = CalFlowGraph.lists_to_ast(node_name_list, node_idx_list, edge_head_list, edge_type_list)
+        graph = CalFlowGraph.lists_to_ast(node_name_list, node_idx_list, edge_head_list, edge_type_list, node_probs_list=node_probs_list)
 
         def get_arg_children(op_node):
             outgoing_edges = [e for e in graph.edges if e[0] == op_node and graph.edges[e]['type'].startswith("arg")]
@@ -456,8 +462,10 @@ class CalFlowGraph:
             return detokenized
 
         expressions = []
+        expression_probs = []
         for node in sorted(graph.nodes):
             op = None
+            op_prob = 1.0
             if graph.nodes[node]['function_type'] is not None: 
                 if graph.nodes[node]['function_type'] == "build":
                     empty_base = True
@@ -479,6 +487,11 @@ class CalFlowGraph:
                                        op_fields = field_names,
                                        empty_base = empty_base, 
                                        push_go = True)
+                    if graph.nodes[node]['node_prob'] is not None:
+                        # construct prob taking into account all children 
+                        op_prob = graph.nodes[node]['node_prob']
+                        for child in children + field_children:
+                            op_prob *= graph.nodes[child]['node_prob']
 
                 elif graph.nodes[node]['function_type'] == "value": 
                     children = get_arg_children(node)
@@ -517,9 +530,18 @@ class CalFlowGraph:
                     inner_dict = {"schema": name, "underlying": underlying}
                     op = ValueOp(value=json.dumps(inner_dict))
 
+                    if graph.nodes[node]['node_prob'] is not None:
+                        # construct prob taking into account all children
+                        op_prob = graph.nodes[node]['node_prob']
+                        for child in children: 
+                            op_prob *= graph.nodes[child]['node_prob']
+
                 elif graph.nodes[node]['function_type'] == "call": 
                     name = graph.nodes[node]['node_name']
                     op = CallLikeOp(name=name)
+
+                    if graph.nodes[node]['node_prob'] is not None:
+                        op_prob = graph.nodes[node]['node_prob']
             else:
                 continue
 
@@ -532,15 +554,19 @@ class CalFlowGraph:
 
                 curr_expr = Expression(id=f"[{eid}]", op = op, arg_ids = children_ids, type_args = type_args)
                 expressions.append(curr_expr)
+                expression_probs.append(op_prob)
 
         expressions.reverse()
-        return Program(expressions)
+        expression_probs.reverse()
+        return Program(expressions), expressions, expression_probs
 
     @staticmethod
     def lists_to_ast(node_name_list: List[str], 
                      node_idx_list: List[str],
                      edge_head_list: List[int], 
-                     edge_type_list: List[int]) -> List[Any]:
+                     edge_type_list: List[int],
+                     node_probs_list: List[float]=None,
+            ) -> List[Any]:
         """
         convert predicted lists back to an AST 
         """
@@ -556,7 +582,11 @@ class CalFlowGraph:
                     node_idx_to_list_idx_mapping[k] -= 1
 
         offset = 0
-        for i, (node_name, node_idx, edge_head, edge_type) in enumerate(zip(node_name_list, node_idx_list, edge_head_list, edge_type_list)):
+        if node_probs_list is None:
+            node_probs_list = [None for i in range(len(node_name_list))]
+
+        zipped_iterator = zip(node_name_list, node_idx_list, edge_head_list, edge_type_list, node_probs_list)
+        for i, (node_name, node_idx, edge_head, edge_type, node_prob) in enumerate(zipped_iterator):
             if edge_type.startswith("fxn_arg"):
                 function_type = "build"
             elif edge_type.startswith("val_arg"):
@@ -579,7 +609,7 @@ class CalFlowGraph:
                 offset += 1
                 update_mapping_after_n(node_idx) 
 
-            graph.add_node(node_idx, node_name = node_name, function_type= function_type)
+            graph.add_node(node_idx, node_name = node_name, function_type= function_type, node_prob = node_prob)
 
             # root self-edges
             if edge_head < 0:
@@ -845,7 +875,7 @@ class CalFlowGraph:
                              node_idx_list: List[int], 
                              edge_head_list: List[int], 
                              edge_type_list: List[int]) -> str:
-        program = CalFlowGraph.prediction_to_program(node_name_list, node_idx_list, edge_head_list, edge_type_list) 
+        program, __, __ = CalFlowGraph.prediction_to_program(node_name_list, node_idx_list, edge_head_list, edge_type_list) 
         pred_lispress = program_to_lispress(program)
         pred_lispress_str = render_pretty(pred_lispress)
         return pred_lispress_str
@@ -856,7 +886,8 @@ class CalFlowGraph:
                         node_name_list: List[str], 
                         node_idx_list: List[int], 
                         edge_head_list: List[int], 
-                        edge_type_list: List[int]):
+                        edge_type_list: List[int],
+                        node_probs: List[float] = None):
 
         # trim 
         N = len(node_name_list)
@@ -864,7 +895,7 @@ class CalFlowGraph:
         edge_type_list = edge_type_list[0:N]
 
         edge_head_list = [x-1 for x in edge_head_list]
-
+        
         try: 
             edge_head_list[0] = 0
         except IndexError:
@@ -886,7 +917,14 @@ class CalFlowGraph:
                 copy_offset += 1
 
         try:
-            program = CalFlowGraph.prediction_to_program(node_name_list, node_idx_list, edge_head_list, edge_type_list) 
+            (program, 
+            expressions, 
+            expression_probs) = CalFlowGraph.prediction_to_program(
+                node_name_list, 
+                node_idx_list, 
+                edge_head_list, 
+                edge_type_list,
+                node_probs_list=node_probs) 
         except:
             return CalFlowGraph(src_str=src_str,
                                 tgt_str="( Error )")
@@ -900,7 +938,9 @@ class CalFlowGraph:
 
         try:
             pred_graph = CalFlowGraph(src_str = src_str,
-                                    tgt_str = pred_lispress_str)
+                                    tgt_str = pred_lispress_str,
+                                    expressions = expressions,
+                                    expression_probs=expression_probs)
         except:
             return CalFlowGraph(src_str=src_str,
                                 tgt_str="( Error )")

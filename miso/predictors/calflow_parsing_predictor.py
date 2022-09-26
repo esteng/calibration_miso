@@ -2,7 +2,8 @@
 # Licensed under the MIT license.
 
 from miso.nn.beam_search import BeamSearch
-from miso.nn.calibrated_beam_search import CalibratedBeamSearch
+# from miso.nn.calibrated_beam_search import CalibratedBeamSearch
+from miso.nn.nucleus_beam_search import CalibratedBeamSearch
 from dataflow.core.lispress import render_compact
 from overrides import overrides
 from typing import List, Iterator, Any
@@ -12,6 +13,7 @@ import json
 import logging 
 import sys
 import pdb 
+from networkx.readwrite import json_graph
 
 import numpy as np 
 from allennlp.predictors.predictor import Predictor
@@ -90,6 +92,27 @@ class CalflowParsingPredictor(Predictor):
 
 @Predictor.register("calflow_parsing_calibrated")
 class CalibratedCalflowParsingPredictor(CalflowParsingPredictor):
+
+    @overrides
+    def dump_line(self, outputs: JsonDict, top_k: bool = False) -> str:
+        # function hijacked from parent class to return a decomp arborescence instead of printing a line 
+        src_str = " ".join(outputs['src_str'])
+
+        # add node probabilities to the nodes in the graph so we can recover them later 
+        pred_graph = CalFlowGraph.from_prediction(src_str,
+                                                outputs['nodes'], 
+                                                outputs['node_indices'], 
+                                                outputs['edge_heads'], 
+                                                outputs['edge_types'],
+                                                node_probs=outputs['node_probs']) 
+        to_ret = {"tgt_str": pred_graph.tgt_str,
+                    "expression_probs": pred_graph.expression_probs, 
+                    "src_str": src_str}
+        to_ret = json.dumps(to_ret)
+
+
+        return to_ret
+
     @overrides 
     def predict_batch_instance(self, instances: List[Instance], oracle: bool = False, top_k_beam_search: bool = False, top_k: int = 1) -> List[JsonDict]:
         # set oracle flag for vanilla parsing analysis 
