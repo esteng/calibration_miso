@@ -8,7 +8,11 @@ from dataflow.core.dialogue import TurnId, ProgramExecutionOracle
 import pdb 
 
 def single_exact_match(pred_lispress, gold_lispress):
-    pred_lispress = render_compact(parse_lispress(pred_lispress))
+    try:
+        pred_lispress = render_compact(parse_lispress(pred_lispress))
+    except:
+        # pdb.set_trace()
+        pred_lispress = "(Error)"
     gold_lispress = render_compact(parse_lispress(gold_lispress))
     pred = TurnPrediction(TurnId("test", 0), "", pred_lispress)
     true = TurnAnswer(TurnId("test", 0), "", gold_lispress, ProgramExecutionOracle(False, True))

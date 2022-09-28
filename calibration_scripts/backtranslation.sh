@@ -69,7 +69,7 @@ pred_miso_out_file="calibration_logs/miso_roundtrip_predicted_from_${model_paren
 echo "running miso on predicted"
 ./experiments/calflow.sh -a eval_fxn > ${pred_miso_out_file}
 filename=$(basename ${pred_out_file})
-mv $CHECKPOINT_DIR/translated_outputs/${filename} ${calflow_to_text_model}/for_roundtrip/predicted_${filename}
+mv ${CHECKPOINT_DIR}/translated_outputs/${filename} ${calflow_to_text_model}/for_roundtrip/predicted_${filename}
 
 # run MISO on predicted 
 export TEST_DATA=${gold_out_file}
@@ -77,4 +77,5 @@ export FXN="None"
 gold_miso_out_file="calibration_logs/miso_roundtrip_gold.txt" 
 echo "Running miso on gold"
 ./experiments/calflow.sh -a eval_fxn > ${gold_miso_out_file}
+mv ${CHECKPOINT_DIR}/translated_outputs/${filename} ${calflow_to_text_model}/for_roundtrip/gold_${filename}
 

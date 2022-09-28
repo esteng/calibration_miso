@@ -4,8 +4,8 @@
 #!/bin/bash
 
 SPLIT=$1
-#onmt_text_data_dir="/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data" 
-onmt_text_data_dir="/brtx/601-nvme1/estengel/resources/data/tree_dst.agent.data" 
+onmt_text_data_dir="/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data" 
+#onmt_text_data_dir="/brtx/601-nvme1/estengel/resources/data/tree_dst.agent.data" 
 python -m dataflow.leaderboard.predict \
     --datum_id_jsonl ${onmt_text_data_dir}/${SPLIT}.datum_id \
     --src_txt ${onmt_text_data_dir}/${SPLIT}.src_tok \
