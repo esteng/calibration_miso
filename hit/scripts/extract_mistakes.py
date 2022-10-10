@@ -96,10 +96,10 @@ def get_probs(data):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--logit_file", type=str, default = "/brtx/604-nvme1/estengel/calflow_calibration/miso/tune_roberta_tok_fix_benchclamp_data//translate_output/test_all_losses.json")
-    parser.add_argument("--source_file", type=str, default="/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data.from_benchclamp/test_all.src_tok")
-    parser.add_argument("--target_file", type=str, default="/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data.from_benchclamp/test_all.tgt")
-    parser.add_argument("--output_file", type=str, default="hit/data/data_by_bin.json")
+    parser.add_argument("--logit_file", type=str, default = "/brtx/604-nvme1/estengel/calflow_calibration/miso/tune_roberta_tok_fix_benchclamp_data//translate_output/dev_all_losses.json")
+    parser.add_argument("--source_file", type=str, default="/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data.from_benchclamp/dev_all.src_tok")
+    parser.add_argument("--target_file", type=str, default="/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data.from_benchclamp/dev_all.tgt")
+    parser.add_argument("--output_file", type=str, default="hit/data/dev_data_by_bin.json")
     parser.add_argument("--threshold", type=float, default=0.6)
     parser.add_argument("--max_per_bin", type=int, default=100) 
     parser.add_argument("--n_bins", type=int, default=20)

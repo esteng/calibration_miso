@@ -33,14 +33,15 @@ if __name__ == "__main__":
     parser.add_argument("--miso_pred_file", type=str, required=True)
     parser.add_argument("--data_dir", type=str, default="hit/data/for_miso")
     parser.add_argument("--n_pred", type=int, default=10)
-    parser.add_argument("--out_file", type=str, default="hit/data/for_translate/data_by_bin.jsonl")
+    parser.add_argument("--out_file", type=str, default="hit/data/for_translate/dev_data_by_bin.jsonl")
     args = parser.parse_args()
 
+    split = "dev" if "dev" in args.miso_pred_file else "test"
     # read gold source and target data 
     data_dir = Path(args.data_dir)
-    with open(data_dir / "data_by_bin.src_tok", "r") as src_f: 
+    with open(data_dir / f"{split}/{split}_data_by_bin.src_tok", "r") as src_f: 
         gold_src_data = src_f.readlines()
-    with open(data_dir / "data_by_bin.tgt", "r") as f:
+    with open(data_dir / f"{split}/{split}_data_by_bin.tgt", "r") as f:
         gold_tgt_data = [x.strip() for x in f.readlines()]
 
     # match with gold source 
