@@ -1,6 +1,7 @@
 import argparse
 import csv 
 import json 
+import pdb 
 import pathlib 
 import numpy as np 
 
@@ -28,6 +29,8 @@ def convert_data_to_csv(all_data, out_dir):
         options_and_idxs = [(x, i) for i, x in enumerate(options)]
         np.random.shuffle(options_and_idxs)
         options, idxs = zip(*options_and_idxs)
+        if len(options) != 4:
+            pdb.set_trace()
         for i in range(len(options)): 
             line_data[f"option_{i}"] = options[i]
             line_data[f"option_{i}_idx"] = idxs[i]

@@ -35,13 +35,18 @@ def group_by_source(outputs: List,
             # causes UNKs for ~2 examples out of ~7000 
             if "UNK" in line['tgt_str']:
                 continue
+            skip = False
             if filter_fences:
                 if "Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str']:
                     # skip fence examples 
-                    continue 
+                    # continue 
+                    grouped[i].append(None)
+                    skip = True
+                    # continue
 
-            line['translated'] = tgt
-            grouped[i].append(line)
+            if not skip:
+                line['translated'] = tgt
+                grouped[i].append(line)
             # add up to n_per_ex examples 
             if len(grouped[i]) == n_per_ex:
                 break
@@ -54,8 +59,14 @@ def get_distractors(grouped_lines):
     distractors = []
     for group in grouped_lines.keys():
         example = grouped_lines[group][0]
-        possible_distractors = [x for x in grouped_lines.values() if x[0]['src_str'] != example['src_str']
-                                and x[0]['tgt_str'] != example['tgt_str']]
+        if example is None:
+            distractors.append(None)
+            continue
+        possible_distractors = [x for x in grouped_lines.values() 
+                                if x is not None and x[0] is not None]
+        possible_distractors = [x for x in possible_distractors
+                                if (x[0]['src_str'] != example['src_str']
+                                and x[0]['tgt_str'] != example['tgt_str'])]
         # flatten
         possible_distractors = [x for y in possible_distractors for x in y]
         distractor = np.random.choice(possible_distractors)
@@ -69,6 +80,13 @@ def clean_generations(outputs):
         outputs[i] = re.sub("</?s>", "", outputs[i])
         outputs[i] = re.split("\|", outputs[i])[1].strip()
     return outputs
+
+def get_lispress(entry):
+    if entry is None:
+        return None
+    lispress = parse_lispress(entry['tgt_str'])
+    lispress_str = render_compact(lispress)
+    return lispress_str
 
 
 if __name__ == "__main__":
@@ -121,9 +139,20 @@ if __name__ == "__main__":
         if args.filter_fences and ("Fence" in gold_tgt or "Pleasantry" in gold_tgt):
             # skip fence examples 
             continue
-        pred_tgts = [render_compact(parse_lispress(x['tgt_str'])) for x in output_list]
-        pred_translated = [x['translated'] for x in output_list]
-        distractor_tgt = distractors[group_idx // args.n_preds]['translated']
+        if len(output_list) == 1 and output_list[0] is None:
+            # skip fence examples 
+            continue 
+
+        pred_tgts = [get_lispress(x) for x in output_list]
+        pred_translated = [x['translated'] if x is not None else None for x in output_list]
+        try:
+            distractor = distractors[group_idx // args.n_preds]
+            if distractor is None:
+                continue
+            distractor_tgt = distractor['translated']
+
+        except IndexError:
+            pdb.set_trace()
         assert(distractor_tgt not in pred_tgts)
         output_dict = {"gold_tgt": gold_tgt,
                        "gold_src": gold_src,
