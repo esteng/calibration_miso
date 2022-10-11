@@ -30,34 +30,43 @@ def group_by_source(outputs: List,
         sorted_combo_lines = sorted(combo_lines, key=lambda x: x[2], reverse=True)
         lines, translated_lines, total_probs = zip(*sorted_combo_lines)
         assert(np.argmax(total_probs) == 0)
+        skip = False
         for line, tgt in zip(lines, translated_lines):
             # skip these, some small issue with nucleus sampling and target copies
             # causes UNKs for ~2 examples out of ~7000 
             if "UNK" in line['tgt_str']:
                 continue
-            skip = False
-            if filter_fences:
-                if "Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str']:
+
+            # only skip example if all outputs are fences 
+            # since gold fence examples are already skipped 
+            # if filter_fences:
+                # if "Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str']:
                     # skip fence examples 
                     # continue 
-                    grouped[i].append(None)
-                    skip = True
+                    # grouped[i].append(None)
+                    # skip = True
                     # continue
 
-            if not skip:
-                line['translated'] = tgt
-                grouped[i].append(line)
+            # if not skip:
+            line['translated'] = tgt
+            grouped[i].append(line)
             # add up to n_per_ex examples 
             if len(grouped[i]) == n_per_ex:
                 break
+        is_fence = ["Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str'] for line in grouped[i]]
+        if filter_fences and all(is_fence):
+            grouped[i] = None
 
-            
     return grouped
 
 def get_distractors(grouped_lines):
     # for each group, choose a random distractor
     distractors = []
     for group in grouped_lines.keys():
+        if grouped_lines[group] is None:
+            distractors.append(None)
+            continue 
+
         example = grouped_lines[group][0]
         if example is None:
             distractors.append(None)
@@ -96,6 +105,8 @@ if __name__ == "__main__":
     parser.add_argument("--translated_tgt_file", type=str, default = "hit/data/translated_by_bart_large/generated_predictions.txt")
     parser.add_argument("--n_preds", type=int, default=10)
     parser.add_argument("--n_per_ex", type=int, default=3)
+    parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--ignore_idx_file", type=str, default=None)
     parser.add_argument("--out_dir", type=str, required=True)
     parser.add_argument("--filter_fences", action="store_true")
     args = parser.parse_args()
@@ -139,6 +150,10 @@ if __name__ == "__main__":
         if args.filter_fences and ("Fence" in gold_tgt or "Pleasantry" in gold_tgt):
             # skip fence examples 
             continue
+        if args.filter_fences and output_list is None:
+            # skip examples where all outputs are fences
+            continue 
+
         if len(output_list) == 1 and output_list[0] is None:
             # skip fence examples 
             continue 
@@ -163,9 +178,18 @@ if __name__ == "__main__":
                         "distractor": distractor_tgt}
         output_data.append(output_dict)
 
+    # adding ability to write only a subset of data 
+    if args.limit is not None:
+        output_data = output_data[:args.limit]
+
+    # add ability to ignore indices if they've already been included in previous hits 
+    if args.ignore_idx_file is not None:
+        with open(args.ignore_idx_file) as f1:
+            ignore_idxs = [json.loads(x)['data_idx'] for x in f1.readlines()]
+        output_data = [x for x in output_data if x['data_idx'] not in ignore_idxs]
+
     out_dir = Path(args.out_dir)
     with open(out_dir / "data_for_hit.jsonl", "w") as f1:
         for line in output_data:
             f1.write(json.dumps(line) + "\n")
-    # print(len(grouped_data))
     

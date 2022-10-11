@@ -7,11 +7,12 @@ import numpy as np
 
 from prep_for_translate import split_source
 
-def read_json(input_file):
+def read_json(input_file, ignore_idxs=[]):
     with open(input_file) as f1:
         data = [json.loads(x) for x in f1.readlines()]
     # remove duplicates (when there are multiple low-confidence decisions)
-    data_by_unique_id = {x['data_idx']: x for x in data}
+    
+    data_by_unique_id = {x['data_idx']: x for x in data if x['data_idx'] not in ignore_idxs}
     return list(data_by_unique_id.values())
 
 def convert_data_to_csv(all_data, out_dir): 
@@ -32,6 +33,9 @@ def convert_data_to_csv(all_data, out_dir):
         if len(options) != 4:
             pdb.set_trace()
         for i in range(len(options)): 
+            if options[i] is None:
+                # output was a fence 
+                pdb.set_trace()
             line_data[f"option_{i}"] = options[i]
             line_data[f"option_{i}_idx"] = idxs[i]
         
@@ -54,7 +58,21 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, required=True)
     parser.add_argument("--out_dir", type=str, required=True)
+    parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--ignore_idx_file", type=str, default=None)
     args = parser.parse_args()
 
-    json_data = read_json(args.input)
+    # add ability to ignore indices if they've already been included in previous hits 
+    if args.ignore_idx_file is not None:
+        with open(args.ignore_idx_file) as f1:
+            ignore_idxs = [json.loads(x)['data_idx'] for x in f1.readlines()]
+    else:
+        ignore_idxs = []
+    json_data = read_json(args.input, ignore_idxs)
+
+    # adding ability to write only a subset of data 
+    if args.limit is not None:
+        json_data = json_data[:args.limit]
+
+
     convert_data_to_csv(json_data, args.out_dir)

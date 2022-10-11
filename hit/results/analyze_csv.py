@@ -13,7 +13,6 @@ from dataflow.core.utterance_tokenizer import UtteranceTokenizer
 import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent.parent))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent.parent.joinpath("hit/scripts/")))
-print(sys.path)
 # from hit.scripts.prep_for_translate import split_source
 from prep_for_translate import split_source
 
@@ -132,7 +131,6 @@ def main(args):
             n_correct += 1
         total += 1
 
-    print(f"Accuracy (non-rewritten): {n_correct}/{total}: {n_correct / total*100:.2f}%")
     print(f"Rewritten: {n_rewritten}")
 
     # decode rewritten examples
@@ -151,6 +149,8 @@ def main(args):
             rewritten_n_correct += 1
         rewritten_total += 1
 
+    print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
+            {n_correct / total*100:.2f}%")
     print(f"Accuracy (rewritten): {rewritten_n_correct}/{rewritten_total}: \
             {rewritten_n_correct / rewritten_total*100:.2f}%")
 
