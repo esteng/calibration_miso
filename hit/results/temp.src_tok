@@ -1,8 +1,4 @@
-__User  Can you find my event that s at the end of the day on friday ?  __Agent  The " Meeting " is on Friday from 5 : 00 to 5 : 30 PM .  __User May 8, Wednesday __StartOfProgram
-__User  Sure is .  __Agent  I 've put that on your calendar .  __User can you put recovery on my calendar from 3 to 5 pm and mark me out of office __StartOfProgram
-__User  hi  __Agent  I can help you create , update , and delete events on your calendar . You can also ask me about your schedule .  __User how much will it snow tomorrow night? __StartOfProgram
-__User  __Agent  __User put meeting with Rohila on Monday __StartOfProgram
-__User  When is my conference ?  __Agent  The event matching " conference " is on Sunday the 27 th at 12 : 00 AM .  __User Make an event for Friday at 3pm __StartOfProgram
-__User  it looks very good thanks  __Agent  I 've put that on your calendar .  __User unclear __StartOfProgram
-__User  I need 2 hours but 2 pm works if I have nothing else  __Agent  Is this good ?  __User What do I have on Monday? __StartOfProgram
-__User  What meetings do I have at HQ location next week ?  __Agent  I found one event next week at HQ . It 's " All Hands Meeting " on Monday the 20 th from 1 : 00 to 1 : 30 PM .  __User Please add going to Seafair with Jake and his boss __StartOfProgram
+__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 PM __StartOfProgram
+__User  __Agent  __User put meeting with rohila   on Monday __StartOfProgram
+__User  can you update my Monday meeting  __Agent  Could you be more specific with your request ?  __User What do I have scheduled on Monday ? __StartOfProgram
+__User  Yes , that 's right .  __Agent  I 've deleted that .  __User Can you schedule lunch on March 15 th at 8 pm with Mark ? __StartOfProgram

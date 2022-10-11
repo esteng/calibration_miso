@@ -6,14 +6,21 @@ import re
 import os 
 import pdb 
 import subprocess 
+import en_core_web_sm
 
 from dataflow.core.lispress import parse_lispress, render_compact
+from dataflow.core.utterance_tokenizer import UtteranceTokenizer
 import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent.parent))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent.parent.joinpath("hit/scripts/")))
 print(sys.path)
 # from hit.scripts.prep_for_translate import split_source
 from prep_for_translate import split_source
+
+tokenizer = UtteranceTokenizer()
+def tokenize(text):
+    toked = tokenizer.tokenize(text)
+    return " ".join(toked) 
 
 def clean_lispress(x):
     x = x.strip()
@@ -95,10 +102,11 @@ def main(args):
             # print(f"Manual entry: {turk_entry['manual_entry']}")
             # get user context 
             gold_src = split_source(json_entry['gold_src'])
+            manual_entry = tokenize(turk_entry['manual_entry'])
             if len(gold_src) == 1:
-                src_str = f"__User {turk_entry['manual_entry']} __StartOfProgram"
+                src_str = f"__User {manual_entry} __StartOfProgram"
             else:
-                src_str = f"__User {gold_src[0]} __Agent {gold_src[1]} __User {turk_entry['manual_entry']} __StartOfProgram"
+                src_str = f"__User {gold_src[0]} __Agent {gold_src[1]} __User {manual_entry} __StartOfProgram"
             rewritten.append((src_str, json_entry['gold_tgt']))
             n_rewritten += 1 
             continue 
@@ -134,10 +142,11 @@ def main(args):
     miso_rewritten_lispress = decode(rewritten, args.checkpoint_dir)
     rewritten_inputs, gold_tgts = zip(*rewritten)
     for rewritten_input, miso_rewritten_lispress, gold_tgt in zip(rewritten_inputs, miso_rewritten_lispress, gold_tgts):
-        print(rewritten_input)
-        print(miso_rewritten_lispress)
-        print(gold_tgt)
-        pdb.set_trace()
+        gold_tgt = clean_lispress(gold_tgt)
+        # print(rewritten_input)
+        # print(miso_rewritten_lispress)
+        # print(gold_tgt)
+        # pdb.set_trace()
         if miso_rewritten_lispress == gold_tgt:
             rewritten_n_correct += 1
         rewritten_total += 1
