@@ -1,4 +1,0 @@
-__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 PM __StartOfProgram
-__User  __Agent  __User put meeting with rohila   on Monday __StartOfProgram
-__User  can you update my Monday meeting  __Agent  Could you be more specific with your request ?  __User What do I have scheduled on Monday ? __StartOfProgram
-__User  Yes , that 's right .  __Agent  I 've deleted that .  __User Can you schedule lunch on March 15 th at 8 pm with Mark ? __StartOfProgram

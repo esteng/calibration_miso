@@ -1,4 +1,0 @@
-( Yield ( UpdateCommitEventWrapper ( UpdatePreflightEventWrapper ( Event.id ( Execute ( refer ( extensionConstraint ( ^ ( Event ) EmptyStructConstraint ) ) ) ) ) ( Event.start_? ( DateTime.time_? ( ?= ( HourMinutePm 6L 45L ) ) ) ) ) ) )
-( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( Event.start_? ( DateTime.date_? ( ?= ( NextDOW ( Monday ) ) ) ) ) ( Event.attendees_? ( AttendeeListHasRecipient ( Execute ( refer ( extensionConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " rohila " ) ) ) ) ) ) ) ) ) ) )
-( Yield ( FindEventWrapperWithDefaults ( EventOnDate ( NextDOW ( Monday ) ) ( ^ ( Event ) EmptyStructConstraint ) ) ) )
-( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( & ( Event.subject_? ( ?= " lunch " ) ) ( Event.start_? ( ?= ( DateAtTimeWithDefaults ( MD 15L ( March ) ) ( NumberPM 8L ) ) ) ) ) ) ) )
