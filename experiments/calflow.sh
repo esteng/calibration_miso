@@ -113,6 +113,34 @@ function eval_fxn() {
     --include-package miso.metrics  
 } 
 
+function eval_calibrate() {
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
+    output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
+    split=$(basename ${TEST_DATA})
+    mkdir -p ${CHECKPOINT_DIR}/translate_output_calibrated
+    python -m miso.commands.exact_match eval \
+    ${model_file} ${TEST_DATA} \
+    --fxn-of-interest ${FXN} \
+    --predictor "calflow_parsing_calibrated" \
+    --batch-size 140 \
+    --top-k-beam-search \
+    --use-dataset-reader \
+    --cuda-device 0 \
+    --beam-size 3 \
+    --top-k 3 \
+    --out-file ${CHECKPOINT_DIR}/translate_output_calibrated/${split}.tgt \
+    --include-package miso.data.dataset_readers \
+    --include-package miso.data.iterators \
+    --include-package miso.data.tokenizers \
+    --include-package miso.models \
+    --include-package miso.modules.seq2seq_encoders \
+    --include-package miso.predictors \
+    --include-package miso.metrics  
+} 
+
+    # --beam-size 10 \
+    # --top-k 10 \
 
 function eval_fxn_cpu() {
     echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
@@ -308,6 +336,8 @@ function main() {
         eval
     elif [[ "${action}" == "eval_fxn" ]]; then
        eval_fxn 
+    elif [[ "${action}" == "eval_calibrate" ]]; then
+       eval_calibrate
     elif [[ "${action}" == "eval_fxn_cpu" ]]; then
        eval_fxn_cpu 
     elif [[ "${action}" == "eval_pre" ]]; then
