@@ -4,6 +4,7 @@ import json
 import pdb 
 import pathlib 
 import numpy as np 
+np.random.seed(12)
 
 from prep_for_translate import split_source
 
@@ -15,7 +16,7 @@ def read_json(input_file, ignore_idxs=[]):
     data_by_unique_id = {x['data_idx']: x for x in data if x['data_idx'] not in ignore_idxs}
     return list(data_by_unique_id.values())
 
-def convert_data_to_csv(all_data, out_dir): 
+def convert_data_to_csv(all_data, out_dir, shuffle=False): 
     csv_data = []
     for line in all_data: 
         # need user turns 
@@ -44,6 +45,11 @@ def convert_data_to_csv(all_data, out_dir):
     out_dir = pathlib.Path(out_dir)
     out_dir.mkdir(exist_ok=True, parents=True)
 
+    if shuffle:
+        zipped_data = list(zip(csv_data, all_data))
+        np.random.shuffle(zipped_data)
+        csv_data, all_data = zip(*zipped_data)
+
     with open(out_dir / "data.csv", 'w') as f1: 
         writer = csv.DictWriter(f1, fieldnames=csv_data[0].keys())
         writer.writeheader()
@@ -60,6 +66,7 @@ if __name__ == "__main__":
     parser.add_argument("--out_dir", type=str, required=True)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--ignore_idx_file", type=str, default=None)
+    parser.add_argument("--shuffle", action="store_true")
     args = parser.parse_args()
 
     # add ability to ignore indices if they've already been included in previous hits 
@@ -74,4 +81,4 @@ if __name__ == "__main__":
     if args.limit is not None:
         json_data = json_data[:args.limit]
 
-    convert_data_to_csv(json_data, args.out_dir)
+    convert_data_to_csv(json_data, args.out_dir, args.shuffle)
