@@ -1,6 +1,4 @@
 intent/logs
-hit/workers
-hit/workers/*
 *.pyc
 *.swp
 *.swo

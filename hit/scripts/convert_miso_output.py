@@ -110,18 +110,33 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # get predicted data 
-    split = "dev" if "dev" in args.miso_pred_file else "test"
+    if "dev" not in args.miso_pred_file and "test" not in args.miso_pred_file:
+
+        path = Path(args.miso_pred_file)
+        parent = path.parent
+        filename = path.stem
+        src_file = str(filename + ".src_tok")
+        tgt_file = str(filename + ".tgt")
+        idx_file = str(filename + ".idx")
+        bin_file = str(filename + ".bins")
+    else:
+        pdb.set_trace()
+        split = "dev" if "dev" in args.miso_pred_file else "test"
+        src_file = f"{split}/{split}_data_by_bin.src_tok"
+        tgt_file = f"{split}/{split}_data_by_bin.tgt" 
+        idx_file = f"{split}/{split}_data_by_bin.idx"
+        bin_file = f"{split}/{split}_data_by_bin.bins"
     with open(args.miso_pred_file, "r") as f:
         data = [json.loads(x) for x in f.readlines()]
     # get corresponding gold target data
     data_dir = Path(args.data_dir)
-    with open(data_dir / f"{split}/{split}_data_by_bin.src_tok", "r") as src_f: 
+    with open(data_dir / src_file, "r") as src_f: 
         srcs = src_f.readlines()
-    with open(data_dir / f"{split}/{split}_data_by_bin.tgt", "r") as f:
+    with open(data_dir / tgt_file, "r") as f:
         gold_tgt_data = [x.strip() for x in f.readlines()]
-    with open(data_dir / f"{split}/{split}_data_by_bin.idx", "r") as f:
+    with open(data_dir / idx_file, "r") as f:
         gold_idx_data = [int(x) for x in f.readlines()]
-    with open(data_dir / f"{split}/{split}_data_by_bin.bins", "r") as f:
+    with open(data_dir / bin_file, "r") as f:
         bin_data = [float(x) for x in f.readlines()]
 
     # get corresponding translated target data

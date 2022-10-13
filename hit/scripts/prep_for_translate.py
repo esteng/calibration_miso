@@ -36,12 +36,23 @@ if __name__ == "__main__":
     parser.add_argument("--out_file", type=str, default="hit/data/for_translate/dev_data_by_bin.jsonl")
     args = parser.parse_args()
 
-    split = "dev" if "dev" in args.miso_pred_file else "test"
+    # get predicted data 
+    if "dev" not in args.miso_pred_file and "test" not in args.miso_pred_file:
+        path = Path(args.miso_pred_file)
+        parent = path.parent
+        filename = path.stem
+        src_file = str(filename + ".src_tok")
+        tgt_file = str(filename + ".tgt")
+    else:
+        split = "dev" if "dev" in args.miso_pred_file else "test"
+        src_file = f"{split}/{split}_data_by_bin.src_tok"
+        tgt_file = f"{split}/{split}_data_by_bin.tgt" 
+
     # read gold source and target data 
     data_dir = Path(args.data_dir)
-    with open(data_dir / f"{split}/{split}_data_by_bin.src_tok", "r") as src_f: 
+    with open(data_dir / src_file, "r") as src_f: 
         gold_src_data = src_f.readlines()
-    with open(data_dir / f"{split}/{split}_data_by_bin.tgt", "r") as f:
+    with open(data_dir / tgt_file, "r") as f:
         gold_tgt_data = [x.strip() for x in f.readlines()]
 
     # match with gold source 
