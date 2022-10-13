@@ -105,8 +105,6 @@ if __name__ == "__main__":
     parser.add_argument("--translated_tgt_file", type=str, default = "hit/data/translated_by_bart_large/generated_predictions.txt")
     parser.add_argument("--n_preds", type=int, default=10)
     parser.add_argument("--n_per_ex", type=int, default=3)
-    parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--ignore_idx_file", type=str, default=None)
     parser.add_argument("--out_dir", type=str, required=True)
     parser.add_argument("--filter_fences", action="store_true")
     args = parser.parse_args()
@@ -178,15 +176,6 @@ if __name__ == "__main__":
                         "distractor": distractor_tgt}
         output_data.append(output_dict)
 
-    # adding ability to write only a subset of data 
-    if args.limit is not None:
-        output_data = output_data[:args.limit]
-
-    # add ability to ignore indices if they've already been included in previous hits 
-    if args.ignore_idx_file is not None:
-        with open(args.ignore_idx_file) as f1:
-            ignore_idxs = [json.loads(x)['data_idx'] for x in f1.readlines()]
-        output_data = [x for x in output_data if x['data_idx'] not in ignore_idxs]
 
     out_dir = Path(args.out_dir)
     with open(out_dir / "data_for_hit.jsonl", "w") as f1:

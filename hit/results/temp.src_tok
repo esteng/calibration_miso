@@ -1,0 +1,22 @@
+__User  __Agent  __User How many feet of snow are expected for tomorrow night ? __StartOfProgram
+__User  __Agent  __User How many feet of snow are expected ? __StartOfProgram
+__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 PM . __StartOfProgram
+__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 PM . __StartOfProgram
+__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 __StartOfProgram
+__User  __Agent  __User Add meeting with Rohila on Monday . __StartOfProgram
+__User  __Agent  __User Schedule a meeting with rohila on Monday . __StartOfProgram
+__User  __Agent  __User put meeting with rohila on monday __StartOfProgram
+__User  __Agent  __User Where is this ? __StartOfProgram
+__User  __Agent  __User Where is this ? __StartOfProgram
+__User  __Agent  __User Where is this ? __StartOfProgram
+__User  __Agent  __User Schedule a jog sometime between Monday through Thursday next week . __StartOfProgram
+__User  __Agent  __User Schedule a jog for sometime between Monday and Thursday next week . __StartOfProgram
+__User  __Agent  __User Schedule one jog for any time between Monday through Thursday next week . __StartOfProgram
+__User  Westly  __Agent  Here is the contact information for Westly :  __User What is the contact information for Winter ? __StartOfProgram
+__User  Westly  __Agent  Here is the contact information for Westly :  __User I meant Westly Winter . __StartOfProgram
+__User  There names are jon and jim .  __Agent  Sorry , I ca n't handle that yet .  __User Ok , set the appointment with jon for next week __StartOfProgram
+__User  There names are jon and jim .  __Agent  Sorry , I ca n't handle that yet .  __User I need my appointment with Jon fixed for next week , __StartOfProgram
+__User  __Agent  __User Do I have a breakfast meeting this morning with Jesse 's manager ? __StartOfProgram
+__User  __Agent  __User Do I have a breakfast meeting scheduled this morning with Jesse 's manger 's manager ? __StartOfProgram
+__User  __Agent  __User I will be in Florida from Friday to monday and I wo n't be reachable . __StartOfProgram
+__User  __Agent  __User I will be in Florida from Friday through Monday and be unreachable . __StartOfProgram

@@ -74,5 +74,4 @@ if __name__ == "__main__":
     if args.limit is not None:
         json_data = json_data[:args.limit]
 
-
     convert_data_to_csv(json_data, args.out_dir)

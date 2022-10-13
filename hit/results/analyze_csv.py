@@ -176,17 +176,21 @@ def annotator_scores(turk_data):
         for turk_entry in turk_entries:
             entries_by_ann[turk_entry['WorkerId']].append(turk_entry)
 
-    dist_dict = defaultdict(lambda: {"dist": 0, "total": 0})
+    dist_dict = defaultdict(lambda: {"dist": 0, "total": 0, "rewritten": 0, "selected": 0})
     for worker_id, worker_entries in entries_by_ann.items():
         for e in worker_entries:
             chosen_idx = e['chosen_idx']
+            if chosen_idx is not None:
+                dist_dict[worker_id]["selected"] += 1
+            else:
+                dist_dict[worker_id]["rewritten"] += 1
             if chosen_idx == "3": 
                 dist_dict[worker_id]["dist"] += 1
             dist_dict[worker_id]["total"] += 1
     
     return dist_dict
 
-def run_choose_and_rewrite(turk_data, json_data):
+def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
     from dataflow.core.utterance_tokenizer import UtteranceTokenizer
     tokenizer = UtteranceTokenizer()
     def tokenize(text):
@@ -197,50 +201,96 @@ def run_choose_and_rewrite(turk_data, json_data):
     n_distractor = 0
     n_rewritten = 0
     total = 0
+    total_gold_on_beam = 0
     rewritten = []
     for turk_entries, json_entry in zip(turk_data, json_data):
-        for turk_entry in turk_entries:
+        # TODO (elias): need to implement three different cases 
+        # case 1 where we take the majority vote 
+            # in this case, what do we do with the rewrites? 
+            # we can't take the majority vote of the rewritten examples,
+            # so should we average?
+            # How about: for cases where the majority is not rewrite, ignore rewrite 
+            # For cases where the majority is rewrite, do rewrite for both/three and average   
+
+        # case 2 where we count as success if any annotator solved the problem
+        # case 3 where we take the mean of successes across annotators 
+        # case 3 is actually the easiest 
+        # aggregated_turk_entries = []
+        aggregated_turk_entries_nonrewrite = []
+        aggregated_turk_entries_rewrite = []
+        if aggregator == "majority":
+            # case 1: take majority vote across anns 
+            chosen_tgt = [e['chosen_tgt'] for e in turk_entries]
+            chosen_idx = [e['chosen_idx'] for e in turk_entries]
+            # check if it has a majority 
+            counts = Counter(chosen_tgt)
+            # if majority decision is to rewrite, then do the rewrites 
+            if None in counts.keys() and counts[None] > 1: 
+                for e in turk_entries:
+                    if e['chosen_tgt'] is None:
+                        aggregated_turk_entries_rewrite.append(e)
+            # otherwise, keep the majority decision 
+            else:
+                # get max by occurrences and select corresponding line 
+                tgt_maj_vote = max(counts.items(), key=lambda x: x[1])[0]
+                if tgt_maj_vote is None:
+                    # there's a 3-way tie with None as one option, so just pick one other 
+                    tgt_maj_vote = [k for k in counts.keys() if k is not None][0]
+                maj_line = [e for e in turk_entries if e['chosen_tgt'] == tgt_maj_vote][0]
+                if maj_line['chosen_idx'] is None:
+                    pdb.set_trace()
+                aggregated_turk_entries_nonrewrite.append(maj_line)
+
+        elif aggregator == "none": 
+            # case 3: take mean of successes across all anns 
+            for turk_entry in turk_entries:
+                chosen_turk_tgt = turk_entry['chosen_tgt']
+                chosen_turk_idx = turk_entry['chosen_idx']
+                if chosen_turk_idx == 3: 
+                    # annotator chose the distractor, which is always index 4 
+                    n_distractor += 1
+                    continue 
+                if chosen_turk_tgt is None:
+                    aggregated_turk_entries_rewrite.append(turk_entry)
+                else:
+                    aggregated_turk_entries_nonrewrite.append(turk_entry)
+
+        for turk_entry in aggregated_turk_entries_nonrewrite:
             chosen_turk_tgt = turk_entry['chosen_tgt']
             chosen_turk_idx = turk_entry['chosen_idx']
             if chosen_turk_idx == 3: 
                 # annotator chose the distractor, which is always index 4 
                 n_distractor += 1
                 continue 
-
-            if chosen_turk_tgt is None:
-                # manual entry, pass for now 
-                # print(f"Manual entry: {turk_entry['manual_entry']}")
-                # get user context 
-                gold_src = split_source(json_entry['gold_src'])
-                manual_entry = tokenize(turk_entry['manual_entry'], tokenizer)
-                if len(gold_src) == 1:
-                    src_str = f"__User {manual_entry} __StartOfProgram"
-                else:
-                    src_str = f"__User {gold_src[0]} __Agent {gold_src[1]} __User {manual_entry} __StartOfProgram"
-                rewritten.append((src_str, json_entry['gold_tgt']))
-                n_rewritten += 1 
-                continue 
             # get the corresponding lispress from json 
-            try:
-                chosen_lispress = json_entry['pred_tgts'][chosen_turk_idx]
-            except IndexError:
-                pdb.set_trace()
-            if chosen_lispress is None:
-                # fence example
-                # this shouldn't actually happen
-                # skip for now, but later should raise error 
-                continue 
+            chosen_lispress = json_entry['pred_tgts'][chosen_turk_idx]
             chosen_lispress = clean_lispress(chosen_lispress)
             # get gold lisress 
             gold_lispress = json_entry['gold_tgt']
             gold_lispress = clean_lispress(gold_lispress)
 
-            # print(f"Chosen tgt: {chosen_turk_tgt}")
-            # print(f"Chosen lispress: {chosen_lispress}") 
-            # print(f"Gold lispress: {gold_lispress}")
+            # TODO: (elias) add a new denominator here that only counts examples where the gold is in k-best 
             if chosen_lispress == gold_lispress:
                 n_correct += 1
+            options = json_entry['pred_tgts']
+            options = [clean_lispress(o) for o in options]
+            gold_on_beam = gold_lispress in options
+            if gold_on_beam:
+                total_gold_on_beam += 1
+
             total += 1
+
+        for turk_entry  in aggregated_turk_entries_rewrite:
+            # get user context 
+            gold_src = split_source(json_entry['gold_src'])
+            manual_entry = tokenize(turk_entry['manual_entry'])
+            if len(gold_src) == 1:
+                src_str = f"__User {manual_entry} __StartOfProgram"
+            else:
+                src_str = f"__User {gold_src[0]} __Agent {gold_src[1]} __User {manual_entry} __StartOfProgram"
+            rewritten.append((src_str, json_entry['gold_tgt']))
+            n_rewritten += 1 
+
     print(f"Rewritten: {n_rewritten}")
     # decode rewritten examples
     print(f"decoding {len(rewritten)} examples from {args.checkpoint_dir}")
@@ -250,16 +300,15 @@ def run_choose_and_rewrite(turk_data, json_data):
     rewritten_inputs, gold_tgts = zip(*rewritten)
     for rewritten_input, miso_rewritten_lispress, gold_tgt in zip(rewritten_inputs, miso_rewritten_lispress, gold_tgts):
         gold_tgt = clean_lispress(gold_tgt)
-        # print(rewritten_input)
-        # print(miso_rewritten_lispress)
-        # print(gold_tgt)
-        # pdb.set_trace()
+
         if miso_rewritten_lispress == gold_tgt:
             rewritten_n_correct += 1
         rewritten_total += 1
 
     print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
             {n_correct / total*100:.2f}%")
+    print(f"Accuracy (non-rewritten, gold on beam): {n_correct}/{total_gold_on_beam}: \
+            {n_correct / total_gold_on_beam*100:.2f}%")
     print(f"Accuracy (rewritten): {rewritten_n_correct}/{rewritten_total}: \
             {rewritten_n_correct / rewritten_total*100:.2f}%")
 
@@ -270,11 +319,17 @@ def run_choose_and_rewrite(turk_data, json_data):
 
 def run_iaa(turk_data, json_data):
     ann_scores = annotator_scores(turk_data)
-    ann_scores = {k: v["dist"] / v["total"] for k, v in ann_scores.items()}
-    ann_scores = {k: f"{v * 100:.2f}%" for k, v in ann_scores.items()}
-    print("percentage of time each annotator chose the distractor")
-    print(ann_scores)
+    ann_scores = {k: {k2: v[k2] / v["total"] 
+                            if k2 != "total" else v[k2] 
+                            for k2 in v.keys() } 
+                for k, v in ann_scores.items()}
 
+    print("percentage of time each annotator chose the distractor")
+    for ann, ann_data in ann_scores.items():
+        print_str = [f"{k}: {v * 100:.2f}%" for k, v in ann_data.items() if k != "total"]
+        print_str.append(f"total: {ann_data['total']}")
+        print_str = " ".join(print_str)
+        print(f"{ann}: {print_str}")
     iaa_scores = {"all_rewrite": 0, "any_rewrite": 0, "target_equal": 0, "idx_equal": 0}
     iaa_maj_scores = {"all_rewrite": 0, "any_rewrite": 0, "target_equal": 0, "idx_equal": 0}
     pw_iaa_scores = {"rewrite": 0, "rewrite_total": 0, "target": 0, "target_total":0,  "idx": 0, "idx_total": 0}
@@ -306,30 +361,22 @@ def run_iaa(turk_data, json_data):
     idx_equal_agreement = iaa_scores["idx_equal"] / idx_equal_total
     print()
     print(f"{target_equal_total} examples have at least two non-rewritten sentences")
-    print(f"all annotators agree on target chosen: {target_equal_agreement*100:.2f}%")
-    print(f"all annotators agree on index chosen: {idx_equal_agreement*100:.2f}%")
+    print(f"all annotators agree on target chosen:  {iaa_scores['target_equal']} / {target_equal_total} = {target_equal_agreement*100:.2f}%")
+    print(f"all annotators agree on index chosen: {iaa_scores['idx_equal']} / {idx_equal_total} =  {idx_equal_agreement*100:.2f}%")
     print()
     print(f"{iaa_scores['any_rewrite']} examples have at least one rewritten sentence")
-    print(f"all annotators rewrote the example: {all_rewritten_agreement*100:.2f}%")
+    print(f"all annotators rewrote the example: {iaa_scores['all_rewrite']} / {iaa_scores['any_rewrite']} = {all_rewritten_agreement*100:.2f}%")
 
     maj_rewritten_agreement = iaa_maj_scores["all_rewrite"] / iaa_maj_scores['any_rewrite']
     target_maj_agreement = iaa_maj_scores["target_equal"] / target_maj_total
     idx_maj_agreement = iaa_maj_scores["idx_equal"] / idx_maj_total
     print()
     print(f"{target_maj_total} examples have a majority of non-rewritten sentences")
-    print(f"a majority of annotators agree on target chosen: {target_maj_agreement*100:.2f}%")
-    print(f"a majority annotators agree on index chosen: {idx_maj_agreement*100:.2f}%")
+    print(f"a majority of annotators agree on target chosen: {iaa_maj_scores['target_equal']} / {target_maj_total} = {target_maj_agreement*100:.2f}%")
+    print(f"a majority annotators agree on index chosen: {iaa_maj_scores['idx_equal']} / {idx_maj_total} = {idx_maj_agreement*100:.2f}%")
     print()
     print(f"{iaa_maj_scores['any_rewrite']} examples have at least one rewritten sentence")
-    print(f"a majority of annotators rewrote the example: {maj_rewritten_agreement*100:.2f}%")
-
-    # pw_rewrite_score = pw_iaa_scores["rewrite"] / pw_iaa_scores["rewrite_total"]
-    # pw_target_score = pw_iaa_scores["target"] / pw_iaa_scores["target_total"]
-    # pw_idx_score = pw_iaa_scores["idx"] / pw_iaa_scores["idx_total"]
-    # print()
-    # print(f"pairwise agreement on rewrite: {pw_rewrite_score*100:.2f}%")
-    # print(f"pairwise agreement on target: {pw_target_score*100:.2f}%")
-    # print(f"pairwise agreement on idx: {pw_idx_score*100:.2f}%")
+    print(f"a majority of annotators rewrote the example: {iaa_maj_scores['all_rewrite']} / {iaa_maj_scores['any_rewrite']} = {maj_rewritten_agreement*100:.2f}%")
 
 def main(args):
     print(f"Reading data from {args.csv}")
@@ -341,7 +388,7 @@ def main(args):
         run_iaa(turk_data, json_data)
 
     if args.do_rewrites:
-        run_choose_and_rewrite(turk_data, json_data)
+        run_choose_and_rewrite(turk_data, json_data, aggregator=args.aggregator)
 
 
 if __name__ == "__main__":
@@ -351,6 +398,7 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint_dir", type=str, help="checkpoint dir for miso model", default="/brtx/604-nvme1/estengel/calflow_calibration/miso/tune_roberta_tok_fix_benchclamp_data")
     parser.add_argument("--do_rewrites", action="store_true", help="whether to rewrite examples")
     parser.add_argument("--do_iaa", action="store_true", help="whether to run iaa")
+    parser.add_argument("--aggregator", type=str, default="none", help="aggregator to use for rewrites", choices = ["none", "majority"])
     parser.add_argument("--n_redundant", type=int, default=1)
     args = parser.parse_args() 
     main(args)
