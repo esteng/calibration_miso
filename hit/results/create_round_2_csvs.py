@@ -65,11 +65,10 @@ if __name__ == "__main__":
             for i, line in enumerate(lines_for_anns[ann]):
                 line['user_turn_0'] = clean_str(line['user_turn_0'])
                 line['agent_turn_0'] = clean_str(line['agent_turn_0'])
-                line['user_turn_1'] = clean_str(line['user_turn_1'])
                 if i == 0:
                     line['is_checkmark_page'] = "true"
                 else:
-                    line['is_checkmark_page'] = "false"
+                    line['is_checkmark_page'] = "true"
                 to_write.append(line)
             print(f"ann {ann} gets {len(to_write)} lines")
             writer = csv.DictWriter(f, fieldnames=to_write[0].keys())

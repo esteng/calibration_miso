@@ -216,10 +216,10 @@
     This chatbot, named <strong>Svenbot</strong>, is supposed to help the user with their calendar.
     Here's the thing: Svenbot recently learned English, and isn't very confident yet.
     Often, it understands the user just fine, but still asks for clarification.
-    Other times, it does have trouble understanding the user, and even a little difference in how something is said 
+    Occasionally, it has trouble understanding the user, and even a little difference in how something is said 
     can change how Svenbot understands the user. 
-    So if Svenbot asks for clarification, it is best to pick something that seems to be closest in meaning to what the user said (in italics); 
-    Svenbot might just need to have the instruction repeated in a slightly different way. 
+    If Svenbot asks for clarification, that means it want to hear the instructions in a different way. 
+    Pick the option that seems closest to what the user originally said.
 </p>
 
 <p class="instr">Your task is to evaluate whether any of the options given by Svenbot is a valid rephrasing of what the user told it to do. 
@@ -252,15 +252,13 @@
 <section>
 <fieldset>
 <script type="text/javascript">
-    console.log(document.getElementById("is_checkmark_page").value);
-    console.log(document.getElementById("overlay"));
     // document.getElementById("overlay").style.display === "block"){
     if (document.getElementById("is_checkmark_page").value === "true"){
         document.write("<div id=\"overlay\" onclick=\"off()\">" +
             "<div id=\"overlaytext\" >The following task looks similar to a task that you have completed. "+
             "However, this task is different. Please read the new instructions carefully, and " +
-            "confirm that you have read this message " + 
-            "<p> CONFIRM </p>" +
+            "click confirm that you have read this message " + 
+            "<p> CLICK TO CONFIRM </p>" +
             "</div>" +
         "</div>");
         on();
@@ -268,12 +266,10 @@
         // set value so that it doesn't show up again  
         document.getElementById("is_checkmark_page").value = "false";
         function on(){
-            console.log("off clicked");
             document.getElementById("overlay").style.display = "block";
         }
 
         function off(){
-            console.log("off clicked");
             document.getElementById("overlay").style.display = "none";
         }
     }
@@ -293,22 +289,22 @@
 <div id="outerbox">
     <span class="box">
             <input accesskey="1" data-key="Key1" id="button_0" name="radio-input" title="Alt+1" type="radio" value="1" /> 
-            (1) <label for="button_0"> <p class="chat"> ${option_0} </p> </label> 
+            (1) <label for="button_0"> <i> ${option_0} </i> </label> 
     </span> 
     <br>
     <span class="box">
             <input accesskey="2" data-key="Key1" id="button_1" name="radio-input" title="Alt+1" type="radio" value="2" /> 
-            (2) <label for="button_1"> <p class="chat"> ${option_1} </p> </label> 
+            (2) <label for="button_1"> <i> ${option_1} </i> </label> 
     </span>
     <br>
     <span class="box">
             <input accesskey="3" data-key="Key1" id="button_2" name="radio-input" title="Alt+1" type="radio" value="3" /> 
-            (3) <label for="button_2"> <p class="chat"> ${option_2} </p> </label> 
+            (3) <label for="button_2"> <i> ${option_2} </i> </label> 
     </span> 
     <br>
     <span class="box">
             <input accesskey="4" data-key="Key1" id="button_3" name="radio-input" title="Alt+1" type="radio" value="4" /> 
-            (4) <label for="button_3"> <p class="chat"> ${option_3} </p> </label> 
+            (4) <label for="button_3"> <i> ${option_3} </i> </label> 
     </span> 
 </div>
 </fieldset>
@@ -330,8 +326,7 @@
 
 <script type="text/javascript">
     const controller = new AbortController();
-    // const el = document.getElementById("outerbox");
-    // console.log("el: ", el)
+
 
     window.addEventListener("keypress", myEventHandler,  {signal: controller.signal});
     // el.addEventListener("keypress", myEventHandler, false);
@@ -339,12 +334,10 @@
     el.addEventListener("click", interruptHandler, false)
 
     function interruptHandler(e) {
-        console.log("e triggered ",e);
         controller.abort();
     }
 
     function myEventHandler(e){
-        console.log(code)
         var code = (e.keyCode ? e.keyCode : e.which);
         switch (code) {
             case 49: // 1
