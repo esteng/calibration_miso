@@ -13,6 +13,10 @@ with open("hit/workers/worked_on_calibration.csv", "w") as f1:
         datapoint["Worker ID"] = worker 
         writer.writerow(datapoint)
 
-
-
+for worker in all_turkers:
+    worker_datapoint = {"Worker ID": worker, f"UPDATE-is_{worker}": 100}
+    with open(f"hit/workers/is_{worker}.csv", "w") as f1:
+        writer = csv.DictWriter(f1, fieldnames=worker_datapoint.keys()) 
+        writer.writeheader() 
+        writer.writerow(worker_datapoint)
 
