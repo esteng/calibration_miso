@@ -144,7 +144,7 @@ def get_iaa_scores(turk_entries, majority=False):
 
     # get iaa scores for a group of turk entries
     if len(turk_entries) == 1:
-        return True, True, True
+        return True, True, True, True
     else: 
         each_is_rewrite = np.array([e['manual_entry'].strip() not in ["{}", ""] 
                             for e in turk_entries]) 
@@ -190,7 +190,7 @@ def annotator_scores(turk_data):
     
     return dist_dict
 
-def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
+def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
     from dataflow.core.utterance_tokenizer import UtteranceTokenizer
     tokenizer = UtteranceTokenizer()
     def tokenize(text):
@@ -203,7 +203,24 @@ def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
     total = 0
     total_gold_on_beam = 0
     rewritten = []
-    for turk_entries, json_entry in zip(turk_data, json_data):
+    non_rewritten_data = []
+    rewritten_data = []
+    # get turk_lookup 
+    turk_lut = {}
+    for turk_entry in turk_data: 
+        te = turk_entry[0]
+        te_str = ""
+        if te['Input.user_turn_0'] != "":
+            te_str = f"__User {te['Input.user_turn_0'].strip()} "
+        if te['Input.agent_turn_0'] != "":
+            te_str += f"__Agent {te['Input.agent_turn_0'].strip()} "
+        if te['Input.user_turn_1'] != "":
+            te_str += f"__User {te['Input.user_turn_1'].strip()}"
+        turk_lut[te_str] = turk_entry
+
+    # for turk_entries, json_entry in zip(turk_data, json_data):
+    for json_entry in json_data:
+        turk_entries = turk_lut[json_entry['gold_src'].strip()]
         # TODO (elias): need to implement three different cases 
         # case 1 where we take the majority vote 
             # in this case, what do we do with the rewrites? 
@@ -278,6 +295,13 @@ def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
             if gold_on_beam:
                 total_gold_on_beam += 1
 
+            to_add = {"json_entry": json_entry, 
+                     "turk_entry": turk_entry,
+                     "chosen_lispress": chosen_lispress, 
+                     "gold_lispress": gold_lispress, 
+                     "gold_on_beam": gold_on_beam,
+                     "is_correct": chosen_lispress == gold_lispress}
+            non_rewritten_data.append(to_add)
             total += 1
 
         for turk_entry  in aggregated_turk_entries_rewrite:
@@ -290,7 +314,9 @@ def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
                 src_str = f"__User {gold_src[0]} __Agent {gold_src[1]} __User {manual_entry} __StartOfProgram"
             rewritten.append((src_str, json_entry['gold_tgt']))
             n_rewritten += 1 
-
+            to_add = {"json_entry": json_entry,
+                     "turk_entry": turk_entry}
+            rewritten_data.append(to_add)
     print(f"Rewritten: {n_rewritten}")
     # decode rewritten examples
     print(f"decoding {len(rewritten)} examples from {args.checkpoint_dir}")
@@ -298,12 +324,15 @@ def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
     rewritten_total = 0
     miso_rewritten_lispress = decode(rewritten, args.checkpoint_dir)
     rewritten_inputs, gold_tgts = zip(*rewritten)
-    for rewritten_input, miso_rewritten_lispress, gold_tgt in zip(rewritten_inputs, miso_rewritten_lispress, gold_tgts):
+    for i, (rewritten_input, miso_rewritten_lispress, gold_tgt) in enumerate(zip(rewritten_inputs, miso_rewritten_lispress, gold_tgts)):
         gold_tgt = clean_lispress(gold_tgt)
 
         if miso_rewritten_lispress == gold_tgt:
             rewritten_n_correct += 1
         rewritten_total += 1
+
+        rewritten_data[i]['rewritten'] = miso_rewritten_lispress
+        rewritten_data[i]['is_correct'] = miso_rewritten_lispress == gold_tgt
 
     print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
             {n_correct / total*100:.2f}%")
@@ -316,6 +345,8 @@ def run_choose_and_rewrite(turk_data, json_data, aggregator="none"):
     combo_total = total + rewritten_total
     print(f"Accuracy (combined): {combo_n_correct}/{combo_total}: \
             {combo_n_correct / combo_total *100:.2f}%")
+
+    return non_rewritten_data, rewritten_data
 
 def run_iaa(turk_data, json_data):
     ann_scores = annotator_scores(turk_data)
@@ -381,6 +412,7 @@ def run_iaa(turk_data, json_data):
 def main(args):
     print(f"Reading data from {args.csv}")
     turk_data = read_csv(args.csv, n_redundant=args.n_redundant)
+
     print(f"Reading data from {args.json}")
     json_data = read_json(args.json)
 
@@ -388,7 +420,7 @@ def main(args):
         run_iaa(turk_data, json_data)
 
     if args.do_rewrites:
-        run_choose_and_rewrite(turk_data, json_data, aggregator=args.aggregator)
+        run_choose_and_rewrite(turk_data, json_data, args, aggregator=args.aggregator)
 
 
 if __name__ == "__main__":

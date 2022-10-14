@@ -1,22 +1,11 @@
-__User  __Agent  __User How many feet of snow are expected for tomorrow night ? __StartOfProgram
-__User  __Agent  __User How many feet of snow are expected ? __StartOfProgram
-__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 PM . __StartOfProgram
-__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 PM . __StartOfProgram
-__User  Sure is .  __Agent  I 've put that on your calendar .  __User Change the start time to 6 : 45 __StartOfProgram
-__User  __Agent  __User Add meeting with Rohila on Monday . __StartOfProgram
-__User  __Agent  __User Schedule a meeting with rohila on Monday . __StartOfProgram
-__User  __Agent  __User put meeting with rohila on monday __StartOfProgram
-__User  __Agent  __User Where is this ? __StartOfProgram
-__User  __Agent  __User Where is this ? __StartOfProgram
-__User  __Agent  __User Where is this ? __StartOfProgram
-__User  __Agent  __User Schedule a jog sometime between Monday through Thursday next week . __StartOfProgram
-__User  __Agent  __User Schedule a jog for sometime between Monday and Thursday next week . __StartOfProgram
-__User  __Agent  __User Schedule one jog for any time between Monday through Thursday next week . __StartOfProgram
-__User  Westly  __Agent  Here is the contact information for Westly :  __User What is the contact information for Winter ? __StartOfProgram
-__User  Westly  __Agent  Here is the contact information for Westly :  __User I meant Westly Winter . __StartOfProgram
-__User  There names are jon and jim .  __Agent  Sorry , I ca n't handle that yet .  __User Ok , set the appointment with jon for next week __StartOfProgram
-__User  There names are jon and jim .  __Agent  Sorry , I ca n't handle that yet .  __User I need my appointment with Jon fixed for next week , __StartOfProgram
-__User  __Agent  __User Do I have a breakfast meeting this morning with Jesse 's manager ? __StartOfProgram
-__User  __Agent  __User Do I have a breakfast meeting scheduled this morning with Jesse 's manger 's manager ? __StartOfProgram
-__User  __Agent  __User I will be in Florida from Friday to monday and I wo n't be reachable . __StartOfProgram
-__User  __Agent  __User I will be in Florida from Friday through Monday and be unreachable . __StartOfProgram
+__User  Change it to Stop & Go .  __Agent  Could you be more specific with your request ?  __User Change the event title to Stop & Go __StartOfProgram
+__User  __Agent  __User Is there time to walk the dog before my meeting ? __StartOfProgram
+__User  Yes . I did n't make it .  __Agent  I 've deleted your event matching " lunch date " on August 28 th .  __User Delete lunch with my co worker from last week . __StartOfProgram
+__User  I need a meeting with kim and her skip tomorrow morning .  __Agent  Here are some times when everyone is free .  __User Can you cancel my meeting with Kim Possible tomorrow ? __StartOfProgram
+__User  need help managing my calendar  __Agent  I can help you create , update , and delete events on your calendar . You can also ask me about your schedule .  __User Starting today until next monday __StartOfProgram
+__User  __Agent  __User Put Cert Renewal on my calendar from the 18 th until the 27 th . __StartOfProgram
+__User  Cancel the little league game on Wednesday .  __Agent  Is this what you want me to cancel ?  __User I meant for you to cancel the one on Thursday . __StartOfProgram
+__User  I need it later .  __Agent  Does one of these work ?  __User The first option works . __StartOfProgram
+__User  __Agent  __User Create a party with waugh the day after tomorrow 7 . 00 to 7 . 30 pm __StartOfProgram
+__User  I had a birthday party event for Emily last saturday at 12 pm  __Agent  Is this what you 're looking for ?  __User James , Karl and Mike attended that event as well . __StartOfProgram
+__User  __Agent  __User I need the reports by David Lax __StartOfProgram
