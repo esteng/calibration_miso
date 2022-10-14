@@ -5,6 +5,11 @@ import pathlib
 import argparse
 import pdb 
 
+def clean_str(str): 
+    if '"' in str:
+        str = str.replace('"', '\\"')
+    return str
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser() 
     parser.add_argument("--input_csv", type=str, required=True)
@@ -58,6 +63,9 @@ if __name__ == "__main__":
         with open(file, "w") as f:
             to_write = []
             for i, line in enumerate(lines_for_anns[ann]):
+                line['user_turn_0'] = clean_str(line['user_turn_0'])
+                line['agent_turn_0'] = clean_str(line['agent_turn_0'])
+                line['user_turn_1'] = clean_str(line['user_turn_1'])
                 if i == 0:
                     line['is_checkmark_page'] = "true"
                 else:
