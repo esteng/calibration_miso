@@ -172,7 +172,7 @@
 
     #overlay {
         position: fixed; /* Sit on top of the page content */
-        display: block; /* Hidden by default */
+        display: none; /* Hidden by default */
         width: 100%; /* Full width (cover the whole page) */
         height: 100%; /* Full height (cover the whole page) */
         top: 0; 
@@ -187,7 +187,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        font-size: 50px;
+        font-size: 20px;
         color: white;
         transform: translate(-50%,-50%);
         -ms-transform: translate(-50%,-50%);
@@ -203,16 +203,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.js"
         integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 
-<script>
-    function on() {
-        document.getElementById("overlay").style.display = "block";
-    }
-    
-    function off() {
-        console.log("off clicked");
-        document.getElementById("overlay").style.display = "none";
-    }
-</script>
+
 
 
 <div class="row col-xs-12 col-md-12">
@@ -261,15 +252,30 @@
 <section>
 <fieldset>
 <script type="text/javascript">
-    console.log(document.getElementById("is_checkmark_page"));
-    if (document.getElementById("is_checkmark_page") === "true"){
-        document.write("<div id=\"overlay\">" +
-            "<div id=\"overlaytext\">The following task looks similar to a task that you have completed. "+
+    console.log(document.getElementById("is_checkmark_page").value);
+    console.log(document.getElementById("overlay"));
+    // document.getElementById("overlay").style.display === "block"){
+    if (document.getElementById("is_checkmark_page").value === "true"){
+        document.write("<div id=\"overlay\" onclick=\"off()\">" +
+            "<div id=\"overlaytext\" >The following task looks similar to a task that you have completed. "+
             "However, this task is different. Please read the new instructions carefully, and " +
-            "confirm that you have read this message " +
-            "<button onclick=\"off()\"> Confirm </button>" +
+            "confirm that you have read this message " + 
+            "<p> CONFIRM </p>" +
             "</div>" +
         "</div>");
+        on();
+            // "<button onclick=\"off()\"> Confirm </button>" +
+        // set value so that it doesn't show up again  
+        document.getElementById("is_checkmark_page").value = "false";
+        function on(){
+            console.log("off clicked");
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function off(){
+            console.log("off clicked");
+            document.getElementById("overlay").style.display = "none";
+        }
     }
     if(document.getElementById("user_turn_0")){
         if(document.getElementById("user_turn_0").value!== ""){
