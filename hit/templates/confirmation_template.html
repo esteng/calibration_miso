@@ -1,190 +1,220 @@
 <!-- Bootstrap v3.0.3 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://s3.amazonaws.com/mturk-public/bs30/css/bootstrap.min.css" rel="stylesheet" />
 <section class="container" id="Other" style="margin-bottom:15px; padding: 10px 10px; font-family: sans-serif, Verdana, Geneva  ; color:#333333; font-size:1.0em;">
-<style type="text/css">hr {
-            color: #000000;
-            background-color: #000000;
-            height: 2px;
-        }
+<style type="text/css">
+    hr {
+        color: #000000;
+        background-color: #000000;
+        height: 2px;
+    }
 
-        table,
-        th,
-        td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
 
-        th,
-        td {
-            padding: 5px;
-            text-align: left;
-            table-layout: fixed;
-            font-size: 15px;
-        }
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+        table-layout: fixed;
+        font-size: 15px;
+    }
 
-        .sentence {
-            font-size: 16px;
-        }
+    .sentence {
+        font-size: 16px;
+    }
 
-        .panel-heading {
-            background-color: #a7eede !important;
-            border: 0px solid;
-        }
+    .panel-heading {
+        background-color: #a7eede !important;
+        border: 0px solid;
+    }
 
-        .panel-primary {
-            border-color: #FFFFFF;
-            border: 0px solid #FFFFFF;
-        }
+    .panel-primary {
+        border-color: #FFFFFF;
+        border: 0px solid #FFFFFF;
+    }
 
-        .emph {
-            color: #EC407A;
-        }
+    .emph {
+        color: #EC407A;
+    }
 
-        .blue {
-            color: #0000FF;
-        }
+    .blue {
+        color: #0000FF;
+    }
 
-        .red {
-            color: #FF0000;
-        }
+    .red {
+        color: #FF0000;
+    }
 
-        .instr {
-            font-family: sans-serif, Verdana, Geneva;
-            font-size: 15px;
-            line-height: 20px;
-            width: 88%;
-        }
-        .chat {text-align: right;}
-        .option {text-align: right;}
-        .user {text-align: left;}
+    .instr {
+        font-family: sans-serif, Verdana, Geneva;
+        font-size: 15px;
+        line-height: 20px;
+        width: 88%;
+    }
+    .chat {text-align: right;}
+    .option {text-align: right;}
+    .user {text-align: left;}
 
-        #slidecontainer {
-            width: 100%;
-            /* Width of the outside container */
-            margin-bottom: 1cm;
-        }
+    #slidecontainer {
+        width: 100%;
+        /* Width of the outside container */
+        margin-bottom: 1cm;
+    }
 
-        .slider {
-            -webkit-appearance: none;
-            /* Override default CSS styles */
-            appearance: none;
-            width: 40%;
-            /* Full-width */
-            height: 10px;
-            /* Specified height */
-            background: #b4b4b4;
-            /* Grey background */
-            outline: none;
-            /* Remove outline */
-            opacity: 0.7;
-            /* Set transparency (for mouse-over effects on hover) */
-            -webkit-transition: .2s;
-            /* 0.2 seconds transition on hover */
-            transition: opacity .2s;
-        }
+    .slider {
+        -webkit-appearance: none;
+        /* Override default CSS styles */
+        appearance: none;
+        width: 40%;
+        /* Full-width */
+        height: 10px;
+        /* Specified height */
+        background: #b4b4b4;
+        /* Grey background */
+        outline: none;
+        /* Remove outline */
+        opacity: 0.7;
+        /* Set transparency (for mouse-over effects on hover) */
+        -webkit-transition: .2s;
+        /* 0.2 seconds transition on hover */
+        transition: opacity .2s;
+    }
 
-        .slider2 {
-            -webkit-appearance: none;
-            /* Override default CSS styles */
-            appearance: none;
-            width: 40%;
-            /* Full-width */
-            height: 10px;
-            /* Specified height */
-            background: #b4b4b4;
-            /* Grey background */
-            outline: none;
-            /* Remove outline */
-            opacity: 0.7;
-            /* Set transparency (for mouse-over effects on hover) */
-            -webkit-transition: .2s;
-            /* 0.2 seconds transition on hover */
-            transition: opacity .2s;
-        }
+    .slider2 {
+        -webkit-appearance: none;
+        /* Override default CSS styles */
+        appearance: none;
+        width: 40%;
+        /* Full-width */
+        height: 10px;
+        /* Specified height */
+        background: #b4b4b4;
+        /* Grey background */
+        outline: none;
+        /* Remove outline */
+        opacity: 0.7;
+        /* Set transparency (for mouse-over effects on hover) */
+        -webkit-transition: .2s;
+        /* 0.2 seconds transition on hover */
+        transition: opacity .2s;
+    }
 
-        /* Mouse-over effects */
-        .slider:hover {
-            opacity: 1;
-            /* Fully shown on mouse-over */
-        }
+    /* Mouse-over effects */
+    .slider:hover {
+        opacity: 1;
+        /* Fully shown on mouse-over */
+    }
 
-        .slider2:hover {
-            opacity: 1;
-            /* Fully shown on mouse-over */
-        }
+    .slider2:hover {
+        opacity: 1;
+        /* Fully shown on mouse-over */
+    }
 
-        /* The slider handle (use webkit (Chrome, Opera, Safari, Edge) and moz (Firefox) to override default look) */
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            /* Override default look */
-            appearance: none;
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            /* Slider handle height */
-            background: #ffffff;
-            /* Green background */
-            border: 2px solid #5ca6ee;
-            cursor: pointer;
-            /* Cursor on hover */
-        }
+    /* The slider handle (use webkit (Chrome, Opera, Safari, Edge) and moz (Firefox) to override default look) */
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        /* Override default look */
+        appearance: none;
+        width: 25px;
+        /* Set a specific slider handle width */
+        height: 25px;
+        /* Slider handle height */
+        background: #ffffff;
+        /* Green background */
+        border: 2px solid #5ca6ee;
+        cursor: pointer;
+        /* Cursor on hover */
+    }
 
-        .slider::-moz-range-thumb {
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            /* Slider handle height */
-            background: #ffffff;
-            /* Green background */
-            border: 2px solid #5ca6ee;
-            cursor: pointer;
-            /* Cursor on hover */
-        }
+    .slider::-moz-range-thumb {
+        width: 25px;
+        /* Set a specific slider handle width */
+        height: 25px;
+        /* Slider handle height */
+        background: #ffffff;
+        /* Green background */
+        border: 2px solid #5ca6ee;
+        cursor: pointer;
+        /* Cursor on hover */
+    }
 
-        .slider2::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            /* Override default look */
-            appearance: none;
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            /* Slider handle height */
-            background: #ffffff;
-            /* Green background */
-            border: 2px solid #0fec00;
-            cursor: pointer;
-            /* Cursor on hover */
-        }
+    .slider2::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        /* Override default look */
+        appearance: none;
+        width: 25px;
+        /* Set a specific slider handle width */
+        height: 25px;
+        /* Slider handle height */
+        background: #ffffff;
+        /* Green background */
+        border: 2px solid #0fec00;
+        cursor: pointer;
+        /* Cursor on hover */
+    }
 
-        .slider2::-moz-range-thumb {
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            /* Slider handle height */
-            background: #ffffff;
-            /* Green background */
-            border: 2px solid #0fec00;
-            cursor: pointer;
-            /* Cursor on hover */
-        }
+    .slider2::-moz-range-thumb {
+        width: 25px;
+        /* Set a specific slider handle width */
+        height: 25px;
+        /* Slider handle height */
+        background: #ffffff;
+        /* Green background */
+        border: 2px solid #0fec00;
+        cursor: pointer;
+        /* Cursor on hover */
+    }
 
-        .overlay {
-            position: fixed; /* Sit on top of the page content */
-            display: none; /* Hidden by default */
-            width: 100%; /* Full width (cover the whole page) */
-            height: 100%; /* Full height (cover the whole page) */
-            top: 0; 
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-            z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-            cursor: pointer; /* Add a pointer on hover */
-            }
+    #overlay {
+        position: fixed; /* Sit on top of the page content */
+        display: block; /* Hidden by default */
+        width: 100%; /* Full width (cover the whole page) */
+        height: 100%; /* Full height (cover the whole page) */
+        top: 0; 
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+        z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+        cursor: pointer; /* Add a pointer on hover */
+    }
+    #overlaytext{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 50px;
+        color: white;
+        transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+    }
+    fieldset {
+        padding: 10px;
+        background: #fbfbfb;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
 </style>
+<body>
 <script src="https://code.jquery.com/jquery-3.3.1.js"
         integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
-        
+
+<script>
+    function on() {
+        document.getElementById("overlay").style.display = "block";
+    }
+    
+    function off() {
+        console.log("off clicked");
+        document.getElementById("overlay").style.display = "none";
+    }
+</script>
+
+
 <div class="row col-xs-12 col-md-12">
 <div class="panel panel-primary">
 <h3 class="panel-heading"><strong><span style="color: #1E1518;">Rating Chatbot Responses</span></strong></h3>
@@ -192,13 +222,17 @@
 <p class="instr">Welcome! Thank you for participating in this task. Please read the instructions carefully.</p>
 
 <p class="instr">You will see a snippet of a converation between a human user and a chatbot below. 
-    The chatbot, named Chattie, is supposed to help the user with their calendar.
-    Unfortunately, Chattie is not sure it understood the last instruction that the user gave (in italics).
-    Luckily, Chattie can offer some options for what it thinks the user meant. 
+    This chatbot, named <strong>Svenbot</strong>, is supposed to help the user with their calendar.
+    Here's the thing: Svenbot recently learned English, and isn't very confident yet.
+    Often, it understands the user just fine, but still asks for clarification.
+    Other times, it does have trouble understanding the user, and even a little difference in how something is said 
+    can change how Svenbot understands the user. 
+    So if Svenbot asks for clarification, it is best to pick something that seems to be closest in meaning to what the user said (in italics); 
+    Svenbot might just need to have the instruction repeated in a slightly different way. 
 </p>
 
-<p class="instr">Your task is to evaluate whether any of the options given by Chattie matches the original instruction. 
-    If one of the options is correct, please select it and press submit.</p>
+<p class="instr">Your task is to evaluate whether any of the options given by Svenbot is a valid rephrasing of what the user told it to do. 
+    If one of the options is valid, please select it and press submit.</p>
 
 <p class="instr">You can click the buttons or use the number keys (1,2,3,4) to select options. 
     Note that you may have to click the HIT once to get the numbers to work, and clicking on the text box
@@ -208,9 +242,9 @@
     Try to pick the one that most closely matches the original while still sounding natural. 
     If there are identical correct options, you can pick any one of them.</p>
 
-<p class="instr">If none of the options proposed by Chattie match what you think the user wanted, 
+<p class="instr">If none of the options proposed by Svenbot match what you think the user wanted, 
     then please use the textbox to rephrase what you think the user meant. 
-    Try to rephrase it in a way you think Chattie would understand.</p>
+    Try to rephrase it in a way you think Svenbot would understand.</p>
 
 <p class="instr">If you have any questions or comments, please use the comment box, or send an e-mail to 
     <strong>textual.choreography@gmail.com</strong></p>
@@ -227,23 +261,26 @@
 <section>
 <fieldset>
 <script type="text/javascript">
-    // if (document.getElementById("is_checkmark_page") === "true"){
-    document.write("<div id=\"overlay\"> <p class='instr'>The following task looks similar to a task that you have completed. " + 
-                    "However, this task is different. Please read the new instructions carefully, and " +
-                    "confirm that you have read this message </p> </div>");
-
-    // }
+    if (document.getElementById("is_checkmark_page") === "true"){
+        document.write("<div id=\"overlay\">" +
+            "<div id=\"overlaytext\">The following task looks similar to a task that you have completed. "+
+            "However, this task is different. Please read the new instructions carefully, and " +
+            "confirm that you have read this message " +
+            "<button onclick=\"off()\"> Confirm </button>" +
+            "</div>" +
+        "</div>");
+    }
     if(document.getElementById("user_turn_0")){
         if(document.getElementById("user_turn_0").value!== ""){
         document.write("<p class=\"user\"><strong> User: </strong> ${user_turn_0} </p>");
-        document.write("<p class=\"chat\"><strong> Chattie: </strong> ${agent_turn_0}</p>");
+        document.write("<p class=\"chat\"><strong> Svenbot: </strong> ${agent_turn_0}</p>");
 
         }
     } 
 
 </script>
 <p class="user"><strong>User:</strong> <i> ${user_turn_1} </i></p>
-<p class="chat"><strong>Chattie:</strong> I'm sorry, I'm having trouble understanding what you meant. 
+<p class="chat"><strong>Svenbot:</strong> I'm sorry, I didn't catch that. 
     Are any of these what you meant?</p>
 
 <div id="outerbox">
@@ -319,10 +356,4 @@
     }
 
 </script>
-<style type="text/css">fieldset {
-        padding: 10px;
-        background: #fbfbfb;
-        border-radius: 5px;
-        margin-bottom: 5px;
-    }
-</style>
+</body>
