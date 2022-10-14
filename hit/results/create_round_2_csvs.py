@@ -61,7 +61,7 @@ if __name__ == "__main__":
                 if i == 0:
                     line['is_checkmark_page'] = "true"
                 else:
-                    line['is_checkmark_page'] = "false"
+                    line['is_checkmark_page'] = "true"
                 to_write.append(line)
             print(f"ann {ann} gets {len(to_write)} lines")
             writer = csv.DictWriter(f, fieldnames=to_write[0].keys())
