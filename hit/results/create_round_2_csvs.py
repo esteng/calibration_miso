@@ -45,6 +45,7 @@ if __name__ == "__main__":
         # data_by_anns[ann] = input_for_ann
 
     if args.exclude:
+        lines_written = 0
         # we're excluding the annotator who did the lines from the csv 
         for ann, res_keys in res_keys_by_anns.items():
             input_exclude_ann = [x for x in input_data if (x["user_turn_0"].strip(), x["agent_turn_0"].strip(), x["user_turn_1"].strip()) in res_keys]
@@ -60,6 +61,8 @@ if __name__ == "__main__":
                 writer.writeheader()
                 for line in to_write:
                     writer.writerow(line)
+                    lines_written += 1
+        print(f"Wrote {lines_written} lines to {out_dir}")
 
     else:
         # for each annotator, get the lines they did and assign them evenly to other annotators 

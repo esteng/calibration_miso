@@ -1,11 +1,6 @@
-__User  Change it to Stop & Go .  __Agent  Could you be more specific with your request ?  __User Change the event title to Stop & Go __StartOfProgram
-__User  __Agent  __User Is there time to walk the dog before my meeting ? __StartOfProgram
-__User  Yes . I did n't make it .  __Agent  I 've deleted your event matching " lunch date " on August 28 th .  __User Delete lunch with my co worker from last week . __StartOfProgram
-__User  I need a meeting with kim and her skip tomorrow morning .  __Agent  Here are some times when everyone is free .  __User Can you cancel my meeting with Kim Possible tomorrow ? __StartOfProgram
-__User  need help managing my calendar  __Agent  I can help you create , update , and delete events on your calendar . You can also ask me about your schedule .  __User Starting today until next monday __StartOfProgram
-__User  __Agent  __User Put Cert Renewal on my calendar from the 18 th until the 27 th . __StartOfProgram
-__User  Cancel the little league game on Wednesday .  __Agent  Is this what you want me to cancel ?  __User I meant for you to cancel the one on Thursday . __StartOfProgram
-__User  I need it later .  __Agent  Does one of these work ?  __User The first option works . __StartOfProgram
-__User  __Agent  __User Create a party with waugh the day after tomorrow 7 . 00 to 7 . 30 pm __StartOfProgram
-__User  I had a birthday party event for Emily last saturday at 12 pm  __Agent  Is this what you 're looking for ?  __User James , Karl and Mike attended that event as well . __StartOfProgram
-__User  __Agent  __User I need the reports by David Lax __StartOfProgram
+__User  __Agent  __User I want dinner scheduled on a day that is n't the weekend __StartOfProgram
+__User  yes this looks good to me  __Agent  I 've put that on your calendar .  __User Add Larry , Bill , and Danny to the meeting with John Smith . __StartOfProgram
+__User  schedule a meeting with the marketing department tomorrow .  __Agent  I can only look up names in your address book . Please use a full name and try again .  __User Schedule a meeting tomorrow with Marcus from the marketing department . __StartOfProgram
+__User  __Agent  __User What will the temperature be tomorrow at 3 am ? __StartOfProgram
+__User  Move the dentist appointment to next Saturday .  __Agent  Is this the update you want ?  __User Schedule a lunch with Sarah and her manager for next Wednesday __StartOfProgram
+__User  I need it later .  __Agent  Does one of these work ?  __User Go with the first one . __StartOfProgram

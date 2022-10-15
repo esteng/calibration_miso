@@ -29,7 +29,7 @@ def read_csv(path, n_redundant=1):
         if manual_entry.strip() == "" or manual_entry.strip() == "{}":
             radio_input = int(line['Answer.radio-input'])
             chosen_tgt = line[f"Input.option_{radio_input - 1}"]
-            chosen_idx = int(line[f"Input.option_{radio_input - 1}_idx"]) - 1
+            chosen_idx = int(line[f"Input.option_{radio_input - 1}_idx"]) 
         else:
             chosen_tgt, chosen_idx = None, None
         line['chosen_tgt'] = chosen_tgt
@@ -73,6 +73,8 @@ def decode(rewritten, checkpoint_dir):
     env['FXN'] = "none"
     p = subprocess.Popen(decode_command, stdout=subprocess.PIPE, env=env)
     out, errs = p.communicate()
+    print(out)
+    print(errs)
     # out = out.decode('utf-8')
     # errs = errs.decode('utf-8')
     out_file = pathlib.Path(checkpoint_dir) / "translate_output" / f"temp.tgt"
@@ -190,7 +192,7 @@ def annotator_scores(turk_data):
     
     return dist_dict
 
-def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
+def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", interact=False):
     from dataflow.core.utterance_tokenizer import UtteranceTokenizer
     tokenizer = UtteranceTokenizer()
     def tokenize(text):
@@ -198,6 +200,8 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
         return " ".join(toked) 
 
     n_correct = 0
+    n_correct_set = 0
+    n_correct_most_likely = 0
     n_distractor = 0
     n_rewritten = 0
     total = 0
@@ -220,7 +224,11 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
 
     # for turk_entries, json_entry in zip(turk_data, json_data):
     for json_entry in json_data:
-        turk_entries = turk_lut[json_entry['gold_src'].strip()]
+        try:
+            turk_entries = turk_lut[json_entry['gold_src'].strip()]
+        except KeyError:
+            print(f"Missing entry")
+            continue
         # TODO (elias): need to implement three different cases 
         # case 1 where we take the majority vote 
             # in this case, what do we do with the rewrites? 
@@ -281,6 +289,13 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
                 continue 
             # get the corresponding lispress from json 
             chosen_lispress = json_entry['pred_tgts'][chosen_turk_idx]
+            equivalent_lispress = [x for i, x in enumerate(json_entry['pred_tgts']) if json_entry['pred_translated'][i] == chosen_turk_tgt]
+            # TODO (elias): sort these lispresses by their prob under the nucleus decode and take the top one 
+            # they are already sorted from json creation, so can just take top 
+            most_likely_equivalent_lispress = equivalent_lispress[0]
+
+            # if len(equivalent_lispress) > 1:
+                # pdb.set_trace()
             chosen_lispress = clean_lispress(chosen_lispress)
             # get gold lisress 
             gold_lispress = json_entry['gold_tgt']
@@ -289,6 +304,13 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
             # TODO: (elias) add a new denominator here that only counts examples where the gold is in k-best 
             if chosen_lispress == gold_lispress:
                 n_correct += 1
+            if gold_lispress in equivalent_lispress:
+                n_correct_set += 1
+            if most_likely_equivalent_lispress == gold_lispress:
+                n_correct_most_likely += 1
+            else:
+                if interact:
+                    pdb.set_trace()
             options = json_entry['pred_tgts']
             options = [clean_lispress(o) for o in options]
             gold_on_beam = gold_lispress in options
@@ -300,7 +322,9 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
                      "chosen_lispress": chosen_lispress, 
                      "gold_lispress": gold_lispress, 
                      "gold_on_beam": gold_on_beam,
-                     "is_correct": chosen_lispress == gold_lispress}
+                     "is_correct": chosen_lispress == gold_lispress,
+                     "is_correct_set": gold_lispress in equivalent_lispress,
+                     "is_correct_most_likely": most_likely_equivalent_lispress == gold_lispress}
             non_rewritten_data.append(to_add)
             total += 1
 
@@ -333,9 +357,14 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none"):
 
         rewritten_data[i]['rewritten'] = miso_rewritten_lispress
         rewritten_data[i]['is_correct'] = miso_rewritten_lispress == gold_tgt
+        rewritten_data[i]['is_correct_set'] = miso_rewritten_lispress == gold_tgt
 
     print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
             {n_correct / total*100:.2f}%")
+    print(f"Accuracy - in set (non-rewritten): {n_correct_set}/{total}: \
+            {n_correct_set / total*100:.2f}%")
+    print(f"Accuracy - most likely in set (non-rewritten): {n_correct_most_likely}/{total}: \
+            {n_correct_most_likely / total*100:.2f}%")
     print(f"Accuracy (non-rewritten, gold on beam): {n_correct}/{total_gold_on_beam}: \
             {n_correct / total_gold_on_beam*100:.2f}%")
     print(f"Accuracy (rewritten): {rewritten_n_correct}/{rewritten_total}: \
@@ -420,7 +449,7 @@ def main(args):
         run_iaa(turk_data, json_data)
 
     if args.do_rewrites:
-        run_choose_and_rewrite(turk_data, json_data, args, aggregator=args.aggregator)
+        run_choose_and_rewrite(turk_data, json_data, args, aggregator=args.aggregator, interact=args.interact)
 
 
 if __name__ == "__main__":
@@ -432,5 +461,6 @@ if __name__ == "__main__":
     parser.add_argument("--do_iaa", action="store_true", help="whether to run iaa")
     parser.add_argument("--aggregator", type=str, default="none", help="aggregator to use for rewrites", choices = ["none", "majority"])
     parser.add_argument("--n_redundant", type=int, default=1)
+    parser.add_argument("--interact", action="store_true")
     args = parser.parse_args() 
     main(args)

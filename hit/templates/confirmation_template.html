@@ -255,10 +255,10 @@
     // document.getElementById("overlay").style.display === "block"){
     if (document.getElementById("is_checkmark_page").value === "true"){
         document.write("<div id=\"overlay\" onclick=\"off()\">" +
-            "<div id=\"overlaytext\" >The following task looks similar to a task that you have completed. "+
-            "However, this task is different. Please read the new instructions carefully, and " +
-            "click confirm that you have read this message " + 
-            "<p> CLICK TO CONFIRM </p>" +
+            "<div id=\"overlaytext\" >The following task looks similar to a separate HIT that you have completed in the past few days. "+
+            "However, this round of tasks is different. Please read the new instructions carefully, and " +
+            "click anywhere to confirm that you have read this message." +  
+            "(This message will appear on each assignment in this HIT; all assignments in this HIT have the same instructions)" +
             "</div>" +
         "</div>");
         on();
