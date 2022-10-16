@@ -18,7 +18,16 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent.parent.joi
 from prep_for_translate import split_source
 
 def clean_lispress(x):
+    x_before = x
     x = x.strip()
+    # if False:
+    # remove determiners in value ops 
+    x = re.sub('" (a|an|the) ([^"]+) "', '" \g<2> "', x)
+    # lowercase all value ops 
+    x = re.sub('" ([^"]+) "', lambda m: m.group(0).lower(), x)
+    # if x != x_before:
+    # pdb.set_trace() 
+
     parsed_x = parse_lispress(x)
     return render_compact(parsed_x)
 
@@ -73,8 +82,8 @@ def decode(rewritten, checkpoint_dir):
     env['FXN'] = "none"
     p = subprocess.Popen(decode_command, stdout=subprocess.PIPE, env=env)
     out, errs = p.communicate()
-    print(out)
-    print(errs)
+    # print(out)
+    # print(errs)
     # out = out.decode('utf-8')
     # errs = errs.decode('utf-8')
     out_file = pathlib.Path(checkpoint_dir) / "translate_output" / f"temp.tgt"
@@ -199,6 +208,11 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
         toked = tokenizer.tokenize(text)
         return " ".join(toked) 
 
+    
+    n_was_correct_now_incorrect = 0
+    n_was_incorrect_now_correct = 0
+    n_stayed_incorrect = 0
+    n_stayed_correct = 0
     n_correct = 0
     n_correct_set = 0
     n_correct_most_likely = 0
@@ -220,6 +234,8 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             te_str += f"__Agent {te['Input.agent_turn_0'].strip()} "
         if te['Input.user_turn_1'] != "":
             te_str += f"__User {te['Input.user_turn_1'].strip()}"
+
+        te_str = re.sub('\\\\"', '"', te_str) 
         turk_lut[te_str] = turk_entry
 
     # for turk_entries, json_entry in zip(turk_data, json_data):
@@ -228,6 +244,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             turk_entries = turk_lut[json_entry['gold_src'].strip()]
         except KeyError:
             print(f"Missing entry")
+            # pdb.set_trace()
             continue
         # TODO (elias): need to implement three different cases 
         # case 1 where we take the majority vote 
@@ -289,7 +306,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                 continue 
             # get the corresponding lispress from json 
             chosen_lispress = json_entry['pred_tgts'][chosen_turk_idx]
-            equivalent_lispress = [x for i, x in enumerate(json_entry['pred_tgts']) if json_entry['pred_translated'][i] == chosen_turk_tgt]
+            equivalent_lispress = [clean_lispress(x) for i, x in enumerate(json_entry['pred_tgts']) if json_entry['pred_translated'][i] == chosen_turk_tgt]
             # TODO (elias): sort these lispresses by their prob under the nucleus decode and take the top one 
             # they are already sorted from json creation, so can just take top 
             most_likely_equivalent_lispress = equivalent_lispress[0]
@@ -297,6 +314,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             # if len(equivalent_lispress) > 1:
                 # pdb.set_trace()
             chosen_lispress = clean_lispress(chosen_lispress)
+            chosen_by_nucleus_lispress = clean_lispress(json_entry['pred_tgts'][0])
             # get gold lisress 
             gold_lispress = json_entry['gold_tgt']
             gold_lispress = clean_lispress(gold_lispress)
@@ -308,14 +326,33 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                 n_correct_set += 1
             if most_likely_equivalent_lispress == gold_lispress:
                 n_correct_most_likely += 1
+                if chosen_by_nucleus_lispress == gold_lispress:
+                    n_stayed_correct += 1
+                else:
+                    n_was_incorrect_now_correct += 1
             else:
-                if interact:
-                    pdb.set_trace()
+                if chosen_by_nucleus_lispress == gold_lispress:
+                    n_was_correct_now_incorrect += 1
+                else:
+                    n_stayed_incorrect += 1
+                # if interact and json_entry['bin'] < 0.1:
+                #     print(json_entry['bin'])
+                #     pdb.set_trace()
             options = json_entry['pred_tgts']
             options = [clean_lispress(o) for o in options]
             gold_on_beam = gold_lispress in options
             if gold_on_beam:
                 total_gold_on_beam += 1
+
+            if interact and float(json_entry['bin']) < 0.15:
+                print(json_entry['bin'])
+                print(f"gold on beam: {gold_on_beam}")
+                if gold_on_beam:
+                    print(f"\tgold: {json_entry['gold_tgt']}")
+                    print(f"\ttop nucleus: {json_entry['pred_tgts'][0]}")
+                    print(f"\tchosen: {chosen_lispress}")
+                print()
+                # pdb.set_trace()
 
             to_add = {"json_entry": json_entry, 
                      "turk_entry": turk_entry,
@@ -341,6 +378,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             to_add = {"json_entry": json_entry,
                      "turk_entry": turk_entry}
             rewritten_data.append(to_add)
+
     print(f"Rewritten: {n_rewritten}")
     # decode rewritten examples
     print(f"decoding {len(rewritten)} examples from {args.checkpoint_dir}")
@@ -353,11 +391,19 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
 
         if miso_rewritten_lispress == gold_tgt:
             rewritten_n_correct += 1
+        else:
+            if interact:
+                pdb.set_trace()
         rewritten_total += 1
 
         rewritten_data[i]['rewritten'] = miso_rewritten_lispress
         rewritten_data[i]['is_correct'] = miso_rewritten_lispress == gold_tgt
         rewritten_data[i]['is_correct_set'] = miso_rewritten_lispress == gold_tgt
+
+    print(f"Dynamic breakdown (ignoring rewritten): {n_stayed_incorrect} stayed incorrect, \
+                                {n_was_correct_now_incorrect} were correct now incorrect, \
+                                {n_stayed_correct} stayed correct, \
+                                {n_was_incorrect_now_correct} were incorrect now correct")
 
     print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
             {n_correct / total*100:.2f}%")
