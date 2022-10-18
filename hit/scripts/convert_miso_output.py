@@ -19,12 +19,9 @@ def group_by_source(outputs: List,
         lines = outputs[i: i+n_preds]
         translated_lines = translated_tgts[i: i+n_preds]
         # make sure ordered correctly 
-        try:
-            total_probs = [np.exp(np.sum(np.log(x['expression_probs']))) 
-                            if x['expression_probs'] is not None else 0.0 
-                                 for x in lines ]
-        except:
-            pdb.set_trace()
+        total_probs = [np.exp(np.sum(np.log(x['expression_probs']))) 
+                        if x['expression_probs'] is not None else 0.0 
+                                for x in lines ]
         # sort by total probability 
         combo_lines = zip(lines, translated_lines, total_probs)
         sorted_combo_lines = sorted(combo_lines, key=lambda x: x[2], reverse=True)
@@ -37,18 +34,14 @@ def group_by_source(outputs: List,
             if "UNK" in line['tgt_str']:
                 continue
 
-            # only skip example if all outputs are fences 
-            # since gold fence examples are already skipped 
-            # if filter_fences:
-                # if "Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str']:
-                    # skip fence examples 
-                    # continue 
-                    # grouped[i].append(None)
-                    # skip = True
-                    # continue
-
-            # if not skip:
             line['translated'] = tgt
+            # get minimum prob 
+            expr_probs = line['expression_probs']
+            if expr_probs is not None and len(expr_probs) > 0:
+                line['min_prob'] = np.min(expr_probs)
+            else:
+                line['min_prob'] = 0.0
+
             grouped[i].append(line)
             # add up to n_per_ex examples 
             if len(grouped[i]) == n_per_ex:
@@ -182,8 +175,10 @@ if __name__ == "__main__":
         except IndexError:
             pdb.set_trace()
         assert(distractor_tgt not in pred_tgts)
+        min_prob_list = [x['min_prob'] for x in output_list]
         output_dict = {"gold_tgt": gold_tgt,
                        "gold_src": gold_src,
+                        "min_probs": min_prob_list, 
                         "bin": bin_data[group_idx // args.n_preds],
                         "data_idx": gold_idx_data[group_idx // args.n_preds],
                         "pred_tgts": pred_tgts,

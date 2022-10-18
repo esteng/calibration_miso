@@ -16,7 +16,11 @@ def read_json(input_file, ignore_idxs=[]):
     data_by_unique_id = {x['data_idx']: x for x in data if x['data_idx'] not in ignore_idxs}
     return list(data_by_unique_id.values())
 
-def convert_data_to_csv(all_data, out_dir, shuffle=False): 
+def convert_data_to_csv(all_data, 
+                        out_dir, 
+                        shuffle=False, 
+                        no_option_shuffle=False,
+                        no_distractor=False): 
     csv_data = []
     for line in all_data: 
         # need user turns 
@@ -27,18 +31,28 @@ def convert_data_to_csv(all_data, out_dir, shuffle=False):
         line_data = {"user_turn_0": turns[0],
                     "agent_turn_0": turns[1],
                     "user_turn_1": turns[2]} 
-        options = line['pred_translated'] + [line['distractor']]
-        options_and_idxs = [(x, i) for i, x in enumerate(options)]
-        np.random.shuffle(options_and_idxs)
-        options, idxs = zip(*options_and_idxs)
-        if len(options) != 4:
-            pdb.set_trace()
+
+        if no_distractor:
+            options = line['pred_translated'] 
+            min_probs = line['min_probs'] 
+        else:
+            options = line['pred_translated'] + [line['distractor']]
+            min_probs = line['min_probs'] + [0.0]
+
+        zipped_options_and_probs = zip(options, min_probs)
+        options_and_idxs = [(x, i, p) for i, (x, p) in enumerate(zipped_options_and_probs)]
+
+        # if flag set to not shuffle options, keep sorted by best total prob 
+        if no_option_shuffle:
+            pass
+        else:
+            np.random.shuffle(options_and_idxs)
+
+        options, idxs, min_probs = zip(*options_and_idxs)
         for i in range(len(options)): 
-            if options[i] is None:
-                # output was a fence 
-                pdb.set_trace()
             line_data[f"option_{i}"] = options[i]
             line_data[f"option_{i}_idx"] = idxs[i]
+            line_data[f"prob_{i}"] = min_probs[i]
         
         csv_data.append(line_data) 
     
@@ -58,8 +72,6 @@ def convert_data_to_csv(all_data, out_dir, shuffle=False):
         for line in all_data:
             f1.write(json.dumps(line) + "\n")
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, required=True)
@@ -67,6 +79,8 @@ if __name__ == "__main__":
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--ignore_idx_file", type=str, default=None)
     parser.add_argument("--shuffle", action="store_true")
+    parser.add_argument("--no_option_shuffle", action="store_true")
+    parser.add_argument("--no_distractor", action="store_true")
     args = parser.parse_args()
 
     # add ability to ignore indices if they've already been included in previous hits 
@@ -81,4 +95,8 @@ if __name__ == "__main__":
     if args.limit is not None:
         json_data = json_data[:args.limit]
 
-    convert_data_to_csv(json_data, args.out_dir, args.shuffle)
+    convert_data_to_csv(json_data, 
+                        args.out_dir, 
+                        args.shuffle, 
+                        args.no_option_shuffle,
+                        args.no_distractor)

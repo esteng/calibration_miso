@@ -241,10 +241,11 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
     # for turk_entries, json_entry in zip(turk_data, json_data):
     for json_entry in json_data:
         try:
-            turk_entries = turk_lut[json_entry['gold_src'].strip()]
+            key = re.sub("__StartOfProgram", "", json_entry['gold_src']).strip()
+            turk_entries = turk_lut[key]
         except KeyError:
             print(f"Missing entry")
-            # pdb.set_trace()
+            pdb.set_trace()
             continue
         # TODO (elias): need to implement three different cases 
         # case 1 where we take the majority vote 
@@ -344,7 +345,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             if gold_on_beam:
                 total_gold_on_beam += 1
 
-            if interact and float(json_entry['bin']) < 0.15:
+            if interact and float(json_entry['bin']) > 0.85:
                 print(json_entry['bin'])
                 print(f"gold on beam: {gold_on_beam}")
                 if gold_on_beam:
@@ -352,7 +353,8 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                     print(f"\ttop nucleus: {json_entry['pred_tgts'][0]}")
                     print(f"\tchosen: {chosen_lispress}")
                 print()
-                # pdb.set_trace()
+                if gold_on_beam: 
+                    pdb.set_trace()
 
             to_add = {"json_entry": json_entry, 
                      "turk_entry": turk_entry,
