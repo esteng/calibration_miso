@@ -1,0 +1,328 @@
+<!-- Bootstrap v3.0.3 -->
+<link href="https://s3.amazonaws.com/mturk-public/bs30/css/bootstrap.min.css" rel="stylesheet" />
+<section class="container" id="Other" style="margin-bottom:15px; padding: 10px 10px; font-family: sans-serif, Verdana, Geneva  ; color:#333333; font-size:1.0em;">
+<style type="text/css">hr {
+            color: #000000;
+            background-color: #000000;
+            height: 2px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            text-align: left;
+            table-layout: fixed;
+            font-size: 15px;
+        }
+
+        .sentence {
+            font-size: 16px;
+        }
+
+        .panel-heading {
+            background-color: #a7eede !important;
+            border: 0px solid;
+        }
+
+        .panel-primary {
+            border-color: #FFFFFF;
+            border: 0px solid #FFFFFF;
+        }
+
+        .emph {
+            color: #EC407A;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .red {
+            color: #FF0000;
+        }
+
+        .instr {
+            font-family: sans-serif, Verdana, Geneva;
+            font-size: 15px;
+            line-height: 20px;
+            width: 88%;
+        }
+        .chat {text-align: right;}
+        .option {text-align: right;}
+        .user {text-align: left;}
+
+        #slidecontainer {
+            width: 100%;
+            /* Width of the outside container */
+            margin-bottom: 1cm;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            /* Override default CSS styles */
+            appearance: none;
+            width: 40%;
+            /* Full-width */
+            height: 10px;
+            /* Specified height */
+            background: #b4b4b4;
+            /* Grey background */
+            outline: none;
+            /* Remove outline */
+            opacity: 0.7;
+            /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s;
+            /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        .slider2 {
+            -webkit-appearance: none;
+            /* Override default CSS styles */
+            appearance: none;
+            width: 40%;
+            /* Full-width */
+            height: 10px;
+            /* Specified height */
+            background: #b4b4b4;
+            /* Grey background */
+            outline: none;
+            /* Remove outline */
+            opacity: 0.7;
+            /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s;
+            /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        /* Mouse-over effects */
+        .slider:hover {
+            opacity: 1;
+            /* Fully shown on mouse-over */
+        }
+
+        .slider2:hover {
+            opacity: 1;
+            /* Fully shown on mouse-over */
+        }
+
+        /* The slider handle (use webkit (Chrome, Opera, Safari, Edge) and moz (Firefox) to override default look) */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            /* Override default look */
+            appearance: none;
+            width: 25px;
+            /* Set a specific slider handle width */
+            height: 25px;
+            /* Slider handle height */
+            background: #ffffff;
+            /* Green background */
+            border: 2px solid #5ca6ee;
+            cursor: pointer;
+            /* Cursor on hover */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            /* Set a specific slider handle width */
+            height: 25px;
+            /* Slider handle height */
+            background: #ffffff;
+            /* Green background */
+            border: 2px solid #5ca6ee;
+            cursor: pointer;
+            /* Cursor on hover */
+        }
+
+        .slider2::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            /* Override default look */
+            appearance: none;
+            width: 25px;
+            /* Set a specific slider handle width */
+            height: 25px;
+            /* Slider handle height */
+            background: #ffffff;
+            /* Green background */
+            border: 2px solid #0fec00;
+            cursor: pointer;
+            /* Cursor on hover */
+        }
+
+        .slider2::-moz-range-thumb {
+            width: 25px;
+            /* Set a specific slider handle width */
+            height: 25px;
+            /* Slider handle height */
+            background: #ffffff;
+            /* Green background */
+            border: 2px solid #0fec00;
+            cursor: pointer;
+            /* Cursor on hover */
+        }
+</style>
+<script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+        
+<div class="row col-xs-12 col-md-12">
+<div class="panel panel-primary">
+<h3 class="panel-heading"><strong><span style="color: #1E1518;">Rating Chatbot Responses</span></strong></h3>
+
+<p class="instr">Welcome! Thank you for participating in this task. Please read the instructions carefully, <strong>as they have changed</strong> .</p>
+
+<p class="instr">You will see a snippet of a converation between a human user and a chatbot below. 
+    This chatbot, named <strong>Svenbot</strong>, is supposed to help the user with their calendar.
+    Here's the thing: Svenbot recently learned English, and isn't very confident yet.
+    Often, it understands the user just fine, but still asks for clarification.
+    Occasionally, it has trouble understanding the user, and even a little difference in how something is said 
+    can change how Svenbot understands the user. 
+    If Svenbot asks for clarification, that means it want to hear the instructions in a different way. 
+    Pick the option that seems closest to what the user originally said.
+</p>
+
+<p class="instr">Your task is to evaluate whether any of the options given by Svenbot is a valid rephrasing of what the user told it to do. 
+    If one of the options is valid, please select it and press submit.</p>
+
+<p class="instr">You can click the buttons or use the number keys (1-0) to select options. 
+    Note that you may have to click the HIT once to get the numbers to work, and clicking on the text box
+    will disable the numbers (options can still be clicked with the mouse).</p>
+
+<p class="instr">There may be multiple similar options. 
+    Try to pick the one that most closely matches the original while still sounding natural.</p>
+
+<p class="instr">You will see a varying number of options. In some cases, there will only be one option. 
+    If none of the options proposed by Svenbot match what you think the user wanted, 
+    then please use the textbox to rephrase what you think the user meant. 
+    Try to rephrase it in a way you think Svenbot would understand.</p>
+
+<p class="instr">If you have any questions or comments, please use the comment box, or send an e-mail to 
+    <strong>textual.choreography@gmail.com</strong></p>
+
+<p class="instr">Otherwise, please leave the comment box blank.</p>
+
+<div hidden>
+    <input id="user_turn_0" type="hidden" value="${user_turn_0}" /> 
+    <input id="agent_turn_0" type="hidden" value="${agent_turn_0}" /> 
+</div>
+
+<section>
+<fieldset>
+<script type="text/javascript">
+    if(document.getElementById("user_turn_0")){
+        if(document.getElementById("user_turn_0").value!== ""){
+        document.write("<p class=\"user\"><strong> User: </strong> ${user_turn_0} </p>");
+        document.write("<p class=\"chat\"><strong> Svenbot: </strong> ${agent_turn_0}</p>");
+
+        }
+    } 
+
+</script>
+<p class="user"><strong>User:</strong> <i> ${user_turn_1} </i></p>
+<p class="chat"><strong>Svenbot:</strong> I'm sorry, I'm having trouble understanding what you meant. 
+    Are any of these what you meant?</p>
+
+<div id="outerbox">
+    <script type="text/javascript">
+        // FOR DEBUGGING, SET MANUALLY 
+        var option_list_input = [`hi option 1`, `hi option 2`, `hi option 3`, `hi option 4`, `hi option 5`, `hi option 6`, `hi option 7`, `hi option 8`, `hi option 9`, `hi option 10`];
+        let value = JSON.stringify(option_list_input);
+        console.log(value);
+        window.option_list = value;
+        // FOR REAL, SET FROM INPUT 
+        // window.option_list = ${option_list};
+    </script>
+
+    <script type="text/javascript">
+        var text_to_write = null;
+        var input_text_to_write = null;
+        console.log(window.option_list);
+        // var option_list = JSON.parse(document.getElementById("option_list").value);
+        var option_list = JSON.parse(window.option_list);
+        for (let i=0; i < option_list.length; i ++){
+            input_text_to_write = `<span class ="box">\n`;
+            input_text_to_write += `<input accesskey = ${i+1} data-key=Key${i+1} id="button_${i}" name="radio-input" title="Alt+1" type="radio" value="${i+1}" />\n`;
+            input_text_to_write += `(${i+1}) <label for="button_${i}"> <p class="chat"> ${option_list[i]} </p> </label>`
+            input_text_to_write += `</span><br>`
+            document.write(input_text_to_write);
+        }
+    </script>
+</div>
+</fieldset>
+
+</section>
+</div>
+
+<div class="form-group"><label for="comments">None of the above:</label> <input class="form-control" id="manual_entry" name="manual_entry" placeholder="Rephrase '${user_turn_1}'" type="text" /></div>
+<div class="form-group"><label for="comments">Comments:</label> <input class="form-control" id="comments" name="comments" placeholder="" type="text" /></div>
+</div>
+</section>
+
+<div hidden>
+    <input id="option_idx_list", type="hidden", value="${option_idx_list}"/>
+</div>
+
+<script type="text/javascript">
+    const controller = new AbortController();
+
+    window.addEventListener("keypress", myEventHandler,  {signal: controller.signal});
+    // el.addEventListener("keypress", myEventHandler, false);
+    const el = document.getElementById("manual_entry");
+    el.addEventListener("click", interruptHandler, false)
+
+    function interruptHandler(e) {
+        console.log("e triggered ",e);
+        controller.abort();
+    }
+
+    function myEventHandler(e){
+        console.log(code)
+        var code = (e.keyCode ? e.keyCode : e.which);
+        switch (code) {
+            case 49: // 1
+                $('#button_0').prop('checked', true);
+                break;
+            case 50: // 2
+                $('#button_1').prop('checked', true);
+                break;
+            case 51: // 3
+                $('#button_2').prop('checked', true);
+                break;
+            case 52: // 4
+                $('#button_3').prop('checked', true);
+                break;
+            case 53: // 5
+                $('#button_4').prop('checked', true);
+                break;
+            case 54: // 6
+                $('#button_5').prop('checked', true);
+                break;
+            case 55: // 7
+                $('#button_6').prop('checked', true);
+                break;
+            case 56: // 8
+                $('#button_7').prop('checked', true);
+                break;
+            case 57: // 9
+                $('#button_8').prop('checked', true);
+                break;
+            case 48: // 0
+                $('#button_9').prop('checked', true);
+                break;
+        }
+    }
+
+</script>
+<style type="text/css">fieldset {
+        padding: 10px;
+        background: #fbfbfb;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+</style>
