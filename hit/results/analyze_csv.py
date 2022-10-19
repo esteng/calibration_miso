@@ -74,7 +74,7 @@ def decode(rewritten, checkpoint_dir):
             f2.write(tgt + "\n")
 
     # run the decoding script
-    decode_command = ["sh", "/home/estengel/incremental-function-learning/experiments/calflow.sh", "-a", "eval_fxn"]
+    decode_command = ["sh", "/home/estengel/incremental-function-learning/experiments/calflow.sh", "-a", "eval_fxn_cpu"]
     env = os.environ.copy()
     # print(temp_file)
     env['CHECKPOINT_DIR'] = checkpoint_dir
@@ -201,7 +201,7 @@ def annotator_scores(turk_data):
     
     return dist_dict
 
-def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", interact=False):
+def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", interact=False, rewrite_chosen=False, rewrite_all_baseline=False):
     from dataflow.core.utterance_tokenizer import UtteranceTokenizer
     tokenizer = UtteranceTokenizer()
     def tokenize(text):
@@ -293,8 +293,12 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                     # annotator chose the distractor, which is always index 4 
                     n_distractor += 1
                     continue 
-                if chosen_turk_tgt is None:
+                if chosen_turk_tgt is None or rewrite_chosen:
+                    if rewrite_chosen and turk_entry is not None:
+                        turk_entry['manual_entry'] = turk_entry['chosen_tgt']
                     aggregated_turk_entries_rewrite.append(turk_entry)
+                elif rewrite_all_baseline:
+                    turk_entry['manual_entry'] = turk_entry['Input.user_turn_1']
                 else:
                     aggregated_turk_entries_nonrewrite.append(turk_entry)
 
@@ -407,21 +411,24 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                                 {n_stayed_correct} stayed correct, \
                                 {n_was_incorrect_now_correct} were incorrect now correct")
 
-    print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
-            {n_correct / total*100:.2f}%")
-    print(f"Accuracy - in set (non-rewritten): {n_correct_set}/{total}: \
-            {n_correct_set / total*100:.2f}%")
-    print(f"Accuracy - most likely in set (non-rewritten): {n_correct_most_likely}/{total}: \
-            {n_correct_most_likely / total*100:.2f}%")
-    print(f"Accuracy (non-rewritten, gold on beam): {n_correct}/{total_gold_on_beam}: \
-            {n_correct / total_gold_on_beam*100:.2f}%")
-    print(f"Accuracy (rewritten): {rewritten_n_correct}/{rewritten_total}: \
-            {rewritten_n_correct / rewritten_total*100:.2f}%")
+    if total > 0:
+        print(f"Accuracy (non-rewritten): {n_correct}/{total}: \
+                {n_correct / total*100:.2f}%")
+        print(f"Accuracy - in set (non-rewritten): {n_correct_set}/{total}: \
+                {n_correct_set / total*100:.2f}%")
+        print(f"Accuracy - most likely in set (non-rewritten): {n_correct_most_likely}/{total}: \
+                {n_correct_most_likely / total*100:.2f}%")
+        print(f"Accuracy (non-rewritten, gold on beam): {n_correct}/{total_gold_on_beam}: \
+                {n_correct / total_gold_on_beam*100:.2f}%")
+    if rewritten_total > 0:
+        print(f"Accuracy (rewritten): {rewritten_n_correct}/{rewritten_total}: \
+                {rewritten_n_correct / rewritten_total*100:.2f}%")
 
     combo_n_correct = n_correct + rewritten_n_correct
     combo_total = total + rewritten_total
-    print(f"Accuracy (combined): {combo_n_correct}/{combo_total}: \
-            {combo_n_correct / combo_total *100:.2f}%")
+    if combo_total > 0:
+        print(f"Accuracy (combined): {combo_n_correct}/{combo_total}: \
+                {combo_n_correct / combo_total *100:.2f}%")
 
     return non_rewritten_data, rewritten_data
 
@@ -497,7 +504,13 @@ def main(args):
         run_iaa(turk_data, json_data)
 
     if args.do_rewrites:
-        run_choose_and_rewrite(turk_data, json_data, args, aggregator=args.aggregator, interact=args.interact)
+        run_choose_and_rewrite(turk_data, 
+                                json_data, 
+                                args, 
+                                aggregator=args.aggregator, 
+                                interact=args.interact, 
+                                rewrite_chosen=args.rewrite_chosen, 
+                                rewrite_all_baseline=args.rewrite_all_baseline)
 
 
 if __name__ == "__main__":
@@ -506,6 +519,8 @@ if __name__ == "__main__":
     parser.add_argument("--json", type=str, required=True, help="json input that generated the csv input for mturk")
     parser.add_argument("--checkpoint_dir", type=str, help="checkpoint dir for miso model", default="/brtx/604-nvme1/estengel/calflow_calibration/miso/tune_roberta_tok_fix_benchclamp_data")
     parser.add_argument("--do_rewrites", action="store_true", help="whether to rewrite examples")
+    parser.add_argument("--rewrite_chosen", action="store_true", help="whether to rewrite the chosen sentence instead of taking the parse associated with it")
+    parser.add_argument("--rewrite_all_baseline", action="store_true", help="set if you want to rewrite the original input sentences, as a baseline for rewrite_chosen")
     parser.add_argument("--do_iaa", action="store_true", help="whether to run iaa")
     parser.add_argument("--aggregator", type=str, default="none", help="aggregator to use for rewrites", choices = ["none", "majority"])
     parser.add_argument("--n_redundant", type=int, default=1)
