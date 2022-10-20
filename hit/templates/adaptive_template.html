@@ -235,7 +235,7 @@
         // window.option_list = value;
         // FOR REAL, SET FROM INPUT 
         window.option_list = ${option_list};
-        window.option_prob_list ${option_prob_list};
+        window.option_prob_list = ${option_prob_list};
     </script>
 
     <script type="text/javascript">
@@ -245,6 +245,7 @@
         // var option_list = JSON.parse(document.getElementById("option_list").value);
         // var option_list = JSON.parse(window.option_list);
         var option_list = window.option_list;
+        var option_prob_list = window.option_prob_list;
         for (let i=0; i < option_list.length; i ++){
             input_text_to_write = "<span class =\"box\">\n";
             input_text_to_write += "<input accesskey = "+ (i+1) +" data-key=Key" + (i+1) + " id=\"button_"+i+"\" name=\"radio-input\" title=\"Alt+1\" type=\"radio\" value=\""+(i+1)+"\" />\n";
