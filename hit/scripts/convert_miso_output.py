@@ -3,7 +3,7 @@ from pathlib import Path
 import re 
 import json 
 from collections import defaultdict
-from typing import List 
+from typing import List, Dict
 import pdb 
 import numpy as np
 from dataflow.core.lispress import parse_lispress, render_compact
@@ -11,13 +11,27 @@ np.random.seed(12)
 
 def group_by_source(outputs: List, 
                     translated_tgts: List[str], 
+                    translation_inputs: List[Dict], 
                     n_preds: int, 
                     n_per_ex: int,
                     filter_fences: bool):
     grouped = defaultdict(list)
-    for i in range(0, len(outputs), n_preds):
-        lines = outputs[i: i+n_preds]
-        translated_lines = translated_tgts[i: i+n_preds]
+    # group by line idx 
+    # for i in range(0, len(outputs), n_preds):
+    trans_by_line_idx = defaultdict(list)
+    for trans_input, trans_output in zip(translation_inputs, translated_tgts):
+        idx = trans_input['dialogue_id']
+        trans_by_line_idx[str(idx)].append(trans_output)
+
+    lines_by_line_idx = defaultdict(list)
+    for line in outputs:
+        lines_by_line_idx[line['line_idx']].append(line)
+    for line_idx, lines in lines_by_line_idx.items():
+
+        # lines = outputs[i: i+n_preds]
+        # translated_lines = translated_tgts[i: i+n_preds]
+        translated_lines = trans_by_line_idx[line_idx]
+        # pdb.set_trace()
         # make sure ordered correctly 
         total_probs = [np.exp(np.sum(np.log(x['expression_probs']))) 
                         if x['expression_probs'] is not None else 0.0 
@@ -42,25 +56,25 @@ def group_by_source(outputs: List,
             else:
                 line['min_prob'] = 0.0
 
-            grouped[i].append(line)
+            grouped[line_idx].append(line)
             # add up to n_per_ex examples 
-            if len(grouped[i]) == n_per_ex:
+            if len(grouped[line_idx]) == n_per_ex:
                 break
-        is_fence = ["Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str'] for line in grouped[i]]
+        is_fence = ["Fence" in line['tgt_str'] or "Pleasantry" in line['tgt_str'] for line in grouped[line_idx]]
         if filter_fences and all(is_fence):
-            grouped[i] = None
+            grouped[line_idx] = None
 
     return grouped
 
 def get_distractors(grouped_lines):
     # for each group, choose a random distractor
-    distractors = []
-    for group in grouped_lines.keys():
-        if grouped_lines[group] is None:
+    distractors = {}
+    for idx, group in grouped_lines.items():
+        if grouped_lines[idx] is None:
             distractors.append(None)
             continue 
 
-        example = grouped_lines[group][0]
+        example = grouped_lines[idx][0]
         if example is None:
             distractors.append(None)
             continue
@@ -73,7 +87,7 @@ def get_distractors(grouped_lines):
         possible_distractors = [x for y in possible_distractors for x in y]
         distractor = np.random.choice(possible_distractors)
         # distractor = np.random.choice(distractor_group)
-        distractors.append(distractor)
+        distractors[idx] = distractor
     return distractors
 
 def clean_generations(outputs):
@@ -94,8 +108,9 @@ def get_lispress(entry):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--miso_pred_file", type=str, required=True)
+    parser.add_argument("--translation_src_file", type=str, required=True)
+    parser.add_argument("--translated_tgt_file", type=str, required=True) 
     parser.add_argument("--data_dir", type=str, default="hit/data/for_miso")
-    parser.add_argument("--translated_tgt_file", type=str, default = "hit/data/translated_by_bart_large/generated_predictions.txt")
     parser.add_argument("--n_preds", type=int, default=10)
     parser.add_argument("--n_per_ex", type=int, default=3)
     parser.add_argument("--out_dir", type=str, required=True)
@@ -132,13 +147,19 @@ if __name__ == "__main__":
     with open(data_dir / bin_file, "r") as f:
         bin_data = [float(x) for x in f.readlines()]
 
+    src_tgt_by_idx = {str(idx): (src, tgt) for idx, src, tgt in zip(gold_idx_data, srcs, gold_tgt_data)}
+    bin_data = {str(idx): bin for idx, bin in zip(gold_idx_data, bin_data)}
+
     # get corresponding translated target data
     with open(args.translated_tgt_file, "r") as f:
         translated_tgt_data = clean_generations(f.readlines()) 
+    with open(args.translation_src_file) as f1:
+        translation_src_data = [json.loads(x) for x in f1.readlines()]
 
     # break into groups  
     grouped_data = group_by_source(data, 
                                     translated_tgt_data, 
+                                    translation_src_data, 
                                     args.n_preds, 
                                     args.n_per_ex, 
                                     args.filter_fences)
@@ -149,8 +170,9 @@ if __name__ == "__main__":
     # combine with gold data and distractor data 
     for group_idx, output_list in grouped_data.items():
         try:
-            gold_src = srcs[group_idx // args.n_preds]
-            gold_tgt = gold_tgt_data[group_idx // args.n_preds]
+            # gold_src = srcs[group_idx // args.n_preds]
+            # gold_tgt = gold_tgt_data[group_idx // args.n_preds]
+            gold_src, gold_tgt = src_tgt_by_idx[group_idx]
         except IndexError:
             pdb.set_trace()
         if args.filter_fences and ("Fence" in gold_tgt or "Pleasantry" in gold_tgt):
@@ -167,7 +189,7 @@ if __name__ == "__main__":
         pred_tgts = [get_lispress(x) for x in output_list]
         pred_translated = [x['translated'] if x is not None else None for x in output_list]
         try:
-            distractor = distractors[group_idx // args.n_preds]
+            distractor = distractors[group_idx]
             if distractor is None:
                 continue
             distractor_tgt = distractor['translated']
@@ -179,8 +201,8 @@ if __name__ == "__main__":
         output_dict = {"gold_tgt": gold_tgt,
                        "gold_src": gold_src,
                         "min_probs": min_prob_list, 
-                        "bin": bin_data[group_idx // args.n_preds],
-                        "data_idx": gold_idx_data[group_idx // args.n_preds],
+                        "bin": bin_data[group_idx],
+                        "data_idx": group_idx, 
                         "pred_tgts": pred_tgts,
                         "pred_translated": pred_translated,
                         "distractor": distractor_tgt}

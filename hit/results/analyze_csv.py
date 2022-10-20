@@ -299,6 +299,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                     aggregated_turk_entries_rewrite.append(turk_entry)
                 elif rewrite_all_baseline:
                     turk_entry['manual_entry'] = turk_entry['Input.user_turn_1']
+                    aggregated_turk_entries_rewrite.append(turk_entry)
                 else:
                     aggregated_turk_entries_nonrewrite.append(turk_entry)
 

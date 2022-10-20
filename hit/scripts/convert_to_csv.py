@@ -16,6 +16,41 @@ def read_json(input_file, ignore_idxs=[]):
     data_by_unique_id = {x['data_idx']: x for x in data if x['data_idx'] not in ignore_idxs}
     return list(data_by_unique_id.values())
 
+def convert_data_to_list_csv(all_data, 
+                            out_dir, 
+                            crit_mass,
+                            shuffle=False,
+                            no_duplicates=False):
+    """ convert data to a csv that has variabe-length lists of indices and options """
+    csv_data = []
+    for line in all_data: 
+        turns = split_source(line['gold_src'])
+        if len(turns) == 1: 
+            # no previous turns 
+            turns = ["", "", turns[0]]
+        line_data = {"user_turn_0": turns[0],
+                    "agent_turn_0": turns[1],
+                    "user_turn_1": turns[2]} 
+        min_probs = line['min_probs'] 
+        options = line['pred_translated'] 
+        
+        option_list = []
+        option_idx_list = [] 
+        cum_prob = 0
+        for i, (prob, opt) in enumerate(zip(min_probs, options)):  
+            if no_duplicates and opt in option_list:
+                continue
+            cum_prob += prob
+            option_list.append(opt)
+            option_idx_list.append(i)
+            if cum_prob > crit_mass: 
+                break
+
+        line_data["option_list"] = json.dumps(option_list)
+        line_data["option_idx_list"] = json.dumps(option_idx_list) 
+        csv_data.append(line_data)
+    write_csv_and_data(csv_data, all_data, out_dir, shuffle=shuffle)
+
 def convert_data_to_csv(all_data, 
                         out_dir, 
                         shuffle=False, 
@@ -55,7 +90,10 @@ def convert_data_to_csv(all_data,
             line_data[f"prob_{i}"] = min_probs[i]
         
         csv_data.append(line_data) 
-    
+
+    write_csv_and_data(csv_data, all_data, out_dir, shuffle=shuffle)
+
+def write_csv_and_data(csv_data, all_data, out_dir, shuffle=False): 
     out_dir = pathlib.Path(out_dir)
     out_dir.mkdir(exist_ok=True, parents=True)
 
@@ -72,6 +110,7 @@ def convert_data_to_csv(all_data,
         for line in all_data:
             f1.write(json.dumps(line) + "\n")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, required=True)
@@ -79,6 +118,9 @@ if __name__ == "__main__":
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--ignore_idx_file", type=str, default=None)
     parser.add_argument("--shuffle", action="store_true")
+    parser.add_argument("--output_list", action="store_true", help="output options as list")
+    parser.add_argument("--crit_mass", type=float, default=0.85, help="Cumulative confidence needed to end list") 
+    parser.add_argument("--no_duplicates", action="store_true", help="remove duplicate options")
     parser.add_argument("--no_option_shuffle", action="store_true")
     parser.add_argument("--no_distractor", action="store_true")
     args = parser.parse_args()
@@ -95,8 +137,15 @@ if __name__ == "__main__":
     if args.limit is not None:
         json_data = json_data[:args.limit]
 
-    convert_data_to_csv(json_data, 
-                        args.out_dir, 
-                        args.shuffle, 
-                        args.no_option_shuffle,
-                        args.no_distractor)
+    if not args.output_list:
+        convert_data_to_csv(json_data, 
+                            args.out_dir, 
+                            args.shuffle, 
+                            args.no_option_shuffle,
+                            args.no_distractor)
+    else:
+        convert_data_to_list_csv(json_data,
+                                args.out_dir,
+                                args.crit_mass,
+                                args.shuffle,
+                                args.no_duplicates)
