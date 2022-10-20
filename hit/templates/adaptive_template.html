@@ -180,15 +180,12 @@
 <p class="instr">You will see a snippet of a converation between a human user and a chatbot below. 
     This chatbot, named <strong>Svenbot</strong>, is supposed to help the user with their calendar.
     Here's the thing: Svenbot recently learned English, and isn't very confident yet.
-    Often, it understands the user just fine, but still asks for clarification.
     Occasionally, it has trouble understanding the user, and even a little difference in how something is said 
     can change how Svenbot understands the user. 
-    If Svenbot asks for clarification, that means it want to hear the instructions in a different way. 
     Pick the option that seems closest to what the user originally said.
 </p>
 
-<p class="instr">Your task is to evaluate whether any of the options given by Svenbot is a valid rephrasing of what the user told it to do. 
-    If one of the options is valid, please select it and press submit.</p>
+<p class="instr">Your task is to evaluate whether any of the options given by Svenbot is a valid rephrasing of what the user told it to do.</p>
 
 <p class="instr">You can click the buttons or use the number keys (1-0) to select options. 
     Note that you may have to click the HIT once to get the numbers to work, and clicking on the text box
@@ -197,10 +194,12 @@
 <p class="instr">There may be multiple similar options. 
     Try to pick the one that most closely matches the original while still sounding natural.</p>
 
-<p class="instr">You will see a varying number of options. In some cases, there will only be one option. 
+<p class="instr">You will see a varying number of options. In some cases, there will only be one option.  
     If none of the options proposed by Svenbot match what you think the user wanted, 
     then please use the textbox to rephrase what you think the user meant. 
-    Try to rephrase it in a way you think Svenbot would understand.</p>
+    Try to rephrase it in a way you think Svenbot would understand.
+    This feature can be used even when there is only one option -- not all of the single option cases are correct. 
+    </p>
 
 <p class="instr">If you have any questions or comments, please use the comment box, or send an e-mail to 
     <strong>textual.choreography@gmail.com</strong></p>
@@ -244,12 +243,13 @@
         var input_text_to_write = null;
         console.log(window.option_list);
         // var option_list = JSON.parse(document.getElementById("option_list").value);
-        var option_list = JSON.parse(window.option_list);
+        // var option_list = JSON.parse(window.option_list);
+        var option_list = window.option_list;
         for (let i=0; i < option_list.length; i ++){
-            input_text_to_write = `<span class ="box">\n`;
-            input_text_to_write += `<input accesskey = ${i+1} data-key=Key${i+1} id="button_${i}" name="radio-input" title="Alt+1" type="radio" value="${i+1}" />\n`;
-            input_text_to_write += `(${i+1}) <label for="button_${i}"> <p class="chat"> ${option_list[i]} </p> </label>`
-            input_text_to_write += `</span><br>`
+            input_text_to_write = "<span class =\"box\">\n";
+            input_text_to_write += "<input accesskey = "+ (i+1) +" data-key=Key" + (i+1) + " id=\"button_"+i+"\" name=\"radio-input\" title=\"Alt+1\" type=\"radio\" value=\""+(i+1)+"\" />\n";
+            input_text_to_write += "("+(i+1)+") <label for=\"button_"+i+"\"> <p class=\"chat\"> "+option_list[i]+" </p> </label>";
+            input_text_to_write += "</span><br>";
             document.write(input_text_to_write);
         }
     </script>
