@@ -218,7 +218,6 @@
         if(document.getElementById("user_turn_0").value!== ""){
         document.write("<p class=\"user\"><strong> User: </strong> ${user_turn_0} </p>");
         document.write("<p class=\"chat\"><strong> Svenbot: </strong> ${agent_turn_0}</p>");
-
         }
     } 
 
@@ -236,6 +235,7 @@
         // window.option_list = value;
         // FOR REAL, SET FROM INPUT 
         window.option_list = ${option_list};
+        window.option_prob_list ${option_prob_list};
     </script>
 
     <script type="text/javascript">
@@ -248,7 +248,7 @@
         for (let i=0; i < option_list.length; i ++){
             input_text_to_write = "<span class =\"box\">\n";
             input_text_to_write += "<input accesskey = "+ (i+1) +" data-key=Key" + (i+1) + " id=\"button_"+i+"\" name=\"radio-input\" title=\"Alt+1\" type=\"radio\" value=\""+(i+1)+"\" />\n";
-            input_text_to_write += "("+(i+1)+") <label for=\"button_"+i+"\"> <p class=\"chat\"> "+option_list[i]+" </p> </label>";
+            input_text_to_write += "("+(i+1)+") <label for=\"button_"+i+"\"> <p class=\"chat\"> "+option_list[i]+" (Confidence: "+option_prob_list[i] +") </p> </label>";
             input_text_to_write += "</span><br>";
             document.write(input_text_to_write);
         }

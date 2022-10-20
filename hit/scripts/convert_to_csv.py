@@ -20,7 +20,8 @@ def convert_data_to_list_csv(all_data,
                             out_dir, 
                             crit_mass,
                             shuffle=False,
-                            no_duplicates=False):
+                            no_duplicates=False,
+                            add_probs=False):
     """ convert data to a csv that has variabe-length lists of indices and options """
     csv_data = []
     for line in all_data: 
@@ -36,6 +37,7 @@ def convert_data_to_list_csv(all_data,
         
         option_list = []
         option_idx_list = [] 
+        option_prob_list = []
         cum_prob = 0
         for i, (prob, opt) in enumerate(zip(min_probs, options)):  
             if no_duplicates and opt in option_list:
@@ -43,11 +45,14 @@ def convert_data_to_list_csv(all_data,
             cum_prob += prob
             option_list.append(opt)
             option_idx_list.append(i)
+            option_prob_list.append(prob)
             if cum_prob > crit_mass: 
                 break
 
         line_data["option_list"] = json.dumps(option_list)
         line_data["option_idx_list"] = json.dumps(option_idx_list) 
+        if add_probs:
+            line_data['option_prob_list'] = json.dumps(option_prob_list)
         csv_data.append(line_data)
     write_csv_and_data(csv_data, all_data, out_dir, shuffle=shuffle)
 
@@ -123,6 +128,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_duplicates", action="store_true", help="remove duplicate options")
     parser.add_argument("--no_option_shuffle", action="store_true")
     parser.add_argument("--no_distractor", action="store_true")
+    parser.add_argument("--add_probs", action="store_true")
     args = parser.parse_args()
 
     # add ability to ignore indices if they've already been included in previous hits 
@@ -148,4 +154,5 @@ if __name__ == "__main__":
                                 args.out_dir,
                                 args.crit_mass,
                                 args.shuffle,
-                                args.no_duplicates)
+                                args.no_duplicates,
+                                args.add_probs)
