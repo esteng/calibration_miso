@@ -36,9 +36,17 @@ def read_csv(path, n_redundant=1):
     def process_row(line):
         manual_entry = line['Answer.manual_entry']
         if manual_entry.strip() == "" or manual_entry.strip() == "{}":
-            radio_input = int(line['Answer.radio-input'])
-            chosen_tgt = line[f"Input.option_{radio_input - 1}"]
-            chosen_idx = int(line[f"Input.option_{radio_input - 1}_idx"]) 
+            radio_input = int(line['Answer.radio-input']) 
+
+            # check if it's a list hit or not 
+            if "Input.option_list" in line:
+                option_list = json.loads(line['Input.option_list'])
+                option_idx_list = json.loads(line['Input.option_idx_list'])
+                chosen_tgt = option_list[radio_input-1]
+                chosen_idx = option_idx_list[radio_input-1]
+            else:
+                chosen_tgt = line[f"Input.option_{radio_input - 1}"]
+                chosen_idx = int(line[f"Input.option_{radio_input - 1}_idx"]) 
         else:
             chosen_tgt, chosen_idx = None, None
         line['chosen_tgt'] = chosen_tgt
@@ -54,10 +62,8 @@ def read_csv(path, n_redundant=1):
     for i in range(0, len(data), n_redundant):
         examples = data[i:i+n_redundant]
         rows_by_example.append(examples)
-        # rows_by_example[i//n_redundant] = examples
-        # rows_by_turker[row['WorkerId']].append(row)
     return rows_by_example
-    # return rows_by_turker   
+ 
 
 def read_json(path): 
     with open(path) as f1:
@@ -245,7 +251,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             turk_entries = turk_lut[key]
         except KeyError:
             print(f"Missing entry")
-            pdb.set_trace()
+            # pdb.set_trace()
             continue
         # TODO (elias): need to implement three different cases 
         # case 1 where we take the majority vote 
