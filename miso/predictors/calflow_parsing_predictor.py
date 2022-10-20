@@ -107,7 +107,8 @@ class CalibratedCalflowParsingPredictor(CalflowParsingPredictor):
                                                 node_probs=outputs['node_probs']) 
         to_ret = {"tgt_str": pred_graph.tgt_str,
                     "expression_probs": pred_graph.expression_probs, 
-                    "src_str": src_str}
+                    "src_str": src_str,
+                    "line_idx": outputs['line_idx']}
         to_ret = json.dumps(to_ret)
 
 

@@ -369,7 +369,10 @@ class CalFlowTransformerParser(CalFlowParser):
             # Target-side copy.
             else:
                 index -= (self._vocab_size + source_dynamic_vocab_size)
-                token = target_dynamic_vocab[index]
+                try:
+                    token = target_dynamic_vocab[index]
+                except KeyError:
+                    token = "UNK"
                 node_index = index
 
             target_token = TextField([Token(token)], instance_meta["target_token_indexers"])
@@ -630,6 +633,7 @@ class CalFlowTransformerParser(CalFlowParser):
                 loss=loss,
                 node_probs = node_probs,
                 src_str=inputs['src_tokens_str'],
+                line_idx=inputs['line_idx'],
                 nodes=node_predictions,
                 node_indices=node_index_predictions,
                 edge_heads=edge_head_predictions,
@@ -642,6 +646,7 @@ class CalFlowTransformerParser(CalFlowParser):
                 loss=0.0,
                 node_probs = [],
                 src_str=[], 
+                line_idx=[],
                 nodes=[], 
                 node_indices=[], 
                 edge_heads=[], 

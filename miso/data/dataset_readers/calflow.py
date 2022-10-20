@@ -279,7 +279,7 @@ class CalFlowDatasetReader(DatasetReader):
             list_data["src_copy_vocab"]
         )
 
-        fields["line_index"] = MetadataField(
+        fields["line_idx"] = MetadataField(
             list_data["line_idx"]
         )
 

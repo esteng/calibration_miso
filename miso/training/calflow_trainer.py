@@ -502,6 +502,7 @@ def _from_params(cls,  # type: ignore
 
     # model params 
     parameters = [[n, p] for n, p in model.named_parameters() if p.requires_grad and n not in tune_bert_names]
+
     optimizer = Optimizer.from_params(parameters, params.pop("optimizer"))
     if "moving_average" in params:
         moving_average = MovingAverage.from_params(params.pop("moving_average"), parameters=parameters)
