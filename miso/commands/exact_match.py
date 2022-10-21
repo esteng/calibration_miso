@@ -128,6 +128,7 @@ class ExactMatchScore(Subcommand):
         subparser.add_argument("--precomputed", action='store_true', required=False, help = "Don't run prediction again, just use already computed outputs ")
         subparser.add_argument("--oracle", action="store_true")
         subparser.add_argument("--top-k-beam-search", action="store_true", help="set to true if you want to decode the --top-k predictions instead of the top 1 from beam search")
+        subparser.add_argument("--top-k-beam-search-hitl", action="store_true", help="set to true if you want to decode the --top-k predictions instead of the top 1 from beam search and run the hitl simulation")
         subparser.add_argument("--top-k", type=int, default=1, help = "top k to predict out of beam search") 
         subparser.add_argument("--json-save-path", type=str, help="if doing oracle decode, path to save instances and output")
 
@@ -151,7 +152,7 @@ def _construct_and_predict(args: argparse.Namespace) -> None:
             print(f"Saved outputs to {args.json_save_path}")
         return
 
-    if args.top_k_beam_search:
+    if args.top_k_beam_search or args.top_k_beam_search_hitl:
         __, output = scorer.predict_and_compute()
         return 
 
@@ -185,6 +186,7 @@ class Scorer:
                 fxn_of_interest = None,
                 oracle = False, 
                 top_k_beam_search = False,
+                top_k_beam_search_hitl = False,
                 top_k = 1,
                 precomputed = False): 
 
@@ -209,6 +211,7 @@ class Scorer:
         self.precomputed = precomputed
         self.oracle = oracle
         self.top_k_beam_search = top_k_beam_search
+        self.top_k_beam_search_hitl = top_k_beam_search_hitl
         self.top_k = top_k
         self.output_file = out_file 
         self.manager = _CalFlowReturningPredictManager(self.predictor,
@@ -221,6 +224,7 @@ class Scorer:
                                     line_limit = self.line_limit,
                                     oracle = self.pred_args.oracle,
                                     top_k_beam_search=self.top_k_beam_search,
+                                    top_k_beam_search_hitl=self.top_k_beam_search_hitl,
                                     top_k=self.top_k,
                                     precomputed = self.precomputed)
 
@@ -256,7 +260,7 @@ class Scorer:
         if self.oracle:
             return input_instances, output_graphs
 
-        if self.top_k_beam_search:
+        if self.top_k_beam_search or self.top_k_beam_search_hitl:
             with open(self.output_file, "w") as f1:
                 for line in output_graphs:
                     try:
@@ -327,6 +331,7 @@ class Scorer:
                    precomputed = args.precomputed,
                    oracle=args.oracle,
                    top_k_beam_search=args.top_k_beam_search,
+                   top_k_beam_search_hitl=args.top_k_beam_search_hitl,
                    top_k=args.top_k
                    )
 
