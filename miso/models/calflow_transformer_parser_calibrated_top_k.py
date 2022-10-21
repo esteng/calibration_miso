@@ -89,11 +89,12 @@ class CalFlowTransformerParser(CalFlowParser):
 
         self.oracle = False
         self.top_k_beam_search = False
+        self.top_k_beam_search_hitl = False
         self.top_k = 1
         self.do_group_dro = do_group_dro
 
         # make sure we never have the wrong settings
-        assert(not ((self.training or self.oracle) and self.top_k_beam_search))
+        assert(not ((self.training or self.oracle) and (self.top_k_beam_search or self.top_k_beam_search_hitl)))
 
     @overrides
     def forward(self, **raw_inputs: Dict) -> Dict:
@@ -102,6 +103,10 @@ class CalFlowTransformerParser(CalFlowParser):
             return self._training_forward(inputs)
         elif self.top_k_beam_search:
             return self._test_forward_top_k(inputs, k=self.top_k)
+        elif self.top_k_beam_search_hitl:
+            self._beam_size = 1
+            self._beam_search.beam_size = 1
+            return self._test_forward_top_k_hitl(inputs, k=self.top_k)
         else:
             return self._test_forward(inputs) 
 
@@ -244,6 +249,123 @@ class CalFlowTransformerParser(CalFlowParser):
 
         return log_probs, state, auxiliaries
 
+    def _take_one_step_node_prediction_hitl_sim(self,
+                                       last_predictions: torch.Tensor,
+                                       state: Dict[str, torch.Tensor],
+                                       auxiliaries: Dict[str, List[Any]],
+                                       timestep: int, 
+                                       misc: Dict,
+                                       ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, List[Any]]]:
+
+        # Adds a HITL simulation step to the node prediction: when the model predicts a low prob node, it is 
+        # flagged and options are presented to an "annotator" (here, the gold lispress sequence). 
+        # If the prefix we've decoded so far matches the gold lispress prefix, then we get the next gold token
+        # If it doesn't, we count it as a mistake. 
+        # We then count how many times the gold token is in the top k options from the model. 
+        # If it is in the top k, we have the "annotator" select it; if it is not, we have the "annotator"
+        # manually write the gold token in. Either way, we replace the model prediction with the gold token. 
+        misc['batch_size'] = 1
+        inputs = self._prepare_next_inputs(
+            predictions=last_predictions,
+            target_attention_map=state["target_attention_map"],
+            target_dynamic_vocabs=auxiliaries["target_dynamic_vocabs"],
+            meta_data=misc["instance_meta"],
+            batch_size=misc["batch_size"],
+            last_decoding_step=misc["last_decoding_step"],
+            source_dynamic_vocab_size=misc["source_dynamic_vocab_size"],
+        )
+
+        # TODO: HERE we go, just concatenate "inputs" to history stored in the state 
+        # need a node index history and a token history 
+        # no need to update history inside of _prepare_next_inputs or double-iterate 
+        # Here is where we need to check against the gold lispress sequence 
+        gold_sequence = misc["gold_target_tokens"]
+        prev_pred_tokens = misc['prev_pred_tokens']
+        # pdb.set_trace()
+        prefix_len = prev_pred_tokens.shape[1]
+        gold_prefix = gold_sequence[:, :prefix_len]
+        prefix_matches = (prev_pred_tokens == gold_prefix).all(dim = 1)
+
+
+        decoder_inputs = torch.cat([
+            self._decoder_token_embedder(inputs["tokens"]),
+            self._decoder_node_index_embedding(inputs["node_indices"]),
+        ], dim=2)
+
+        # if previously decoded steps, concat them in before current input 
+        if state['input_history'] is not None:
+            # state_history = state['input_history'].repeat((size_multiplier, 1, 1))
+            state_history = state['input_history']
+            decoder_inputs = torch.cat([state_history, decoder_inputs], dim = 1)
+
+        # set previously decoded to current step  
+        state['input_history'] = decoder_inputs
+
+
+        decoding_outputs = self._decoder.one_step_forward(
+            inputs=decoder_inputs,
+            source_memory_bank=state["source_memory_bank"],
+            source_mask=state["source_mask"],
+            decoding_step=misc["last_decoding_step"] + 1,
+            total_decoding_steps=self._max_decoding_steps,
+            coverage=state.get("coverage", None)
+        )
+
+        state['attentional_tensor'] = decoding_outputs['attentional_tensor'].squeeze(1)
+        state['output'] = decoding_outputs['output'].squeeze(1)
+
+        if decoding_outputs["coverage"] is not None:
+            state["coverage"] = decoding_outputs["coverage"]
+
+
+        node_prediction_outputs = self._extended_pointer_generator(
+            inputs=decoding_outputs["attentional_tensor"],
+            source_attention_weights=decoding_outputs["source_attention_weights"],
+            target_attention_weights=decoding_outputs["target_attention_weights"],
+            source_attention_map=state["source_attention_map"],
+            target_attention_map=state["target_attention_map"]
+        )
+        log_probs = (node_prediction_outputs["hybrid_prob_dist"] + self._eps).squeeze(1).log()
+
+        misc["last_decoding_step"] += 1
+
+        max_probs, node_preds = torch.max(log_probs, dim = -1)
+        node_probs = torch.exp(log_probs[:, node_preds])
+        top_k_node_preds = torch.topk(log_probs, k = 5, dim = -1)[1]
+        try:
+            next_gold = gold_sequence[:, prefix_len] 
+        except IndexError:
+            pdb.set_trace()
+
+        # compare pred to gold 
+        next_pred_equal_next_gold = (node_preds == next_gold).bool()
+        flipped = False
+        for bidx in range(gold_sequence.shape[0]):
+            if not prefix_matches[bidx]:
+                misc['prefix_diverged'] += 1 
+                continue
+            if next_pred_equal_next_gold[bidx].item(): 
+                # we're golden, do nothing 
+                misc['pred_was_correct'] += 1
+            else: 
+                # get the topk 
+                top_k_options = top_k_node_preds[bidx]
+                if next_gold[bidx] in top_k_options: 
+                    # "annotator" would be able to choose from topk list 
+                    misc['ann_chose_from_top_k'] += 1
+                else:
+                    misc['ann_manually_inserted'] += 1
+                # manually set the logprobs to be the gold 
+                log_probs[bidx, next_gold[bidx]] = 0.0 - self._eps
+                flipped = True
+        # if flipped:
+        #     pdb.set_trace()
+        next_pred_tokens = torch.argmax(log_probs, dim=-1).unsqueeze(-1)
+        misc['prev_pred_tokens'] = torch.cat([prev_pred_tokens, next_pred_tokens], dim=-1)
+
+        return log_probs, state, auxiliaries
+
+
 
     @overrides
     def _prepare_inputs(self, raw_inputs):
@@ -303,6 +425,8 @@ class CalFlowTransformerParser(CalFlowParser):
         auxiliaries = {
             "target_dynamic_vocabs": inputs["target_dynamic_vocab"]
         }
+
+
         misc = {
             "batch_size": batch_size,
             # "beam_size": start
@@ -310,6 +434,15 @@ class CalFlowTransformerParser(CalFlowParser):
             "source_dynamic_vocab_size": inputs["source_dynamic_vocab_size"],
             "instance_meta": inputs["instance_meta"]
         }
+
+        if "target_tokens" in inputs.keys() and inputs['target_tokens'] is not None:
+            pdb.set_trace()
+            misc['gold_target_tokens']  = torch.cat([start_predictions.unsqueeze(-1), inputs['generation_outputs']], dim=-1)
+            misc['ann_chose_from_top_k'] = 0
+            misc['ann_manually_inserted'] = 0
+            misc['prefix_diverged'] = 0
+            misc['pred_was_correct'] = 0
+            misc['prev_pred_tokens'] = start_predictions.unsqueeze(-1)
 
         return start_predictions, start_state, auxiliaries, misc
 
@@ -540,7 +673,9 @@ class CalFlowTransformerParser(CalFlowParser):
         if not self.do_group_dro:
             loss = node_pred_loss["loss_per_node"] + edge_pred_loss["loss_per_node"] 
         else:
-            loss = self.get_dro_loss(node_pred_loss["loss_per_node_per_instance"], edge_pred_loss["loss_per_node_per_instance"], inputs['contains_fxn']) 
+            loss = self.get_dro_loss(node_pred_loss["loss_per_node_per_instance"], 
+                                    edge_pred_loss["loss_per_node_per_instance"], 
+                                    inputs['contains_fxn']) 
 
         to_ret = dict(loss=loss)
 
@@ -572,6 +707,94 @@ class CalFlowTransformerParser(CalFlowParser):
             to_ret['prob_dist'] = prob_list
         return to_ret  
 
+    def _test_forward_top_k_hitl(self, inputs: Dict, k: int) -> List[Dict]:
+        # need to set this manually to override the model 
+        encoding_outputs = self._encode(
+            tokens=inputs["source_tokens"],
+            subtoken_ids=inputs["source_subtoken_ids"],
+            token_recovery_matrix=inputs["source_token_recovery_matrix"],
+            mask=inputs["source_mask"]
+        )
+
+        start_predictions, start_state, auxiliaries, misc = self._prepare_decoding_start_state(inputs, encoding_outputs)
+
+        # all_predictions: [batch_size, beam_size, max_steps]
+        # outputs: [batch_size, beam_size, max_steps, hidden_vector_dim]
+        # log_probs: [batch_size, beam_size]
+    
+        all_predictions, outputs,  log_probs, target_dynamic_vocabs = self._beam_search.search(
+            start_predictions=start_predictions,
+            start_state=start_state,
+            auxiliaries=auxiliaries,
+            step=lambda x, y, z, s: self._take_one_step_node_prediction_hitl_sim(x, y, z, s, misc),
+            tracked_state_name="output",
+            tracked_auxiliary_name="target_dynamic_vocabs"
+        )
+        pdb.set_trace()
+
+        all_outputs = []
+        for beam_idx in range(all_predictions.shape[1]):
+            node_predictions, node_index_predictions, edge_head_mask, valid_node_mask = self._read_node_predictions(
+                # Remove the last one because we can't get the RNN state for the last one.
+                predictions=all_predictions[:, beam_idx, :-1],
+                meta_data=inputs["instance_meta"],
+                target_dynamic_vocabs=target_dynamic_vocabs[beam_idx],
+                source_dynamic_vocab_size=inputs["source_dynamic_vocab_size"]
+            )
+            # pdb.set_trace()
+            # node_probs = outputs[:, beam_idx, :]
+            # # pdb.set_trace()
+            # node_probs = node_probs.detach().cpu().numpy().tolist()
+
+            edge_predictions = self._parse(
+                rnn_outputs=outputs[:, beam_idx],
+                edge_head_mask=edge_head_mask
+            )
+
+            (edge_head_predictions, 
+            edge_type_predictions, 
+            edge_type_ind_predictions) = self._read_edge_predictions(edge_predictions)
+
+            edge_pred_loss = self._compute_edge_prediction_loss(
+                edge_head_ll=edge_predictions["edge_head_ll"],
+                edge_type_ll=edge_predictions["edge_type_ll"],
+                pred_edge_heads=edge_predictions["edge_heads"],
+                pred_edge_types=edge_predictions["edge_types"],
+                gold_edge_heads=edge_predictions["edge_heads"],
+                gold_edge_types=edge_predictions["edge_types"],
+                valid_node_mask=valid_node_mask
+            )
+
+            loss = -log_probs[:, beam_idx].sum() / edge_pred_loss["num_nodes"] + edge_pred_loss["loss_per_node"]
+
+            outputs = dict(
+                loss=loss,
+                # node_probs = node_probs,
+                src_str=inputs['src_tokens_str'],
+                line_idx=inputs['line_idx'],
+                nodes=node_predictions,
+                node_indices=node_index_predictions,
+                edge_heads=edge_head_predictions,
+                edge_types=edge_type_predictions,
+                edge_types_inds=edge_type_ind_predictions
+            )
+            all_outputs.append(outputs)
+
+        flat_outputs = dict(
+                loss=0.0,
+                node_probs = [],
+                src_str=[], 
+                line_idx=[],
+                nodes=[], 
+                node_indices=[], 
+                edge_heads=[], 
+                edge_types=[], 
+                edge_types_inds=[], 
+        )
+        for output in all_outputs:
+            for k in output.keys():
+                flat_outputs[k] += output[k]
+        return flat_outputs
     def _test_forward_top_k(self, inputs: Dict, k: int) -> List[Dict]:
         encoding_outputs = self._encode(
             tokens=inputs["source_tokens"],

@@ -61,10 +61,16 @@ class CalflowParsingPredictor(Predictor):
         outputs = self._model.forward_on_instance(instance)
         return sanitize(outputs)
 
-    def predict_batch_instance(self, instances: List[Instance], oracle: bool = False, top_k_beam_search: bool = False, top_k: int = 1) -> List[JsonDict]:
+    def predict_batch_instance(self, 
+                                instances: List[Instance], 
+                                oracle: bool = False, 
+                                top_k_beam_search: bool = False, 
+                                top_k_beam_search_hitl: bool = False, 
+                                top_k: int = 1) -> List[JsonDict]:
         # set oracle flag for vanilla parsing analysis 
         self._model.oracle = oracle
         self._model.top_k_beam_search = top_k_beam_search
+        self._model.top_k_beam_search_hitl = top_k_beam_search_hitl
         self._model.top_k = top_k
         if top_k > 1:
             self._model._beam_search = BeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
@@ -73,6 +79,8 @@ class CalflowParsingPredictor(Predictor):
         if oracle: 
             return self.organize_forced_decode(instances, outputs) 
         if top_k_beam_search:
+            return [self.dump_line(line) for line in outputs]
+        if top_k_beam_search_hitl:
             return [self.dump_line(line) for line in outputs]
         return sanitize(outputs)
 
@@ -115,10 +123,16 @@ class CalibratedCalflowParsingPredictor(CalflowParsingPredictor):
         return to_ret
 
     @overrides 
-    def predict_batch_instance(self, instances: List[Instance], oracle: bool = False, top_k_beam_search: bool = False, top_k: int = 1) -> List[JsonDict]:
+    def predict_batch_instance(self, 
+                                instances: List[Instance], 
+                                oracle: bool = False, 
+                                top_k_beam_search: bool = False, 
+                                top_k_beam_search_hitl = False, 
+                                top_k: int = 1) -> List[JsonDict]:
         # set oracle flag for vanilla parsing analysis 
         self._model.oracle = oracle
         self._model.top_k_beam_search = top_k_beam_search
+        self._model.top_k_beam_search_hitl = top_k_beam_search_hitl
         self._model.top_k = top_k
         self._model._beam_search = CalibratedBeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
         self._model._beam_size = top_k
