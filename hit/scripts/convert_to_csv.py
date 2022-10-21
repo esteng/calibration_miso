@@ -45,7 +45,7 @@ def convert_data_to_list_csv(all_data,
             cum_prob += prob
             option_list.append(opt)
             option_idx_list.append(i)
-            option_prob_list.append(f"{prob*100:.2f}")
+            option_prob_list.append(f"{int(round(prob*100,0))}")
             if cum_prob > crit_mass: 
                 break
 
