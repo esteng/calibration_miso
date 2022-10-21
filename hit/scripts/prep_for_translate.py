@@ -61,6 +61,12 @@ if __name__ == "__main__":
         gold_src_data = src_f.readlines()
     with open(data_dir / tgt_file, "r") as f:
         gold_tgt_data = [x.strip() for x in f.readlines()]
+    idx_file = tgt_file.split(".tgt")[0] + ".idx"
+
+    with open(data_dir / idx_file) as f:
+        gold_idx_data = [int(x) for x in f.readlines()]
+    
+    src_tgt_by_idx = {idx: (gold, tgt) for idx, gold, tgt in zip(gold_idx_data, gold_src_data, gold_tgt_data)}
 
     # match with gold source 
 
@@ -76,7 +82,8 @@ if __name__ == "__main__":
         for j, data in enumerate(lines):
             # line_idx = i // args.n_pred
             line_idx = int(line_idx)
-            src_str = gold_src_data[line_idx]
+            # src_str = gold_src_data[line_idx]
+            src_str, __ = src_tgt_by_idx[line_idx]
             prev_user_str, prev_agent_str, user_str = split_source(src_str)
             # data = json.loads(line)
             try:

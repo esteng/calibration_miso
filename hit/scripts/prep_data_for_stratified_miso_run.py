@@ -1,9 +1,10 @@
 # get input just for stratified sample to reduce computation time 
+from genericpath import exists
 import json 
 from pathlib import Path
 import re 
 
-path_to_strat_three_line = "hit/data/for_hit_round_3/stratified_data_by_bin.tgt"
+path_to_strat_three_line = "hit/data/for_hit_round_4/stratified_data_by_bin.tgt"
 with open(path_to_strat_three_line) as f1:
     strat_three_lines = [json.loads(x) for x in f1.readlines()]
     strat_three_lines = [(x['src_str'].strip(), x['midpoint']) for x in strat_three_lines]
@@ -30,7 +31,8 @@ for line, bin in strat_three_lines:
             data_by_src[src] = {"src": src, "tgt": tgt, "idx": idx, "bin": bin}
 
 print(len(data_by_src))
-out_dir = Path("hit/data/for_miso/stratified")
+out_dir = Path("hit/data/for_miso/stratified_round_4")
+out_dir.mkdir(parents=True, exist_ok=True)
 with open(out_dir / "stratified.src_tok", "w") as src_f, \
     open(out_dir / "stratified.tgt", "w") as tgt_f,\
     open(out_dir / "stratified.idx", "w") as idx_f,\

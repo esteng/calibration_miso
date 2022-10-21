@@ -52,17 +52,20 @@ def read_csv(path, n_redundant=1):
         line['chosen_tgt'] = chosen_tgt
         line['chosen_idx'] = chosen_idx
         line['manual_entry'] = manual_entry
-        return line 
+        return line
 
+    is_list = False
     with open(path) as f1:
         reader = csv.DictReader(f1)
         data = [process_row(x) for x in reader]
+        if "Input.option_list" in data[0]:
+            is_list = True
     # rows_by_example = defaultdict(list)
     rows_by_example = []
     for i in range(0, len(data), n_redundant):
         examples = data[i:i+n_redundant]
         rows_by_example.append(examples)
-    return rows_by_example
+    return rows_by_example, is_list
  
 
 def read_json(path): 
@@ -80,7 +83,7 @@ def decode(rewritten, checkpoint_dir):
             f2.write(tgt + "\n")
 
     # run the decoding script
-    decode_command = ["sh", "/home/estengel/incremental-function-learning/experiments/calflow.sh", "-a", "eval_fxn_cpu"]
+    decode_command = ["sh", "/home/estengel/incremental-function-learning/experiments/calflow.sh", "-a", "eval_fxn"]
     env = os.environ.copy()
     # print(temp_file)
     env['CHECKPOINT_DIR'] = checkpoint_dir
@@ -207,7 +210,14 @@ def annotator_scores(turk_data):
     
     return dist_dict
 
-def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", interact=False, rewrite_chosen=False, rewrite_all_baseline=False):
+def run_choose_and_rewrite(turk_data, 
+                           json_data, 
+                           args, 
+                           aggregator="none", 
+                           interact=False, 
+                           rewrite_chosen=False, 
+                           rewrite_all_baseline=False, 
+                           is_list=False):
     from dataflow.core.utterance_tokenizer import UtteranceTokenizer
     tokenizer = UtteranceTokenizer()
     def tokenize(text):
@@ -295,7 +305,7 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
             for turk_entry in turk_entries:
                 chosen_turk_tgt = turk_entry['chosen_tgt']
                 chosen_turk_idx = turk_entry['chosen_idx']
-                if chosen_turk_idx == 3: 
+                if chosen_turk_idx == 3 and not is_list: 
                     # annotator chose the distractor, which is always index 4 
                     n_distractor += 1
                     continue 
@@ -312,7 +322,8 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
         for turk_entry in aggregated_turk_entries_nonrewrite:
             chosen_turk_tgt = turk_entry['chosen_tgt']
             chosen_turk_idx = turk_entry['chosen_idx']
-            if chosen_turk_idx == 3: 
+
+            if chosen_turk_idx == 3 and not is_list: 
                 # annotator chose the distractor, which is always index 4 
                 n_distractor += 1
                 continue 
@@ -344,12 +355,19 @@ def run_choose_and_rewrite(turk_data, json_data, args, aggregator="none", intera
                     n_was_incorrect_now_correct += 1
             else:
                 if chosen_by_nucleus_lispress == gold_lispress:
+                    # pdb.set_trace()
                     n_was_correct_now_incorrect += 1
                 else:
                     n_stayed_incorrect += 1
-                # if interact and json_entry['bin'] < 0.1:
-                #     print(json_entry['bin'])
-                #     pdb.set_trace()
+                if interact and json_entry['bin'] == 0.75:
+                    print(json_entry['bin'])
+                    print(f"chosen idx {chosen_turk_idx}")
+                    print(f"chosen gloss {chosen_turk_tgt}")
+                    print(f"input: {json_entry['gold_src']}")
+                    print(f"options: {json_entry['pred_translated']}")
+                    print(f"chosen lispress: {chosen_lispress}")
+                    print(f"gold: {gold_lispress}")
+                    pdb.set_trace()
             options = json_entry['pred_tgts']
             options = [clean_lispress(o) for o in options]
             gold_on_beam = gold_lispress in options
@@ -502,7 +520,7 @@ def run_iaa(turk_data, json_data):
 
 def main(args):
     print(f"Reading data from {args.csv}")
-    turk_data = read_csv(args.csv, n_redundant=args.n_redundant)
+    turk_data, is_list = read_csv(args.csv, n_redundant=args.n_redundant)
 
     print(f"Reading data from {args.json}")
     json_data = read_json(args.json)
@@ -517,7 +535,8 @@ def main(args):
                                 aggregator=args.aggregator, 
                                 interact=args.interact, 
                                 rewrite_chosen=args.rewrite_chosen, 
-                                rewrite_all_baseline=args.rewrite_all_baseline)
+                                rewrite_all_baseline=args.rewrite_all_baseline,
+                                is_list=is_list)
 
 
 if __name__ == "__main__":

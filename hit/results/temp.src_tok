@@ -1,3 +1,6 @@
+__User  __Agent  __User Add Kevin and Steve to the meeting tomorrow at 3 : 30 and remove John , Kayla , and Thomas . __StartOfProgram
+__User  __Agent  __User Can you tell me the location and time of my appointment with Batman __StartOfProgram
+__User  Make an all day event for tomorrow with Abby  __Agent  Is this what you 're looking for ?  __User remove the all - day event with Abby __StartOfProgram
+__User  __Agent  __User How long is my doctor 's appointment ? __StartOfProgram
+__User  Do I have anything on Sunday after 5 pm ?  __Agent  No , I did n't find any events on Sunday the 20 th after 5 : 00 PM .  __User Add Strange Aeons to my calendar on Sunday from 7 : 30 pm to 11 pm at Roll20 __StartOfProgram
 __User  That 'll work .  __Agent  I 've put that on your calendar .  __User schedule down time with janice from 2 - 4 PM __StartOfProgram
-__User  Do I have anything on Sunday after 5 pm ?  __Agent  No , I did n't find any events on Sunday the 20 th after 5 : 00 PM .  __User Add Strange Aeons to my calendar on Sunday from 7 : 30 PM to 11 PM at Roll20 __StartOfProgram
-__User  __Agent  __User Add Kevin and Steve to the 3 : 30 meeting tomorrow and remove John , Kayla and Thomas from the 3 : 30 meeting tomorrow . __StartOfProgram
