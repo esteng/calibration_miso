@@ -436,8 +436,25 @@ class CalFlowTransformerParser(CalFlowParser):
         }
 
         if "target_tokens" in inputs.keys() and inputs['target_tokens'] is not None:
-            pdb.set_trace()
-            misc['gold_target_tokens']  = torch.cat([start_predictions.unsqueeze(-1), inputs['generation_outputs']], dim=-1)
+            generation_outputs = inputs['generation_outputs']
+            not_pad_mask = generation_outputs.ne(self._vocab_pad_index)
+
+            source_copy_indices = inputs['source_copy_indices']
+            target_copy_indices = inputs['target_copy_indices']
+            valid_target_copy_mask = target_copy_indices.ne(0) & not_pad_mask
+            valid_source_copy_mask = (~valid_target_copy_mask & not_pad_mask &
+                                  source_copy_indices.ne(1) & source_copy_indices.ne(0))
+            valid_generation_mask = ~(valid_target_copy_mask | valid_source_copy_mask) & not_pad_mask
+            _target_copy_indices = ((target_copy_indices + self._vocab_size + inputs['source_dynamic_vocab_size']) *
+                                    valid_target_copy_mask.long())
+            _source_copy_indices = (source_copy_indices + self._vocab_size) * valid_source_copy_mask.long()
+
+            _generation_outputs = generation_outputs * valid_generation_mask.long()
+            hybrid_targets = _target_copy_indices + _source_copy_indices + _generation_outputs
+            # TODO (elias): this isn't correct; it's mixing vocabs that shouldn't be mixed 
+
+
+            misc['gold_target_tokens']  = torch.cat([start_predictions.unsqueeze(-1), hybrid_targets], dim=-1)
             misc['ann_chose_from_top_k'] = 0
             misc['ann_manually_inserted'] = 0
             misc['prefix_diverged'] = 0
