@@ -236,28 +236,16 @@
 
 
 <script type="text/javascript">
-    const controller = new AbortController();
-    // const el = document.getElementById("outerbox");
-    // console.log("el: ", el)
-
     window.addEventListener("keypress", myEventHandler,  {signal: controller.signal});
-    // el.addEventListener("keypress", myEventHandler, false);
-    const el = document.getElementById("manual_entry");
-    el.addEventListener("click", interruptHandler, false)
-
-    function interruptHandler(e) {
-        console.log("e triggered ",e);
-        controller.abort();
-    }
 
     function myEventHandler(e){
-        console.log(code)
         var code = (e.keyCode ? e.keyCode : e.which);
+        console.log(code); 
         switch (code) {
-            case 89: // 1
+            case 89: // y
                 $('#button_yes').prop('checked', true);
                 break;
-            case 78: // 2
+            case 78: // n
                 $('#button_no').prop('checked', true);
                 break;
         }
