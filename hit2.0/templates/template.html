@@ -236,16 +236,16 @@
 
 
 <script type="text/javascript">
-    window.addEventListener("keypress", myEventHandler,  {signal: controller.signal});
+    window.addEventListener("keypress", myEventHandler); 
 
     function myEventHandler(e){
         var code = (e.keyCode ? e.keyCode : e.which);
-        console.log(code); 
+        console.log("code" + code); 
         switch (code) {
-            case 89: // y
+            case 121: // y
                 $('#button_yes').prop('checked', true);
                 break;
-            case 78: // n
+            case 110: // n
                 $('#button_no').prop('checked', true);
                 break;
         }
