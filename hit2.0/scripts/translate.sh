@@ -1,13 +1,11 @@
 #!/bin/bash
 
 # REQUIRES
-# $1: calflow_to_text_model 
-# $2: file from hit/scripts/prep_for_translate.py 
-# $3: output_dir 
+# $1: input file 
 
 calflow_to_text_model=/brtx/604-nvme1/estengel/calflow_calibration/benchclamp/lispress_to_text_context/1.0/bart-large_calflow_last_user_all_0.0001/checkpoint-10000 \
 # input_file=$(pwd)/hit2.0/data/for_translate/dev_all_top_1_from_miso.jsonl \
-input_file=$(pwd)/hit2.0/data/for_translate/short.jsonl \
+input_file=$(pwd)/$1
 output_dir=$(pwd)/hit2.0/data/translated_by_bart_large/
 
 eval "$(conda shell.bash hook)"

@@ -68,10 +68,9 @@ if __name__ == "__main__":
         for idx, data in src_tgt_loss_by_idx.items():
             data = sorted(data, key=lambda x: x[2], reverse=True)
             pred_src, pred_tgt, prob = data[0]
-            data_to_write = {"pred_src": pred_src, "pred_tgt": pred_tgt, "prob": prob}
+            data_to_write = {"pred_src": pred_src, "pred_tgt": pred_tgt, "prob": prob, "idx": idx}
             gold_src, gold_tgt = gold_src_tgt_by_idx[idx]
             data_to_write["gold_src"] = gold_src
             data_to_write["gold_tgt"] = gold_tgt
 
             f1.write(json.dumps(data_to_write) + "\n") 
-

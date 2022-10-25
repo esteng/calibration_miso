@@ -1,0 +1,100 @@
+</s><s> | When is my next lunch?</s><pad><pad><pad><pad><pad><pad>
+</s><s> | When is my next lunch scheduled?</s><pad><pad><pad><pad><pad>
+</s><s> | When is my next lunch</s><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | When's my next lunch?</s><pad><pad><pad><pad><pad><pad>
+</s><s> | What time is my next lunch?</s><pad><pad><pad><pad><pad>
+</s><s> | when is my next lunch?</s><pad><pad><pad><pad><pad><pad>
+</s><s> | When's my next lunch scheduled?</s><pad><pad><pad><pad><pad>
+</s><s> | when is my next lunch</s><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | What day is my next lunch?</s><pad><pad><pad><pad><pad>
+</s><s> | When do I have my next lunch</s><pad><pad><pad><pad><pad>
+</s><s> | What time is my meeting with Jerri Skinner on Friday?</s>
+</s><s> | When am I meeting with Jerri Skinner on Friday?</s><pad>
+</s><s> | What time is my meeting with Jerri Skinner friday?</s>
+</s><s> | What time am I meeting Jerri Skinner on Friday?</s><pad>
+</s><s> | What time is my meeting with Jerri Skinner this Friday?</s>
+</s><s> | What time is my appointment with Jerri Skinner on Friday?</s>
+</s><s> | What time am I meeting with Jerri Skinner on Friday?</s>
+</s><s> | When am I meeting with Jerri Skinner this Friday?</s><pad>
+</s><s> | When is my meeting with Jerri Skinner on Friday?</s><pad>
+</s><s> | What time is my meeting with Jerri Skinner friday?</s>
+</s><s> | Create an appointment with Jerri Skinner at 9am</s><pad><pad>
+</s><s> | Make an appointment with Jerri Skinner at 9</s><pad><pad><pad>
+</s><s> | Create an appointment with Jerri Skinner at 9</s><pad><pad><pad>
+</s><s> | Create an appointment at 9am with Jerri Skinner</s><pad><pad>
+</s><s> | make an appointment with Jerri Skinner at 9am</s><pad><pad>
+</s><s> | Create an appointment with Jerri Skinner at 9AM</s><pad><pad>
+</s><s> | Make an appointment with Jerri Skinner at 9am</s><pad><pad>
+</s><s> | make an appointment with Jerri Skinner at 9 am</s><pad><pad>
+</s><s> | make an appointment with Jerri Skinner at 9</s><pad><pad><pad>
+</s><s> | Create an appointment with Jerri Skinner at 9:00</s><pad>
+</s><s> | No, I need it to last 2 hours.</s><pad><pad>
+</s><s> | No, I need it to last for 2 hours.</s><pad>
+</s><s> | No, I need it to be 2 hours long.</s><pad>
+</s><s> | No, I need it to be 2 hours</s><pad><pad><pad>
+</s><s> | Yes, but can you make it last two hours?</s><pad>
+</s><s> | Yes, but can you make if for two hours?</s><pad>
+</s><s> | No, I need it to last 2 hours</s><pad><pad><pad>
+</s><s> | No, it should be two hours long.</s><pad><pad><pad>
+</s><s> | No it should be two hours long</s><pad><pad><pad><pad><pad>
+</s><s> | Yes, but can you make it two hours?</s><pad><pad>
+</s><s> | That is perfect.</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | That looks good.</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | This looks good.</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | That looks great.</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | That is correct.</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | That works.</s><pad><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | Perfect.</s><pad><pad><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | Perfect!</s><pad><pad><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | This looks great!</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | Perfect, thanks.</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | Make a meeting with Abby and Abby's boss</s><pad><pad><pad>
+</s><s> | Make a meeting with Abby and her boss</s><pad><pad><pad><pad>
+</s><s> | I need a meeting with Abby and her boss</s><pad><pad><pad>
+</s><s> | Make a meeting with Abby and Abby's manager</s><pad><pad><pad>
+</s><s> | Make a meeting with Abby and her manager</s><pad><pad><pad><pad>
+</s><s> | I need a meeting with Abby and her manager</s><pad><pad><pad>
+</s><s> | Make a meeting with Abby and Abby's Boss</s><pad><pad><pad>
+</s><s> | Make an event with Abby and Abby's boss</s><pad><pad><pad>
+</s><s> | Set up a meeting with Abby and her boss</s><pad><pad><pad>
+</s><s> | Make a meeting with Abby and Abby's Manager</s><pad><pad><pad>
+</s><s> | The 2nd one works great</s><pad><pad><pad><pad><pad><pad>
+</s><s> | The 2nd one works.</s><pad><pad><pad><pad><pad><pad>
+</s><s> | I like the 2nd one</s><pad><pad><pad><pad><pad><pad>
+</s><s> | I like the 2nd one.</s><pad><pad><pad><pad><pad>
+</s><s> | The 2nd one is great</s><pad><pad><pad><pad><pad><pad>
+</s><s> | Let's go with the second one</s><pad><pad><pad><pad><pad>
+</s><s> | The 2nd one works better</s><pad><pad><pad><pad><pad><pad>
+</s><s> | The 2nd one looks great</s><pad><pad><pad><pad><pad><pad>
+</s><s> | Do the second one</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | Let's go with the second option</s><pad><pad><pad><pad><pad>
+</s><s> | Can you find the meeting in January with the manager?</s><pad>
+</s><s> | Can you show me the meeting in January with the manager?</s>
+</s><s> | Can you find my meeting in January with the manager?</s><pad>
+</s><s> | Can you find my event in January with the manager?</s><pad>
+</s><s> | Can you find the event in January with the manager?</s><pad>
+</s><s> | Can you search for my event in January with the manager?</s>
+</s><s> | Can you search for the event in January with the manager?</s>
+</s><s> | When is my meeting in January with the manager?</s><pad><pad>
+</s><s> | Can you find my event in January with the boss?</s><pad>
+</s><s> | Find my event in January with the manager.</s><pad><pad><pad>
+</s><s> | Can you change the time to 9am</s><pad>
+</s><s> | Change the time to 9am</s><pad><pad><pad>
+</s><s> | Can you change the time to 9am?</s>
+</s><s> | Can you change the time to 9 am?</s>
+</s><s> | Can you change the time to 9 am</s><pad>
+</s><s> | Change the time to 9am please</s><pad><pad>
+</s><s> | Can you move that to 9 am?</s><pad>
+</s><s> | Can you change the time to 9 AM</s><pad>
+</s><s> | Could you change the time to 9am?</s>
+</s><s> | Could you change the time to 9am</s><pad>
+</s><s> | Yes it does.</s><pad><pad><pad><pad><pad>
+</s><s> | That looks good.</s><pad><pad><pad><pad><pad>
+</s><s> | yes it does</s><pad><pad><pad><pad><pad><pad>
+</s><s> | It's look well</s><pad><pad><pad><pad><pad>
+</s><s> | That works.</s><pad><pad><pad><pad><pad><pad>
+</s><s> | Looks good.</s><pad><pad><pad><pad><pad><pad>
+</s><s> | Yes that looks good</s><pad><pad><pad><pad><pad>
+</s><s> | Yes</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | yes</s><pad><pad><pad><pad><pad><pad><pad><pad>
+</s><s> | looks good</s><pad><pad><pad><pad><pad><pad><pad>

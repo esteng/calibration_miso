@@ -6,6 +6,7 @@ from collections import defaultdict
 from pathlib import Path 
 import numpy as np 
 from dataflow.core.lispress import parse_lispress, render_compact
+np.random.seed(12)
 
 detok_gex = re.compile(r'" (.*?) "')
 def detokenize_lispress(lispress):
@@ -54,6 +55,33 @@ def read_nucleus_file(miso_pred_file):
         data_by_idx[idx] = sorted_combo_lines
     return  data_by_idx
 
+def stratified_sample(lines_by_idx, max_samples, n_bins, max_prob):
+    # bin lines by min prob 
+    bins = {i: [] for i in range(n_bins)}
+    bin_edges = np.linspace(0, max_prob, n_bins + 1)
+    for idx, lines in lines_by_idx.items():
+        line = lines[0]
+        min_prob = line[1]
+        # find bin 
+        for i in range(1, len(bin_edges)):
+            if min_prob < bin_edges[i]:
+                bins[i-1].append(idx)
+                break
+
+    # sample from each bin
+    samples_per_bin = max_samples // n_bins
+    sampled_idxs = []
+    bins_to_ret = []
+    for i in range(n_bins):
+        sampled_idxs.extend(np.random.choice(bins[i], samples_per_bin, replace=False))
+        bins_to_ret.extend([bin_edges[i] for _ in range(samples_per_bin)])
+    # make sure no repeats, if there are then there's a bug above 
+    assert(len(set(sampled_idxs)) == len(sampled_idxs))
+
+    return sampled_idxs, bins_to_ret
+
+
+
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
     parser.add_argument("--miso_pred_file", type=str, required=True)
@@ -61,6 +89,10 @@ if __name__ == "__main__":
     parser.add_argument("--tgt_file", type=str, default=None)
     parser.add_argument("--idx_file", type=str, default=None)
     parser.add_argument("--out_file", type=str, default="hit2.0/data/for_translate/dev_all_top_1_from_miso.jsonl")
+    parser.add_argument("--max_samples", type=int, default=None)
+    parser.add_argument("--n_bins", type=int, default=None)
+    parser.add_argument("--max_prob", type=float, default=None)
+    parser.add_argument("--exclude_idxs", type=str, default=None)
     args = parser.parse_args()
 
     # read gold source and target data 
@@ -77,7 +109,40 @@ if __name__ == "__main__":
     tgts = []
     lines_by_idx = read_nucleus_file(args.miso_pred_file)
 
-    for line_idx, lines in lines_by_idx.items():
+    if args.exclude_idxs is not None:
+        with open(args.exclude_idxs) as f1:
+            exclude_idxs = f1.read().strip().split("\n")
+            exclude_idxs = [int(x) for x in exclude_idxs]
+        lines_by_idx = {idx: data for idx, data in lines_by_idx.items() if idx not in exclude_idxs}
+
+    if args.max_prob is not None:
+        # lines_by_idx: {idx: (data, min_prob, total_prob)}
+        # filter by min_prob < args.max_prob
+        lines_by_idx = {idx: [x for x in lines if x[1] < args.max_prob] for idx, lines in lines_by_idx.items()}
+
+    if args.max_samples is not None:
+        # if provided, sample args.max_samples idxs 
+        out_path = Path(args.out_file).parent
+        if args.n_bins is None:
+            idxs = np.random.choice(list(lines_by_idx.keys()), args.max_samples, replace=False)
+        else:
+            # do stratified sampling by number of bins 
+            idxs, bins = stratified_sample(lines_by_idx, args.max_samples, args.n_bins, args.max_prob)
+            with open(out_path / "sampled_bins.txt", "w") as f:
+                f.write("\n".join([str(x) for x in bins]))
+
+        sampled_lines_by_idx = {idx: lines_by_idx[idx] for idx in idxs}
+        with open(out_path / "sampled_idxs.txt", "w") as f:
+            f.write("\n".join([str(x) for x in idxs]))
+
+        with open(out_path / "sampled_nucleus_lines.tgt", "w") as f1:
+            for idx, data in sampled_lines_by_idx.items():
+                for row in data:
+                    f1.write(json.dumps(row[0]) + "\n")
+    else:
+        sampled_lines_by_idx = lines_by_idx
+
+    for line_idx, lines in sampled_lines_by_idx.items():
         data = lines[0][0]
         line_idx = int(line_idx)
         src_str, __ = src_tgt_by_idx[line_idx]
