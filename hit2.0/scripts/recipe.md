@@ -8,4 +8,4 @@
 6. forced decode `hit2.0/scripts/forced_decode.sh hit2.0/data/for_forced_decode_pilot/dev_for_forced_decode` 
 7. move the output from checkpoint dir to dir of your chosing in `hit2.0/data` 
 8. rank paraphrases by loss `python hit2.0/scripts/rank_by_loss.py --loss_file hit2.0/data/from_forced_decode_pilot/dev_for_forced_decode_losses.json --translated_file hit2.0/data/translated_by_bart_large/pilot_100_0.6.txt --gold_dir /srv/local1/estengel/resources/data/smcalflow.agent.data.from_benchclamp/ --gold_split dev_all --force_decode_input_dir hit2.0/data/for_forced_decode_pilot/ --out_file hit2.0/data/for_csv/dev_pilot.jsonl`
-9. prepare csv `prep_csv.py` 
+9. prepare csv `python hit2.0/scripts/prep_csv.py --jsonl_file hit2.0/data/for_csv/dev_pilot.jsonl --out_file hit2.0/data/for_hit/dev_pilot.csv` 

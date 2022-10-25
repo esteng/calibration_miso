@@ -1,0 +1,101 @@
+user_turn_0,agent_turn_0,user_turn_1,paraphrase,confidence
+" yes , confirm that . ", I 've put that on your calendar . , Can you make it at conference room b ?, Change the location to conference room b.,1.3254749399561016e-05
+ good ! thanks , I 've put that on your calendar . , Do I have any other meetings with Jenny soon ?," Thanks , do I have anything else with Jenny ?",1.3840399429722264e-08
+,, What do I have scheduled for the day after Thanksgiving ?, Can you find my event the day after Thanksgiving ?,7.332714702977707e-06
+ Can you change my first event to end at 7 : 00 PM ? , How is this ? , Can you move it to tomorrow as well ?, Move this event to tomorrow .,6.072197954588574e-05
+" Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! "," I have accepted it . I will accept "" road trip with Jolene "" and send a response to the organizer with the following comment : "" I ca n't believe we are going to Napa ! "" . Is that ok ? "," Perfect , could you also accept my Brunch with Kim ? Tell her ill bring the Champagne .", Accept the invite to Brunch with Kim and tell her ill bring the Champagne,0.0009766967825999822
+ Try that again , Here are some times when you and Frank are free . , lets redo this request please, Nevermind,0.010385400615632534
+ cancel the brainstorming session event please , Is this what you want me to cancel ? , Yes that is, it fires me,0.0002311309362994507
+ Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? , Is this what you 're looking for ? ," Great , very good .", Yes it does .,0.0038536484353244305
+,, What events do I have for tomorrow ?, What events do I have scheduled for tomorrow,4.527397352567888e-07
+ Create Dinner date with cecelia Waller and Wade tonight , Here are some times when everyone is free . , I want it from 9 pm," No , make it 9 PM",1.0408997034419869e-13
+,, Can you tell me all my events for the first week of February ?, Did I have any meetings last weekend ?,0.07352153956890106
+ Are there any next week ? ," Yes , I found 2 events next week . The first is "" Lunch "" on Monday the 16 th from 11 : 00 to 11 : 30 AM . ", Change the time to 02 : 00 PM - 03 : 00 PM UTC, change the timing,0.06666544079780579
+,," Hi , I need you to schedule a meeting for tomorrow with my manager and Elli 's manager .", Schedule a meeting with my manager and Elli 's manager tomorrow,0.08523181553867622
+,, I am gettign my hair cut on Tuesday at 5 ., Add hair cut at 5 pm tuesday,0.08105515405800236
+ Looks like a great time , I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . , Add meeting with Jake for a whole day, I need an all day event for today with Jake,0.096412520581153
+,, What free time do I have to schedule a ball game after 12 ?, create ball game after 12,0.11575752916758868
+ That 's great . , I 've put that on your calendar . , One last thing . Are there any meetings this week with Damon Ellery ?, Do I have any meetings scheduled with Damon Ellery for this week,0.11043752812279765
+,," Hi there , my name is Megan . I need some help creating and scheduling some events for next week .", Defer the meeting with lee Wei,0.0717749074101448
+ I would like to add events for EDC week ," I can only do one action at a time . If you separate your requests , I can help you . ", add all the pool parties, I would like to add an event for Dinner with Mom on Friday at 6 pm .,0.06579437106847763
+ When does it end ? , The event with John next week ends on Sunday the 20 th at 9 : 00 AM . ," I wo n't need an entire hour for that , lets change that to only last 45 minutes and make sure I am shown as busy during that time", I need to clear my schedule next Monday .,0.09068725258111954
+ Set pick up Mark 's gift this morning , Does one of these work ? , I 'll take the earlier morning one ., Pick the earlier one .,0.12378747067690513
+ Please enter an appointment with Page at my office at noon on Monday . , I did n't find anyone named Page in your address book . , Paige ? It was a typo ., I need you to enter the address book for Page .,0.16339930891990662
+ i need you to decline the event with Josh ," I will decline "" Meeting with Josh and Damon Straeter "" . Is that ok ? ", Yes also decline my AC / CD Reunion and say i am going to see Journey instead," Yes , thank you . Decline my AC / CD Reunion and say that "" i am going to see Journey instead """,0.12846741667351952
+ Ok ! , Let me know if there 's anything else I can help you with . , Update the location of Chelsea 's graduation to the Grand Opera House, Put Chelsea 's graduation location as the Grand Opera House .,0.15808367127623865
+ thank you for the information . , Let me know if there 's anything else I can help you with . , Add cancel fortnite competition to my schedule for Monday at 9, Add cancel fortnite competition on monday at 9,0.17608445326192942
+,," Please invite Kevin and Steve to tomorrow 's 3 : 30 meeting , and remove John , Kayla and Thomas"," Add Kevin to the meeting and remove John , Kayla and Thomas .",0.12399301104778301
+ select first one , I 've put that on your calendar . , ok .. select this one ., defer the next meeting with john,0.13906913995742798
+ Push my meeting with Monica back 2 hours . , Is this the update you want ? , Yes . And Add Jaime to the Softball meeting ., Yes . Also add Jaime to my Softball meeting,0.12243854803111887
+ Schedule a coffee date with Dana on Sunday , Here are some times when you and Dana Smith are free . ," I 'd like the first one . On that same day , I need to workout .", yes the first one . And add workout that day,0.1272438186333375
+ Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . , How is this ? , Great . Now Joe wo n't be there for the cruise planning but Rachel and Danny will .," Joe wo n't be at the cruise planning , but Rachel and Danny will be .",0.13129620488428068
+ Actually please cancel and schedule an all day retreat with Jim . , Here are some times when you and Jim Johnson are free . , select first meeting, First one is look good,0.22776725433489406
+ wait i meant next month , Yes . Here are some times when you are free in April . , Is kim free in May, i need to know if kim is free in may,0.1958023899368101
+ Do I have any other things scheduled after my appointment ? ," Yes , I found one event yesterday after 12 : 30 PM . It was "" production meeting "" from 1 : 00 to 1 : 30 PM . ", Move my meeting with David to one hour after my appointment tomorrow ., Move my appointment tomorrow to an hour after my meeting with David .,0.2269015804554721
+ Is Alyssa invited to tonight 's meeting ? , It does n't look like it . , what about Madison ?, How about Madison ?,0.22891031780484772
+ Add another meeting for later that same day . , Does one of these work ? , The first one does ., first one,0.23111900752453632
+ No ," Ok , I wo n't do anything for now . Let me know what else I can help you with . ", Can you tell me when I have a drs appt this week ?, when do i have my dr appt this week,0.22704383237733947
+" Actually , I meant the seminar . ", Is this the change you want to make ? ," Yessir , or ma'am , thank you", thanks for your help,0.1976524293422699
+" No , I want it to be at 7 am . ", How about now ? , Can you add conference room C as the location ?," No , I want it to take place in Conference Room B.",0.21269813179969788
+ This works perfectly , Let me know if there 's anything else I can help you with . , cancel brunch and make it lunch, Can you cancel all my meetings on Friday ?,0.22004815936088562
+,, do you helping mind ., Hello,0.20399659872055054
+,, Find the next Thanksgiving, Search for my next Thanksgiving event .,0.24826292077151885
+,, What meetings do I have in the morning ?, What do I have this morning ?,0.266755281195197
+,, Search for events taking place in Cheryl 's office next week ., What events are in Cheryl 's office next week ?,0.2727820204886719
+,, Change my meeting today with Emily from 3 pm to 4 pm ., Please change my meeting with Emily today from 3 pm to 4 pm,0.2660024077634373
+,," Hi , am I free next Saturday night ?", Am i free Saturday night ?,0.25876696255153336
+" Can you add a new event after that with them called "" coffee "" ", Does one of these work ? , The one on the 5 th works, Let 's go with the one on the fifth,0.2669086205849181
+ Is there anything between 11 and 12 ? ," No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . ", Let me know what is scheduled between 7 pm and 9 pm on Sunday ., What do I have on Sunday between 7 pm and 9 pm ?,0.24947299505961903
+ Will I see Heather for her bridal shower ? ," No , I did n't find any events matching "" bridal shower "" with Heather . ", I had a baseball game on Thursday ?, Did I attend a baseball game last thursday ?,0.2497605928050823
+,," I need to know every events I had last year , please .", Did I have any meetings last weekend ?,0.2713169753551483
+" Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . ", Is this what you want me to cancel ? , the first one will work the best," Yes , please .",0.24626693520191623
+,, find the type of event scheduled for January 2 nd, What do I have Jan 2 ?,0.3128131234726108
+ When is my next meeting with Adam Wallen ? , I did n't find any events with Adam Wallen . , Can you see up a meeting with Adam Wallen for Friday around 2 pm ?, Search for meeting with Adam Wallen on Friday at 2 : 00 pm .,0.3565776517754572
+ Wine fest is Nov 8 - 12 , Does one of these work ? , needs to be for a week actually, Can you make it a week ?,0.3234702265561218
+ PLease schedule that and check if i m available on March 13 th , Yes . Here are some times when you are free on Friday . ," Alright , schedule the one PM event .", add that,0.3198743430849369
+" Add protest at the White House to my calendar for April 20 , 2069 ", Does one of these work ? , cancel this and vote trump, Nope,0.33006688952445984
+,, yes, Yes,0.35214680433273315
+ OK ! , I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . , also last year i had an easter brunch on easter, I had an easter brunch last year ?,0.33665170464551225
+ Do I have anything on monday that 's not Baseball Practice ? ," No , I did n't find any events not matching "" Baseball Practice "" on Monday the 13 th . ", Show me my events next week that are not dance parties, what events do I have next week that are not dance parties ?,0.3242524597926832
+ meeting with David , I found 3 different people matching your query . Which of these did you mean ? , First one is good, please change my meeting,0.3081044554710388
+ Can you tell me what 's on the calendar for this coming Saturday ? ," You have 2 events on your calendar . Your "" basketball game "" from 9 : 00 to 10 : 00 AM . ", What is the second event ?, What 's the next one ?,0.3446734964248357
+ delete doctor event Saturday , Is this what you want me to cancel ? , day after tomorrow doctor event," The day after tomorrow , make an appointment to the doctor",0.3750179126260633
+ When is Sue available for Cambridge ? , Here are some times when Sue is free in the next five days . , The second one would be a better time to meet at Cambridge ., Add the second option to my calendar,0.38250862234968963
+,, What is the date of the first day of my vacation ?, Defer the meeting with lee Wei,0.36563345789909363
+ Spartan 006 - Li ? , Here is the contact information for Spartan 006 - Jai : , Spartan 008 - Li ?, Is there anything else about the Spartan 008-Li ?,0.40807666811270954
+,, create a timer for me," hi , i want to book a train",0.3679700493812561
+ change lunch from 2 : 30 to 4 pm , Does this look right ? ," No , change it to 4 pm .", 4 PM is better .,0.3790471964668026
+ Yes this looks good . ," I 've changed "" Lunch "" to be at 1 : 00 . ", Where can I find Sushi Connections ?, Where is the closest starbucks ?,0.37732386589050293
+ Looks right . , I 've put that on your calendar . , I will be with my Team in Wichitaiiaiai for all of next week, I will be at Wichitaiiai all of next week with my team,0.395344935727612
+ I need a meeting with doctor john tomorrow at 10 : 30 pm . , Is this good ? , I need a meeting with doctor john tomorrow at 11 : 30 pm ., add a meeting with doctor john tomorrow at 11 : 30 pm,0.41509863056086704
+ What was it like yesterday ? ," It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . ", What will it be like tomorrow ?, how about tomorrow ?,0.39459948746479045
+ That looks great . ," I 've changed "" Lunch "" to be . ", I also need to move my birthday party to a different time, can you change the time,0.43796440958976746
+,, I need to visit City Hall sometime next week ., Make a meeting at City Hall next week,0.43350842475849866
+,, Schedule visit with college recruiter next weekend ., When is my next meeting with my mates ?,0.4757249355316162
+ Cancel boys night now on Saturday . , Is this what you want me to cancel ? , yes cancel this boys night, yes please,0.46093200327380046
+ what events are this weekend ? , I did n't find any events this weekend . ," Nevermind , just put that on my calendar", how do I create an event ?,0.42879173159599304
+ Will it be sunny for my powerwalk tomorrow ? ," Yes . The average cloud cover will be 32 % for "" powerwalk "" in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . ", Will it rain Saturday during the picnic ?, Will it rain for saturday 's picnic ?,0.4758114388342541
+,," Delete birthday tomorrow with Emily , Joseph , Lois and Stewie"," Cancel my birthday event tomorrow with Emily , Joseph , Lois and Stewie .",0.4471407869114358
+ Yes it does . , I 've put that on your calendar . , Is there any other meeting this week ?, Do I have anything else scheduled for this week ?,0.4243127793572382
+ Do I have any events in March with people attending ? ," Yes , I found one event next month . It 's "" Meditation Seminar "" on March 20 th from 8 : 00 to 8 : 30 AM . ", So do I have any events in June with people coming ?, Do I have anything in June with attendees ?,0.45319475904552764
+ What is the weather like for my doctor appointment ? ," It will be clear with a temperature of 0 . 00 ° F for "" doctor appointment "" on May 7 th from 10 : 00 to 10 : 30 AM . ", When is sunset schedule for ?, what time is sunset today ?,0.43100634619828215
+ Yes please . Then recreate it for the week after ," I 've deleted your next event . Sorry , I ca n't handle that yet . ", ok make sure to delete the meeting with martin afterword, Delete my meeting with martin,0.5173459757328083
+,, What soccer games do I have scheduled with Tara this week ?, search for soccer games with Tara this week,0.5106319575671939
+,, Make an event for my birthday for Thursday of next week, Please create an event for my birthday next week on thursday,0.5161484449553014
+" Alright , I want you to cancel that . Then set an event for Thursday at Noon that says "" Tom Catch - Up "" "," I can only do one action at a time . If you separate your requests , I can help you . ", And schedule the Thursday noon even with Tom ., Make an event for Thursday at Noon with Tom,0.4916829215985595
+ Am I free late morning Monday ? , Yes . Here are some times when you are free on Monday the 16 th . , What about on Friday ?, What about Friday ?,0.5153432941978221
+,, Please update my work lunch from 1 p.m. to 1 : 30 p.m., Can you change my work lunch to 1 : 30 pm ?,0.5132492446289983
+ the breakfast needs to be 3 hours , How about now ? , Make my conference call on Wednesday one hour ., The conference call on Wednesday needs to be for one hour .,0.5209030247108899
+,," I 'd like to know if Josh , Rachel , and Ludwig are coming to the bbq this weekend .", Defer the meeting with lee Wei,0.5137204527854919
+ Yes that is what I wanted ," I 've changed "" Sales Call "" to be without Kim Possible and David Crim . ", Great But I need to change something else I need to uninvite Kim on the first and invite Jennifer, Kim ca n't make it but Jennifer will be there,0.5236240296366538
+ Does Carmine 's in Bellevue offer waiter service ? , Yes . ," Thank you . What about Cracker Barrel in Lebanon , TN ?"," Tell me if Cracker Barrel in Lebanon , TN has waiter service",0.4895361234837618
+ What date is Easter next year ? ," Easter is on Sunday , April 4 , 2021 . ", Will I be busy on March 21 next year ?, am I busy on March 21 st next year ?,0.5885623979408985
+,, fire Kristen Clifford tomorrow at 2 pm," hi , i want to book a train",0.5752819776535034
+ Next week , Does one of these work ? , Schedule for Wednesday, wednesday works,0.5605735209963906
+ I met with Harry Potter on the 20 th last month . Please mark it on my calendar . , Here are some times when you and Harry Potter are free . ," Let me rephrase . Enter on my calendar "" meeting with Harry Potter "" on July 20 at 1 : 00 PM for one hour .", I met with Harry Potter on the 20 th of July . It was at 1 pm for an hour .,0.5634148179444829
+ Do I have an appointment with Barack Obama next week ? ," No , I did n't find any events with Barack Obama next week . ", I would like you to input my appointment entitled lunch with Barack Obama on Wednesday noon next week for one hour ., Create a one hour lunch with Barack Obama next week at noon .,0.5461549029700047
+,, Jenica 's Birthday party is tomorrow at the Holy Grail at 7 pm . We will definitely go on for at least 5 hours ., Block off five hours tomorrow at 7 pm for Jenica 's Birthday party at the Holy Grail .,0.5872860041180455
+ Show me all events coming up later today , I found 3 events today after 1 : 59 PM . , Can you please add a lunch around 1 PM, Make me a lunch event around 1 pm,0.5714775756165444
+" When will it rain again in Amherst , NY ? "," Sorry , I ca n't answer that with the information I have access to . "," What is the 10 day forecast for Amherst , NY ?"," How is the 10 day forecast in Amherst , NY ?",0.5937314677276613
+ I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . , Is this good ? , yer, Yes this looks good,0.5956256215336566
+ Looks great . ," I 've changed "" Do n't Sleep "" to be at 6 : 00 . "," do nt change it to yesterday , these are for tomorrow !", Can you change that to tomorrow ?,0.5767954347958621

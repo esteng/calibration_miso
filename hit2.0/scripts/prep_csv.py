@@ -37,7 +37,8 @@ if __name__ == "__main__":
             csv_line = {"user_turn_0": user_utt_0, 
                         "agent_turn_0": agent_utt_0, 
                         "user_turn_1": user_utt_1, 
-                        "paraphrase": paraphrase}
+                        "paraphrase": paraphrase,
+                        "confidence": data['confidence']}
             csv_lines.append(csv_line)
 
 

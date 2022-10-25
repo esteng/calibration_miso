@@ -5,6 +5,8 @@ from pathlib import Path
 from collections import defaultdict 
 import pdb 
 
+from prep_for_translate import read_nucleus_file
+
 def read_loss_file(loss_file):
     with open(loss_file) as f1:
         loss_data = json.load(f1)
@@ -28,6 +30,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--loss_file", type=str, required=True)
     parser.add_argument("--translated_file", type=str, required=True)
+    parser.add_argument("--miso_pred_file", type=str, required=True, help = "something like hit2.0/data/for_translate_pilot/sampled_nucleus_lines.tgt")
     parser.add_argument("--gold_dir", type=str, required=True)
     parser.add_argument("--gold_split", type=str, default='dev_all')
     parser.add_argument("--force_decode_input_dir", type=str, required=True)
@@ -35,6 +38,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     loss_data = read_loss_file(args.loss_file)
+
+    miso_lines_by_idx = read_nucleus_file(args.miso_pred_file)
 
     miso_dir = Path(args.force_decode_input_dir)
     with open(miso_dir /  f"dev_for_forced_decode.src_tok")  as src_f, \
@@ -66,9 +71,11 @@ if __name__ == "__main__":
     to_ret = []    
     with open(args.out_file, "w") as f1:
         for idx, data in src_tgt_loss_by_idx.items():
+            miso_line = miso_lines_by_idx[str(idx)][0]
+            orig_min_prob = miso_line[1]
             data = sorted(data, key=lambda x: x[2], reverse=True)
             pred_src, pred_tgt, prob = data[0]
-            data_to_write = {"pred_src": pred_src, "pred_tgt": pred_tgt, "prob": prob, "idx": idx}
+            data_to_write = {"pred_src": pred_src, "pred_tgt": pred_tgt, "prob": prob, "idx": idx, "confidence": orig_min_prob}
             gold_src, gold_tgt = gold_src_tgt_by_idx[idx]
             data_to_write["gold_src"] = gold_src
             data_to_write["gold_tgt"] = gold_tgt
