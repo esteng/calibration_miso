@@ -184,7 +184,7 @@
 </p>
 
 
-<p class="instr">You can click the buttons or use the y/n keys to select yes or no. 
+<p class="instr">You can click the buttons or use the y/n keys (or 1 and 2 keys, 1=yes, 2=no) to select yes or no. 
     Note that you may have to click the HIT once to get the keys to work.</p>
 
 <p class="instr">If you have any questions or comments, please use the comment box, or send an e-mail to 
@@ -246,6 +246,12 @@
                 $('#button_yes').prop('checked', true);
                 break;
             case 110: // n
+                $('#button_no').prop('checked', true);
+                break;
+            case 49: // 1
+                $('#button_yes').prop('checked', true);
+                break;
+            case 50: // 2
                 $('#button_no').prop('checked', true);
                 break;
         }
