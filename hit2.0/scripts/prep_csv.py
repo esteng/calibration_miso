@@ -38,7 +38,7 @@ if __name__ == "__main__":
                         "agent_turn_0": agent_utt_0, 
                         "user_turn_1": user_utt_1, 
                         "paraphrase": paraphrase,
-                        "confidence": data['confidence']}
+                        "confidence": f"{data['confidence']*100:.0f}%"}
             csv_lines.append(csv_line)
 
 
