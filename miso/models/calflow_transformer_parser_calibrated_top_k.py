@@ -91,6 +91,8 @@ class CalFlowTransformerParser(CalFlowParser):
         self.top_k_beam_search = False
         self.top_k_beam_search_hitl = False
         self.top_k = 1
+        self.hitl_top_k = 5
+        self.hitl_threshold = 0.8
         self.do_group_dro = do_group_dro
 
         # make sure we never have the wrong settings
@@ -106,7 +108,10 @@ class CalFlowTransformerParser(CalFlowParser):
         elif self.top_k_beam_search_hitl:
             self._beam_size = 1
             self._beam_search.beam_size = 1
-            return self._test_forward_top_k_hitl(inputs, k=self.top_k)
+            return self._test_forward_top_k_hitl(inputs, 
+                                                k=self.top_k, 
+                                                k_for_top_k = self.hitl_top_k,
+                                                hitl_threshold = self.hitl_threshold)
         else:
             return self._test_forward(inputs) 
 
@@ -331,33 +336,52 @@ class CalFlowTransformerParser(CalFlowParser):
 
         max_probs, node_preds = torch.max(log_probs, dim = -1)
         node_probs = torch.exp(log_probs[:, node_preds])
-        top_k_node_preds = torch.topk(log_probs, k = 5, dim = -1)[1]
+        k_for_top_k = misc['k_for_top_k']
+        threshold = misc['threshold']
+        top_k_node_preds = torch.topk(log_probs, k = k_for_top_k, dim = -1)[1]
         try:
             next_gold = gold_sequence[:, prefix_len] 
         except IndexError:
-            pdb.set_trace()
+            return log_probs, state, auxiliaries
+            # pdb.set_trace()
 
         # compare pred to gold 
         next_pred_equal_next_gold = (node_preds == next_gold).bool()
         flipped = False
         for bidx in range(gold_sequence.shape[0]):
-            if not prefix_matches[bidx]:
-                misc['prefix_diverged'] += 1 
+            if next_gold[bidx] == 0:
+                # padding token, skip
                 continue
+            else:
+                misc['tokens_predicted'][bidx].append(1)
+            if not prefix_matches[bidx]:
+                misc['prefix_diverged'][bidx].append(1)
+                continue
+            # Add in the thresholding check 
+            if torch.exp(max_probs[bidx]) > threshold:
+                # confident decisions get no intervention 
+                continue
+
+            misc['low_conf_tokens'][bidx].append(1)
             if next_pred_equal_next_gold[bidx].item(): 
                 # we're golden, do nothing 
-                misc['pred_was_correct'] += 1
-            else: 
-                # get the topk 
-                top_k_options = top_k_node_preds[bidx]
-                if next_gold[bidx] in top_k_options: 
-                    # "annotator" would be able to choose from topk list 
-                    misc['ann_chose_from_top_k'] += 1
-                else:
-                    misc['ann_manually_inserted'] += 1
-                # manually set the logprobs to be the gold 
-                log_probs[bidx, next_gold[bidx]] = 0.0 - self._eps
-                flipped = True
+                misc['pred_was_correct'][bidx].append(1)
+            # even if the next pred was correct, we don't know that,
+            # we're going just off of confidence to decide whether to show
+            # to an annotator, but in the case where the pred was correct 
+            # it will by definition be in the top k tokens  
+
+            # get the topk 
+            top_k_options = top_k_node_preds[bidx]
+            if next_gold[bidx] in top_k_options: 
+                # "annotator" would be able to choose from topk list 
+                misc['ann_chose_from_top_k'][bidx].append(1)
+            else:
+                misc['ann_manually_inserted'][bidx].append(1)
+            # manually set the logprobs to be the gold 
+            log_probs[bidx, next_gold[bidx]] = 0.0 - self._eps
+            flipped = True
+
         # if flipped:
         #     pdb.set_trace()
         next_pred_tokens = torch.argmax(log_probs, dim=-1).unsqueeze(-1)
@@ -405,8 +429,12 @@ class CalFlowTransformerParser(CalFlowParser):
         return inputs
     
     @overrides
-    def _prepare_decoding_start_state(self, inputs: Dict, encoding_outputs: Dict[str, torch.Tensor]) \
-            -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict]:
+    def _prepare_decoding_start_state(self, 
+                inputs: Dict, 
+                encoding_outputs: Dict[str, torch.Tensor],
+                k_for_top_k: int = 5,
+                hitl_threshold: float = 0.8
+        ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict]:
         batch_size = inputs["source_tokens"]["source_tokens"].size(0)
         bos = self.vocab.get_token_index(START_SYMBOL, self._target_output_namespace)
         start_predictions = inputs["source_tokens"]["source_tokens"].new_full((batch_size,), bos)
@@ -455,11 +483,15 @@ class CalFlowTransformerParser(CalFlowParser):
 
 
             misc['gold_target_tokens']  = torch.cat([start_predictions.unsqueeze(-1), hybrid_targets], dim=-1)
-            misc['ann_chose_from_top_k'] = 0
-            misc['ann_manually_inserted'] = 0
-            misc['prefix_diverged'] = 0
-            misc['pred_was_correct'] = 0
+            misc['ann_chose_from_top_k'] = [[0] for __ in range(batch_size)]
+            misc['ann_manually_inserted'] = [[0] for __ in range(batch_size)]
+            misc['tokens_predicted'] = [[0] for __ in range(batch_size)]
+            misc['low_conf_tokens'] = [[0] for __ in range(batch_size)]
+            misc['prefix_diverged'] = [[0] for __ in range(batch_size)]
+            misc['pred_was_correct'] = [[0] for __ in range(batch_size)]
             misc['prev_pred_tokens'] = start_predictions.unsqueeze(-1)
+            misc['k_for_top_k'] = k_for_top_k
+            misc['threshold'] = hitl_threshold
 
         return start_predictions, start_state, auxiliaries, misc
 
@@ -724,7 +756,11 @@ class CalFlowTransformerParser(CalFlowParser):
             to_ret['prob_dist'] = prob_list
         return to_ret  
 
-    def _test_forward_top_k_hitl(self, inputs: Dict, k: int) -> List[Dict]:
+    def _test_forward_top_k_hitl(self, 
+                                 inputs: Dict, 
+                                 k: int, 
+                                 k_for_top_k: int = 5,
+                                 hitl_threshold: float = 0.8) -> List[Dict]:
         # need to set this manually to override the model 
         encoding_outputs = self._encode(
             tokens=inputs["source_tokens"],
@@ -733,7 +769,13 @@ class CalFlowTransformerParser(CalFlowParser):
             mask=inputs["source_mask"]
         )
 
-        start_predictions, start_state, auxiliaries, misc = self._prepare_decoding_start_state(inputs, encoding_outputs)
+        (start_predictions, 
+         start_state, 
+         auxiliaries, 
+         misc) = self._prepare_decoding_start_state(inputs, 
+                                                    encoding_outputs, 
+                                                    k_for_top_k=k_for_top_k,
+                                                    hitl_threshold=hitl_threshold)
 
         # all_predictions: [batch_size, beam_size, max_steps]
         # outputs: [batch_size, beam_size, max_steps, hidden_vector_dim]
@@ -747,7 +789,6 @@ class CalFlowTransformerParser(CalFlowParser):
             tracked_state_name="output",
             tracked_auxiliary_name="target_dynamic_vocabs"
         )
-        pdb.set_trace()
 
         all_outputs = []
         for beam_idx in range(all_predictions.shape[1]):
@@ -793,12 +834,24 @@ class CalFlowTransformerParser(CalFlowParser):
                 node_indices=node_index_predictions,
                 edge_heads=edge_head_predictions,
                 edge_types=edge_type_predictions,
-                edge_types_inds=edge_type_ind_predictions
+                edge_types_inds=edge_type_ind_predictions,
+                ann_chose_from_top_k=misc['ann_chose_from_top_k'],
+                ann_manually_inserted=misc['ann_manually_inserted'],
+                prefix_diverged=misc['prefix_diverged'],
+                pred_was_correct=misc['pred_was_correct'],
+                tokens_predicted=misc['tokens_predicted'],
+                low_conf_tokens=misc['low_conf_tokens']
             )
             all_outputs.append(outputs)
 
         flat_outputs = dict(
                 loss=0.0,
+                ann_chose_from_top_k=[],
+                ann_manually_inserted=[],
+                prefix_diverged=[],
+                tokens_predicted=[],
+                low_conf_tokens=[],
+                pred_was_correct=[],
                 node_probs = [],
                 src_str=[], 
                 line_idx=[],
@@ -811,7 +864,17 @@ class CalFlowTransformerParser(CalFlowParser):
         for output in all_outputs:
             for k in output.keys():
                 flat_outputs[k] += output[k]
+        for k in ['ann_chose_from_top_k', 'ann_manually_inserted', 'prefix_diverged', 'pred_was_correct', 'tokens_predicted', 'low_conf_tokens']:
+            # pad 
+            lens = [len(x) for x in flat_outputs[k]]
+            max_len = max(lens)
+            for i, x in enumerate(flat_outputs[k]):
+                x = x + [0 for i in range(max_len - len(x))]
+                flat_outputs[k][i] = x
+            flat_outputs[k] = torch.Tensor(flat_outputs[k])
+            # pdb.set_trace()
         return flat_outputs
+
     def _test_forward_top_k(self, inputs: Dict, k: int) -> List[Dict]:
         encoding_outputs = self._encode(
             tokens=inputs["source_tokens"],
@@ -820,7 +883,11 @@ class CalFlowTransformerParser(CalFlowParser):
             mask=inputs["source_mask"]
         )
 
-        start_predictions, start_state, auxiliaries, misc = self._prepare_decoding_start_state(inputs, encoding_outputs)
+        (start_predictions, 
+        start_state, 
+        auxiliaries, 
+        misc) = self._prepare_decoding_start_state(inputs, 
+                                                   encoding_outputs)
 
         # all_predictions: [batch_size, beam_size, max_steps]
         # outputs: [batch_size, beam_size, max_steps, hidden_vector_dim]
@@ -986,7 +1053,7 @@ class CalFlowTransformerParser(CalFlowParser):
         -------
         A list of the models output for each instance.
         """
-        if not self.top_k_beam_search:
+        if not (self.top_k_beam_search or self.top_k_beam_search_hitl):
             return super().forward_on_instances(instances)
 
         batch_size = len(instances) * self._beam_size

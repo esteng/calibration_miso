@@ -62,7 +62,17 @@ def read_csv(csv_file):
     with open(csv_file) as f1:
         reader = csv.DictReader(f1)
         csv_lines = [x for x in reader]
-    return csv_lines
+
+    lines_by_hit_id = defaultdict(list)
+
+    hit_ids = []
+    for line in csv_lines:
+        str_hit_id = build_miso_input(line)
+        # if line['HITId'] not in hit_ids:
+        if str_hit_id not in hit_ids: 
+            hit_ids.append(str_hit_id) 
+        lines_by_hit_id[str_hit_id].append(line)
+    return lines_by_hit_id, hit_ids 
 
 def read_json(path):
     with open(path) as f1:
@@ -84,7 +94,7 @@ def build_miso_input(csv_line):
     inp_str += f"__User {user_input} __StartOfProgram"
     return inp_str
 
-def score_lines(csv_lines, json_lines, bins_by_idx, rewrite=False, rewrite_checkpoint = None):
+def score_lines(csv_lines, json_lines, bins_by_idx, rewrite=False, rewrite_checkpoint = None, restrict_to_agree = False, aggregator="majority"):
     true_positives = []
     false_positives = []
     false_negatives = []
@@ -93,10 +103,37 @@ def score_lines(csv_lines, json_lines, bins_by_idx, rewrite=False, rewrite_check
     all_bins = set(bins_by_idx.values())
     by_bin_data = {bin: {"tp": 0, "fp": 0, "fn": 0, "tn": 0} for bin in all_bins}
 
+    # need to aggregate csv lines, default = majority   
+    csv_lines_single = [] 
+    json_lines_single = []
+    for json_line in json_lines:
+        anns = csv_lines[json_line['gold_src'].strip()]
+        if len(anns) == 0:
+            raise ValueError("No annotations found for line: " + json_line['gold_src'])
+        # anns = csv_lines[hit_id]
+        yes_no = [ann['Answer.radio-input'] for ann in anns]
+        yes_no = [1 if x == "yes" else 0 for x in yes_no]
+        all_agree = len(set(yes_no)) == 1
+        if not all_agree and restrict_to_agree:
+            # skip anything that doesn't have perfect agreement 
+            continue
+        if sum(yes_no) > len(yes_no) / 2:
+            # majority is yes
+            majority = 'yes'
+        else:
+            majority = 'no'
+        new_line = anns[0]
+        new_ann_name = ",".join([ann['WorkerId'] for ann in anns])
+        new_line['WorkerId'] = new_ann_name 
+        new_line['Answer.radio-input'] = majority
+        csv_lines_single.append(new_line)
+        json_lines_single.append(json_line)
+
     if rewrite:
         rewritten = []
         # build input based on gloss 
-        for cl, jl in zip(csv_lines, json_lines):
+        for cl, jl in zip(csv_lines_single, json_lines_single):
+            # cl = csv_lines[hid]
             miso_input = build_miso_input(cl)
             miso_output = jl['gold_tgt'].strip()
             rewritten.append((miso_input, miso_output, jl['idx']))
@@ -109,7 +146,7 @@ def score_lines(csv_lines, json_lines, bins_by_idx, rewrite=False, rewrite_check
             jl['pred_tgt'] = pred_tgt
             json_lines[i] = jl
 
-    for cl, jl in zip(csv_lines, json_lines):
+    for cl, jl in zip(csv_lines_single, json_lines_single):
         accept = cl['Answer.radio-input'] == "yes"
         prob = float(jl['prob'])
         was_correct = clean_lispress(jl['pred_tgt'].strip()) == clean_lispress(jl['gold_tgt'].strip())
@@ -233,26 +270,46 @@ def run_baseline(json_lines, bins_by_idx, max_bin):
     best_idx = np.argmax(all_f1s)
     best_cutoff, best_result = all_results[best_idx]
     return best_cutoff, best_result
-    
+
+def get_agreement(csv_lines): 
+    n_agree = 0
+    for hit_id, anns in csv_lines.items():
+        answers = [ann['Answer.radio-input'] for ann in anns]
+        all_agree = len(set(answers)) == 1
+        if all_agree:
+            n_agree += 1 
+        n_anns = len(anns)
+    print(f"{n_anns} annotators agree on {n_agree} out of {len(csv_lines)}: {n_agree / len(csv_lines)*100:.2f}%")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv", type=str, required=True)
     parser.add_argument("--json", type=str, required=True)
     parser.add_argument("--translation_dir", type=str, required=True, help="something like hit2.0/data/for_translate_pilot")
+    parser.add_argument("--do_iaa", action="store_true")
     parser.add_argument("--do_baseline", action="store_true")
     parser.add_argument("--rewrite", action="store_true")
     parser.add_argument("--rewrite_checkpoint", type=str, default=None)
     parser.add_argument("--max_bin", type=float, default=0.6)
+    parser.add_argument("--restrict_to_agree", action="store_true")
     args = parser.parse_args()
 
-    csv_lines = read_csv(args.csv)
+    csv_lines, hit_ids = read_csv(args.csv)
     json_lines = read_json(args.json)
+
+    if args.do_iaa:
+        print("Doing IAA")
+        get_agreement(csv_lines) 
 
     bins_by_idx = get_bins(args.translation_dir)
     if not args.do_baseline:
         assert len(csv_lines) == len(json_lines)
-        score_results = score_lines(csv_lines, json_lines, bins_by_idx, args.rewrite, args.rewrite_checkpoint)
+        score_results = score_lines(csv_lines, 
+                                    json_lines, 
+                                    bins_by_idx, 
+                                    args.rewrite, 
+                                    args.rewrite_checkpoint,
+                                    args.restrict_to_agree)
     else:
         print("RUNNING BASELINE...")
         # baseline: just set a confidence cutoff and reject everything below it 

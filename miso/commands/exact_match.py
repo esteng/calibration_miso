@@ -129,6 +129,8 @@ class ExactMatchScore(Subcommand):
         subparser.add_argument("--oracle", action="store_true")
         subparser.add_argument("--top-k-beam-search", action="store_true", help="set to true if you want to decode the --top-k predictions instead of the top 1 from beam search")
         subparser.add_argument("--top-k-beam-search-hitl", action="store_true", help="set to true if you want to decode the --top-k predictions instead of the top 1 from beam search and run the hitl simulation")
+        subparser.add_argument("--hitl-top-k", type=int, default=5, help="the number of options to present the simulated annotator in the HITL experiment")
+        subparser.add_argument("--hitl-threshold", type=float, default=0.8, help="the threshold for asking the annotator to choose")
         subparser.add_argument("--top-k", type=int, default=1, help = "top k to predict out of beam search") 
         subparser.add_argument("--json-save-path", type=str, help="if doing oracle decode, path to save instances and output")
 
