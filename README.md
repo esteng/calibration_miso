@@ -5,6 +5,17 @@ Author: Elias Stengel-Eskin
 
 Personal Email: elias.stengel@gmail.com
 
+## About the repo 
+This repo started as a fork of [MISO](https://github.com/esteng/miso_uds) which is a semantic parsing codebase that was released with [Joint Universal Syntactic and Semantic Parsing](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing). 
+
+MISO was built over the course of the following publications:  
+- [AMR Parsing as Sequence-to-Graph Transduction, Zhang et al., ACL 2019](https://www.aclweb.org/anthology/P19-1009/)
+- [Broad-Coverage Semantic Parsing as Transduction, Zhang et al., EMNLP 2019](https://www.aclweb.org/anthology/D19-1392/)
+- [Universal Decompositional Semantic Parsing, Stengel-Eskin et al. ACL 2020](https://www.aclweb.org/anthology/2020.acl-main.746/)
+- [Joint Universal Syntactic and Semantic Parsing, Stengel-Eskin et al., TACL 2021](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing)
+
+It is a flexible sequence-to-graph parsing framework built on top of [allennlp](https://github.com/allenai/allennlp).  
+
 ## Installation 
 
 All dependencies can be installed with `./install_requirements.sh` 
