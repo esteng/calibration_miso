@@ -189,6 +189,7 @@ class Scorer:
                 oracle = False, 
                 top_k_beam_search = False,
                 top_k_beam_search_hitl = False,
+                hitl_threshold: float = 0.8, 
                 top_k = 1,
                 precomputed = False): 
 
@@ -214,6 +215,8 @@ class Scorer:
         self.oracle = oracle
         self.top_k_beam_search = top_k_beam_search
         self.top_k_beam_search_hitl = top_k_beam_search_hitl
+        self.hitl_threshold = hitl_threshold
+
         self.top_k = top_k
         self.output_file = out_file 
         self.manager = _CalFlowReturningPredictManager(self.predictor,
@@ -227,6 +230,7 @@ class Scorer:
                                     oracle = self.pred_args.oracle,
                                     top_k_beam_search=self.top_k_beam_search,
                                     top_k_beam_search_hitl=self.top_k_beam_search_hitl,
+                                    hitl_threshold=self.hitl_threshold,
                                     top_k=self.top_k,
                                     precomputed = self.precomputed)
 
@@ -334,6 +338,7 @@ class Scorer:
                    oracle=args.oracle,
                    top_k_beam_search=args.top_k_beam_search,
                    top_k_beam_search_hitl=args.top_k_beam_search_hitl,
+                   hitl_threshold=args.hitl_threshold,
                    top_k=args.top_k
                    )
 

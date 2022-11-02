@@ -165,14 +165,17 @@ class CalibratedCalflowParsingHIT11L(CalflowParsingPredictor):
                                 oracle: bool = False, 
                                 top_k_beam_search: bool = False, 
                                 top_k_beam_search_hitl = False, 
-                                top_k: int = 1) -> List[JsonDict]:
+                                top_k: int = 1, 
+                                hitl_threshold: float = 0.8) -> List[JsonDict]:
         # set oracle flag for vanilla parsing analysis 
         self._model.oracle = oracle
         self._model.top_k_beam_search = top_k_beam_search
         self._model.top_k_beam_search_hitl = top_k_beam_search_hitl
         self._model.top_k = top_k
+        self._model.hitl_threshold = hitl_threshold
         self._model._beam_search = BeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
         self._model._beam_size = top_k
+
         outputs = self._model.forward_on_instances(instances)
         return [self.dump_line(line, top_k=True) for line in outputs]
 
@@ -206,12 +209,14 @@ class CalibratedCalflowParsingPredictor(CalflowParsingPredictor):
                                 oracle: bool = False, 
                                 top_k_beam_search: bool = False, 
                                 top_k_beam_search_hitl = False, 
-                                top_k: int = 1) -> List[JsonDict]:
+                                top_k: int = 1,
+                                hitl_threshold: float = 0.8) -> List[JsonDict]:
         # set oracle flag for vanilla parsing analysis 
         self._model.oracle = oracle
         self._model.top_k_beam_search = top_k_beam_search
         self._model.top_k_beam_search_hitl = top_k_beam_search_hitl
         self._model.top_k = top_k
+        self._model.hitl_threshold = hitl_threshold
         self._model._beam_search = CalibratedBeamSearch(self._model._vocab_eos_index, self._model._max_decoding_steps, top_k)
         self._model._beam_size = top_k
         outputs = self._model.forward_on_instances(instances)

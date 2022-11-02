@@ -182,6 +182,7 @@ class _CalFlowReturningPredictManager(_ReturningPredictManager):
                  oracle: bool = False,
                  top_k_beam_search: bool = False,
                  top_k_beam_search_hitl: bool = False,
+                 hitl_threshold: bool = 0.8,
                  top_k: int = 1, 
                  precomputed: bool = False) -> None:
         super(_CalFlowReturningPredictManager, self).__init__(predictor=predictor,
@@ -197,6 +198,7 @@ class _CalFlowReturningPredictManager(_ReturningPredictManager):
         self.top_k_beam_search = top_k_beam_search
         self.top_k_beam_search_hitl = top_k_beam_search_hitl
         self.top_k = top_k
+        self.hitl_threshold = hitl_threshold
 
     @overrides
     def _predict_instances(self, batch):
@@ -205,7 +207,12 @@ class _CalFlowReturningPredictManager(_ReturningPredictManager):
         if not self.oracle and not is_top_k:
             return super()._predict_instances(batch)
         elif not self.oracle and is_top_k:
-            results = self._predictor.predict_batch_instance(batch, self.oracle, self.top_k_beam_search, self.top_k_beam_search_hitl, self.top_k)
+            results = self._predictor.predict_batch_instance(batch, 
+                                                             self.oracle, 
+                                                             self.top_k_beam_search, 
+                                                             self.top_k_beam_search_hitl, 
+                                                             self.top_k, 
+                                                             self.hitl_threshold)
             return [results]
         elif self.oracle and not is_top_k:
             results = self._predictor.predict_batch_instance(batch, self.oracle) 
