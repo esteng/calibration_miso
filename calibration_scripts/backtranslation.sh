@@ -73,7 +73,7 @@ echo "running miso on predicted"
 filename=$(basename ${pred_out_file})
 mv ${CHECKPOINT_DIR}/translate_output/${filename}.tgt ${calflow_to_text_model}/for_roundtrip/predicted_${filename}.tgt
 
-# run MISO on predicted 
+# run MISO on gold
 export TEST_DATA=${gold_out_file}
 export FXN="None"
 gold_miso_out_file="calibration_logs/miso_roundtrip_gold_${dev_split}.txt" 
