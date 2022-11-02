@@ -29,6 +29,32 @@ def split_source(input_src_str):
         # prev user, prev agent, current user 
         return "", "", src_str[0]
 
+def read_nucleus_file(miso_pred_file):
+    with open(miso_pred_file, "r") as f:
+        data = [json.loads(x) for x in f.readlines()]
+    to_ret = []
+    data_by_idx = defaultdict(list)
+    for line in data:
+        data_by_idx[line['line_idx']].append(line) 
+
+    for idx, lines in data_by_idx.items():
+        total_probs = [np.exp(np.sum(np.log(x['expression_probs']))) 
+                                if x['expression_probs'] is not None else 0.0 
+                                    for x in lines ]
+        min_probs = []
+        for x in lines:
+            if x['expression_probs'] is not None and len(x['expression_probs']) > 0:
+                min_probs.append(np.min(x['expression_probs']))
+            else:
+                min_probs.append(0.0)
+
+        combo_lines = zip(lines, min_probs, total_probs)
+        sorted_combo_lines = sorted(combo_lines, key=lambda x: x[-1], reverse=True)
+
+        data_by_idx[idx] = sorted_combo_lines
+
+    return data_by_idx
+
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
     parser.add_argument("--miso_pred_file", type=str, required=True)
@@ -72,16 +98,10 @@ if __name__ == "__main__":
 
 
     tgts = []
-    lines_by_idx = defaultdict(list)
-    with open(args.miso_pred_file, "r") as f:
-        for i, line in enumerate(f):
-            line = json.loads(line)
-            lines_by_idx[line['line_idx']].append(line)
+    lines_by_idx = read_nucleus_file(args.miso_pred_file)
 
     for line_idx, lines in lines_by_idx.items():
         for j, data in enumerate(lines):
-            # line_idx = i // args.n_pred
-            line_idx = int(line_idx)
             # src_str = gold_src_data[line_idx]
             src_str, __ = src_tgt_by_idx[line_idx]
             prev_user_str, prev_agent_str, user_str = split_source(src_str)
