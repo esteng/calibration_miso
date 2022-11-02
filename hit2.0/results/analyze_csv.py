@@ -94,7 +94,13 @@ def build_miso_input(csv_line):
     inp_str += f"__User {user_input} __StartOfProgram"
     return inp_str
 
-def score_lines(csv_lines, json_lines, bins_by_idx, rewrite=False, rewrite_checkpoint = None, restrict_to_agree = False, aggregator="majority"):
+def score_lines(csv_lines, 
+                json_lines, 
+                bins_by_idx, 
+                rewrite=False, 
+                rewrite_checkpoint = None, 
+                restrict_to_agree = False, 
+                interact = False): 
     true_positives = []
     false_positives = []
     false_negatives = []
@@ -156,9 +162,21 @@ def score_lines(csv_lines, json_lines, bins_by_idx, rewrite=False, rewrite_check
             true_positives.append(jl)
             by_bin_data[bin]['tp'] += 1
         if not accept and was_correct:
+            if interact: 
+                print(f"pred src: {jl['pred_src']}")
+                print(f"pred_tgt: {clean_lispress(jl['pred_tgt'])}")
+                print(f"gold src: {jl['gold_src']}")
+                print(f"gold_tgt: {clean_lispress(jl['gold_tgt'])}")
+                pdb.set_trace() 
             false_negatives.append(jl)
             by_bin_data[bin]['fn'] += 1
         if accept and not was_correct:
+            if interact: 
+                print(f"pred src: {jl['pred_src']}")
+                print(f"pred_tgt: {clean_lispress(jl['pred_tgt'])}")
+                print(f"gold src: {jl['gold_src']}")
+                print(f"gold_tgt: {clean_lispress(jl['gold_tgt'])}")
+                pdb.set_trace() 
             false_positives.append(jl)
             by_bin_data[bin]['fp'] += 1
         if not accept and not was_correct:
@@ -262,7 +280,7 @@ def run_one_baseline(json_lines, bins_by_idx, cutoff):
 
 def run_baseline(json_lines, bins_by_idx, max_bin):
     all_results = []
-    increment = max_bin / 10
+    increment = max_bin / 100
     all_cutoffs = np.arange(increment, max_bin, increment)
     for cutoff in all_cutoffs:
         all_results.append((cutoff, run_one_baseline(json_lines, bins_by_idx, cutoff)))
@@ -272,6 +290,12 @@ def run_baseline(json_lines, bins_by_idx, max_bin):
     return best_cutoff, best_result
 
 def get_agreement(csv_lines): 
+    flat_csv_lines = [x for y in csv_lines.values() for x in y ]
+    all_anns = [line['WorkerId'] for line in flat_csv_lines]
+    num_anns = len(set(all_anns))
+    num_per_ann = Counter(all_anns)
+    print(f"There were {num_anns} unique annotators.")
+    print(f"annotations per annotor: {num_per_ann}") 
     n_agree = 0
     for hit_id, anns in csv_lines.items():
         answers = [ann['Answer.radio-input'] for ann in anns]
@@ -292,6 +316,7 @@ if __name__ == "__main__":
     parser.add_argument("--rewrite_checkpoint", type=str, default=None)
     parser.add_argument("--max_bin", type=float, default=0.6)
     parser.add_argument("--restrict_to_agree", action="store_true")
+    parser.add_argument("--interact", action="store_true")
     args = parser.parse_args()
 
     csv_lines, hit_ids = read_csv(args.csv)
@@ -309,18 +334,24 @@ if __name__ == "__main__":
                                     bins_by_idx, 
                                     args.rewrite, 
                                     args.rewrite_checkpoint,
-                                    args.restrict_to_agree)
+                                    args.restrict_to_agree,
+                                    args.interact)
     else:
-        print("RUNNING BASELINE...")
+        print("RUNNING BASELINES...")
         # baseline: just set a confidence cutoff and reject everything below it 
         # we will run over a range of cutoffs 
         best_cutoff, score_results = run_baseline(json_lines, bins_by_idx, args.max_bin)
         print(f"Best cutoff: {best_cutoff}")
+        # reject all baseline 
+        reject_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = 1.1) 
+        print(f"Reject all baseline: {len(reject_all_results['false_positives'])} {reject_all_results['total_precision']:.3f}, {reject_all_results['total_recall']:.3f}, {reject_all_results['total_f1']:.3f}")
+        accept_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = -0.1) 
+        print(f"Accept all baseline: {len(accept_all_results['false_positives'])} {accept_all_results['total_precision']:.3f}, {accept_all_results['total_recall']:.3f}, {accept_all_results['total_f1']:.3f}")
 
     precision_score = score_results['total_precision']
     recall_score = score_results['total_recall']
     f1_score = score_results['total_f1']
-    print(f"{precision_score:.3f} {recall_score:.3f} {f1_score:.3f}")
+    print(f"fP: {len(score_results['false_positives'])} P: {precision_score:.3f} R: {recall_score:.3f} F1: {f1_score:.3f}")
 
     for bin, res_dict in sorted(score_results['by_bin_data'].items(), key = lambda x: x[0]):
         print(f"\tbin: {bin:.2f}, p: {res_dict['precision']:.3f}, r: {res_dict['recall']:.3f}, f1: {res_dict['f1']:.3f}")
