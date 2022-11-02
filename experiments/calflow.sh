@@ -113,6 +113,7 @@ function eval_fxn() {
     --include-package miso.metrics  
 } 
 
+
 function eval_calibrate() {
     echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
@@ -127,9 +128,62 @@ function eval_calibrate() {
     --top-k-beam-search \
     --use-dataset-reader \
     --cuda-device 0 \
-    --beam-size 3 \
-    --top-k 3 \
+    --beam-size 10 \
+    --top-k 10 \
     --out-file ${CHECKPOINT_DIR}/translate_output_calibrated/${split}.tgt \
+    --include-package miso.data.dataset_readers \
+    --include-package miso.data.iterators \
+    --include-package miso.data.tokenizers \
+    --include-package miso.models \
+    --include-package miso.modules.seq2seq_encoders \
+    --include-package miso.predictors \
+    --include-package miso.metrics  
+} 
+
+function eval_calibrate_cpu() {
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
+    output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
+    split=$(basename ${TEST_DATA})
+    mkdir -p ${CHECKPOINT_DIR}/translate_output_calibrated
+    python -m miso.commands.exact_match eval \
+    ${model_file} ${TEST_DATA} \
+    --fxn-of-interest ${FXN} \
+    --predictor "calflow_parsing_calibrated" \
+    --batch-size 140 \
+    --top-k-beam-search \
+    --use-dataset-reader \
+    --cuda-device -1 \
+    --beam-size 10 \
+    --top-k 10 \
+    --out-file ${CHECKPOINT_DIR}/translate_output_calibrated/${split}.tgt \
+    --include-package miso.data.dataset_readers \
+    --include-package miso.data.iterators \
+    --include-package miso.data.tokenizers \
+    --include-package miso.models \
+    --include-package miso.modules.seq2seq_encoders \
+    --include-package miso.predictors \
+    --include-package miso.metrics  
+} 
+
+function eval_hitl() {
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
+    output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
+    split=$(basename ${TEST_DATA})
+    mkdir -p ${CHECKPOINT_DIR}/translate_output_hitl
+    python -m miso.commands.exact_match eval \
+    ${model_file} ${TEST_DATA} \
+    --fxn-of-interest ${FXN} \
+    --predictor "calflow_parsing_hitl" \
+    --batch-size 140 \
+    --top-k-beam-search-hitl \
+    --hitl-threshold ${HITL_THRESHOLD} \
+    --use-dataset-reader \
+    --cuda-device 0 \
+    --beam-size 1 \
+    --top-k 1 \
+    --out-file ${CHECKPOINT_DIR}/translate_output_hitl/${split}_${HITL_THRESHOLD}.tgt \
     --include-package miso.data.dataset_readers \
     --include-package miso.data.iterators \
     --include-package miso.data.tokenizers \
@@ -242,6 +296,32 @@ function log_losses() {
     --include-package miso.metrics  
 } 
 
+function log_losses_short() {
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
+    #output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
+    split=$(basename ${TEST_DATA})
+    mkdir -p ${CHECKPOINT_DIR}/translate_output
+    python -um miso.commands.exact_match eval \
+    ${model_file} ${TEST_DATA} \
+    --fxn-of-interest ${FXN} \
+    --predictor "calflow_parsing_log" \
+    --oracle \
+    --score-type basic \
+    --batch-size 1 \
+    --beam-size 1 \
+    --use-dataset-reader \
+    --cuda-device 0 \
+    --json-save-path ${CHECKPOINT_DIR}/translate_output/${split}_losses.json \
+    --include-package miso.data.dataset_readers \
+    --include-package miso.data.iterators \
+    --include-package miso.data.tokenizers \
+    --include-package miso.models \
+    --include-package miso.modules.seq2seq_encoders \
+    --include-package miso.predictors \
+    --include-package miso.metrics  
+} 
+
 function big_beam() {
     echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
@@ -327,6 +407,8 @@ function main() {
         train
     elif [[ "${action}" == "log" ]]; then
         log_losses
+    elif [[ "${action}" == "log_short" ]]; then
+        log_losses_short
     elif [[ "${action}" == "resume" ]]; then
         resume
     elif [[ "${action}" == "all" ]]; then
@@ -338,6 +420,10 @@ function main() {
        eval_fxn 
     elif [[ "${action}" == "eval_calibrate" ]]; then
        eval_calibrate
+    elif [[ "${action}" == "eval_calibrate_cpu" ]]; then
+       eval_calibrate_cpu
+    elif [[ "${action}" == "eval_hitl" ]]; then
+       eval_hitl
     elif [[ "${action}" == "eval_fxn_cpu" ]]; then
        eval_fxn_cpu 
     elif [[ "${action}" == "eval_pre" ]]; then
