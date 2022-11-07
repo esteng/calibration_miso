@@ -38,6 +38,7 @@ class TreeDSTDatasetReader(CalFlowDatasetReader):
                                         use_program = self.use_program,
                                         use_agent_utterance = self.use_agent_utterance,
                                         use_context = self.use_context,
+                                        line_idx = line_idx.strip(),
                                         fxn_of_interest = self.fxn_of_interest)
                                         
 
