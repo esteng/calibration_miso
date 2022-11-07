@@ -31,14 +31,12 @@ class TreeDSTGraph(CalFlowGraph):
                 use_program: bool = False,
                 use_agent_utterance: bool = False, 
                 use_context: bool = False,
-                line_idx: int = None,
                 fxn_of_interest: str = None):
         super(TreeDSTGraph, self).__init__(src_str=src_str, 
                                            tgt_str=tgt_str,
                                            use_program=use_program,
                                            use_agent_utterance=use_agent_utterance,
                                            use_context=use_context,
-                                           line_idx=line_idx,
                                            fxn_of_interest=fxn_of_interest)
     @overrides
     def fill_lists_from_program(self, program: Program):            
@@ -261,8 +259,8 @@ class TreeDSTGraph(CalFlowGraph):
 
             for i, (parent_node_idx, argn) in enumerate(parent_node_lookup[id]):
                 # NOTE (elias): tree DST specific: for lambdas, only add one, not 2 
-                # if e.op.name == "lambda_arg" and self.node_name_list[-1] == "lambda_arg":
-                    # pdb.set_trace()
+                if e.op.name == "lambda_arg" and self.node_name_list[-1] == "lambda_arg":
+                    pdb.set_trace()
                     # skip the second lambda arg, we'll add it in post-hoc 
                     # continue 
 
