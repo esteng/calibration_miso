@@ -49,6 +49,11 @@ def load_two_lambdas_lispress():
     return """( plan ( revise ( ^ ( Unit ) Path.apply " Book " ) ( ^ ( ( Constraint Taxi ) ) Path.apply " object " ) ( lambda ( ^ ( Constraint Taxi ) x0 ) ( & x0 ( Taxi.serviceType_? ( List.exists_? ( ?= ( ServiceType.Executive ) ) ) ) ) ) ) )"""
 
 @pytest.fixture
+def load_single_lambda_lispress():
+    #return """( plan ( revise ( ^ ( Unit ) Path.apply " Book " ) ( ^ ( ( Constraint Taxi ) ) Path.apply " object " ) ( lambda ( ^ ( Constraint Taxi ) x0 ) ( & x0 ( Taxi.serviceType_? ( List.exists_? ( ?= ( ServiceType.Executive ) ) ) ) ) ) ) )"""
+    return """( plan ( revise ( ^ ( Unit ) Path.apply " Book " ) ( ^ ( ( Constraint Hotel ) ) Path.apply " object " ) ( lambda ( ^ ( Constraint Hotel ) x0 ) ( & x0 ( Hotel.hotelName_? ( ^ ( ( Constraint String ) ) refer ) ) ) ) ) )"""
+
+@pytest.fixture
 def load_all_valid_tgt_str():
     data_path = "/brtx/601-nvme1/estengel/resources/data/tree_dst.agent.data/valid.tgt"
     with open(data_path) as f1:
@@ -70,6 +75,9 @@ def test_broken_roundtrip(load_broken_lispress):
 
 def test_two_lambdas_roundtrip(load_two_lambdas_lispress):
     tree_dst_roundtrip(load_two_lambdas_lispress)
+
+def test_single_lambda_roundtrip(load_single_lambda_lispress):
+    tree_dst_roundtrip(load_single_lambda_lispress)
 
 def test_calflow_roundtrip_valid(load_all_valid_tgt_str):
     all_lines = load_all_valid_tgt_str
