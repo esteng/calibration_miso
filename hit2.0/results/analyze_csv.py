@@ -100,7 +100,8 @@ def score_lines(csv_lines,
                 rewrite=False, 
                 rewrite_checkpoint = None, 
                 restrict_to_agree = False, 
-                interact = False): 
+                interact = False,
+                beta: float = 1.0): 
     true_positives = []
     false_positives = []
     false_negatives = []
@@ -187,7 +188,7 @@ def score_lines(csv_lines,
     fn = len(false_negatives)
     precision = safe_divide(tp, tp + fp)
     recall = safe_divide(tp, tp + fn)
-    f1 = 2 * safe_divide(precision * recall, precision + recall)
+    f1 = (1 + beta**2) * safe_divide(precision * recall, (beta**2 * precision) + recall)
 
     for bin, data in by_bin_data.items():
         btp = data['tp']
@@ -196,7 +197,7 @@ def score_lines(csv_lines,
         tn = data['tn']
         bin_precision = safe_divide(btp, btp + bfp)
         bin_recall = safe_divide(btp, btp + bfn)
-        bin_f1 = 2 * safe_divide(bin_precision * bin_recall, bin_precision + bin_recall)
+        bin_f1 = (1 + beta**2) * safe_divide(bin_precision * bin_recall, (beta**2 * bin_precision + bin_recall))
         by_bin_data[bin]['precision'] = bin_precision
         by_bin_data[bin]['recall'] = bin_recall
         by_bin_data[bin]['f1'] = bin_f1
@@ -222,7 +223,7 @@ def get_bins(translation_dir):
     bins_by_idx = {idx: bin for bin, idx in zip(bins, idxs)}
     return bins_by_idx
 
-def run_one_baseline(json_lines, bins_by_idx, cutoff):
+def run_one_baseline(json_lines, bins_by_idx, cutoff, beta):
     true_positives = []
     false_positives = []
     false_negatives = []
@@ -254,7 +255,7 @@ def run_one_baseline(json_lines, bins_by_idx, cutoff):
     fn = len(false_negatives)
     precision = safe_divide(tp, tp + fp)
     recall = safe_divide(tp, tp + fn)
-    f1 = 2 * safe_divide(precision * recall, precision + recall)
+    f1 = (1 + beta**2) * safe_divide(precision * recall, (beta**2* precision) + recall)
 
     for bin, data in by_bin_data.items():
         btp = data['tp']
@@ -263,7 +264,7 @@ def run_one_baseline(json_lines, bins_by_idx, cutoff):
         tn = data['tn']
         bin_precision = safe_divide(btp, btp + bfp)
         bin_recall = safe_divide(btp, btp + bfn)
-        bin_f1 = 2 * safe_divide(bin_precision * bin_recall, bin_precision + bin_recall)
+        bin_f1 = (1 + beta**2) * safe_divide(bin_precision * bin_recall, beta**2 * bin_precision + bin_recall)
         by_bin_data[bin]['precision'] = bin_precision
         by_bin_data[bin]['recall'] = bin_recall
         by_bin_data[bin]['f1'] = bin_f1
@@ -278,16 +279,18 @@ def run_one_baseline(json_lines, bins_by_idx, cutoff):
               "true_negatives": true_negatives}
     return to_ret
 
-def run_baseline(json_lines, bins_by_idx, max_bin):
-    all_results = []
-    increment = max_bin / 100
-    all_cutoffs = np.arange(increment, max_bin, increment)
-    for cutoff in all_cutoffs:
-        all_results.append((cutoff, run_one_baseline(json_lines, bins_by_idx, cutoff)))
-    all_f1s = [result['total_f1'] for cutoff, result in all_results]
-    best_idx = np.argmax(all_f1s)
-    best_cutoff, best_result = all_results[best_idx]
-    return best_cutoff, best_result
+def run_baseline(json_lines, bins_by_idx, max_bin, cutoff=0.45, beta=1.0):
+    # all_results = []
+    # increment = max_bin / 100
+    # all_cutoffs = np.arange(increment, max_bin, increment)
+    # for cutoff in all_cutoffs:
+        # all_results.append((cutoff, run_one_baseline(json_lines, bins_by_idx, cutoff)))
+    best_result = run_one_baseline(json_lines, bins_by_idx, cutoff, beta) 
+    # all_f1s = [result['total_f1'] for cutoff, result in all_results]
+    # best_idx = np.argmax(all_f1s)
+    # best_cutoff, best_result = all_results[best_idx]
+    # best_cutoff = cutoff
+    return cutoff, best_result
 
 def get_agreement(csv_lines): 
     flat_csv_lines = [x for y in csv_lines.values() for x in y ]
@@ -317,6 +320,8 @@ if __name__ == "__main__":
     parser.add_argument("--max_bin", type=float, default=0.6)
     parser.add_argument("--restrict_to_agree", action="store_true")
     parser.add_argument("--interact", action="store_true")
+    parser.add_argument("--cutoff", type=float, default=0.40, help="cutoff threshold for baseline, computed by running analysis/calibration_find_cutoff.ipynb")
+    parser.add_argument("--beta", type=float, default=1.0, help="beta for F1")
     args = parser.parse_args()
 
     csv_lines, hit_ids = read_csv(args.csv)
@@ -335,24 +340,25 @@ if __name__ == "__main__":
                                     args.rewrite, 
                                     args.rewrite_checkpoint,
                                     args.restrict_to_agree,
-                                    args.interact)
+                                    args.interact,
+                                    args.beta)
     else:
         print("RUNNING BASELINES...")
         # baseline: just set a confidence cutoff and reject everything below it 
         # we will run over a range of cutoffs 
-        best_cutoff, score_results = run_baseline(json_lines, bins_by_idx, args.max_bin)
+        best_cutoff, score_results = run_baseline(json_lines, bins_by_idx, args.max_bin, args.cutoff, args.beta)
         print(f"Best cutoff: {best_cutoff}")
         # reject all baseline 
-        reject_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = 1.1) 
+        reject_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = 1.1, beta=args.beta) 
         print(f"Reject all baseline: {len(reject_all_results['false_positives'])} {reject_all_results['total_precision']:.3f}, {reject_all_results['total_recall']:.3f}, {reject_all_results['total_f1']:.3f}")
-        accept_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = -0.1) 
+        accept_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = -0.1, beta=args.beta) 
         print(f"Accept all baseline: {len(accept_all_results['false_positives'])} {accept_all_results['total_precision']:.3f}, {accept_all_results['total_recall']:.3f}, {accept_all_results['total_f1']:.3f}")
 
     precision_score = score_results['total_precision']
     recall_score = score_results['total_recall']
     f1_score = score_results['total_f1']
-    print(f"fP: {len(score_results['false_positives'])} P: {precision_score:.3f} R: {recall_score:.3f} F1: {f1_score:.3f}")
+    print(f"fP: {len(score_results['false_positives'])} P: {precision_score:.3f} R: {recall_score:.3f} F{args.beta}: {f1_score:.3f}")
 
     for bin, res_dict in sorted(score_results['by_bin_data'].items(), key = lambda x: x[0]):
-        print(f"\tbin: {bin:.2f}, p: {res_dict['precision']:.3f}, r: {res_dict['recall']:.3f}, f1: {res_dict['f1']:.3f}")
+        print(f"\tbin: {bin:.2f}, p: {res_dict['precision']:.3f}, r: {res_dict['recall']:.3f}, f{args.beta}: {res_dict['f1']:.3f}")
     pdb.set_trace()
