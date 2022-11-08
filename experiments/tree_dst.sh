@@ -145,6 +145,32 @@ function eval_fxn_precomputed() {
     --include-package miso.metrics  
 } 
 
+function eval_calibrate() {
+    echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for CalFlow parsing..."
+    model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
+    output_file=${CHECKPOINT_DIR}/${TEST_DATA}.pred.txt
+    split=$(basename ${TEST_DATA})
+    mkdir -p ${CHECKPOINT_DIR}/translate_output_calibrated
+    python -m miso.commands.exact_match eval \
+    ${model_file} ${TEST_DATA} \
+    --fxn-of-interest ${FXN} \
+    --predictor "tree_dst_parsing_calibrated" \
+    --batch-size 140 \
+    --top-k-beam-search \
+    --use-dataset-reader \
+    --cuda-device 0 \
+    --beam-size 1 \
+    --top-k 1 \
+    --out-file ${CHECKPOINT_DIR}/translate_output_calibrated/${split}.tgt \
+    --include-package miso.data.dataset_readers \
+    --include-package miso.data.iterators \
+    --include-package miso.data.tokenizers \
+    --include-package miso.models \
+    --include-package miso.modules.seq2seq_encoders \
+    --include-package miso.predictors \
+    --include-package miso.metrics  
+} 
+
 function prob_analysis() {
     echo "Evaluating Exact Match with Function Scores for Function ${FXN} for a transductive model for TreeDST parsing..."
     model_file=${CHECKPOINT_DIR}/ckpt/model.tar.gz
@@ -295,6 +321,8 @@ function main() {
        eval_fxn_cpu 
     elif [[ "${action}" == "eval_pre" ]]; then
        eval_fxn_precomputed 
+    elif [[ "${action}" == "eval_calibrate" ]]; then
+       eval_calibrate
     elif [[ "${action}" == "prob" ]]; then
       	prob_analysis 
     elif [[ "${action}" == "beam" ]]; then

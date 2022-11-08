@@ -128,8 +128,8 @@ function eval_calibrate() {
     --top-k-beam-search \
     --use-dataset-reader \
     --cuda-device 0 \
-    --beam-size 10 \
-    --top-k 10 \
+    --beam-size 1 \
+    --top-k 1 \
     --out-file ${CHECKPOINT_DIR}/translate_output_calibrated/${split}.tgt \
     --include-package miso.data.dataset_readers \
     --include-package miso.data.iterators \
