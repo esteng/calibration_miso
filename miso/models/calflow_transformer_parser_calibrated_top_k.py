@@ -503,8 +503,7 @@ class CalFlowTransformerParser(CalFlowParser):
                              meta_data: List[Dict],
                              batch_size: int,
                              last_decoding_step: int,
-                             source_dynamic_vocab_size: int,
-                             size_multiplier: int = 1) -> Dict:
+                             source_dynamic_vocab_size: int) -> Dict:
         """
         Read out a group of hybrid predictions. Based on different ways of node prediction,
         find the corresponding token and node index. Prepare the tensorized inputs
@@ -525,17 +524,17 @@ class CalFlowTransformerParser(CalFlowParser):
         default_node_index = last_decoding_step + 1
 
         def batch_index(instance_i: int) -> int:
-            if predictions.size(0) == batch_size * self._beam_size * size_multiplier:
-                return instance_i // (self._beam_size * size_multiplier)
+            if predictions.size(0) == batch_size * self._beam_size:
+                return instance_i // self._beam_size
             else:
                 return instance_i
-            # return instance_i // predictions.size(0)
 
         token_instances = []
 
         node_indices = torch.zeros_like(predictions)
 
         for i, index in enumerate(predictions.tolist()):
+
             instance_meta = meta_data[batch_index(i)]
             target_dynamic_vocab = target_dynamic_vocabs[i]
             # Generation.
@@ -551,10 +550,7 @@ class CalFlowTransformerParser(CalFlowParser):
             # Target-side copy.
             else:
                 index -= (self._vocab_size + source_dynamic_vocab_size)
-                try:
-                    token = target_dynamic_vocab[index]
-                except KeyError:
-                    token = "UNK"
+                token = target_dynamic_vocab[index]
                 node_index = index
 
             target_token = TextField([Token(token)], instance_meta["target_token_indexers"])
@@ -562,7 +558,7 @@ class CalFlowTransformerParser(CalFlowParser):
             token_instances.append(Instance({"target_tokens": target_token}))
             node_indices[i] = node_index
             if last_decoding_step != -1:  # For <BOS>, we set the last decoding step to -1.
-                target_attention_map[i % size_multiplier, last_decoding_step, node_index] = 1
+                target_attention_map[i, last_decoding_step, node_index] = 1
                 target_dynamic_vocab[node_index] = token
 
         # Covert tokens to tensors.
@@ -578,7 +574,6 @@ class CalFlowTransformerParser(CalFlowParser):
             # [group_size, 1]
             node_indices=node_indices.unsqueeze(1),
         )
-
 
     def get_dro_loss(self,
                     node_loss_per_instance: torch.Tensor,

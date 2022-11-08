@@ -31,13 +31,17 @@ class TreeDSTGraph(CalFlowGraph):
                 use_program: bool = False,
                 use_agent_utterance: bool = False, 
                 use_context: bool = False,
-                fxn_of_interest: str = None):
+                fxn_of_interest: str = None,
+                line_idx: int = None,
+                expression_probs: List[float] = None):
         super(TreeDSTGraph, self).__init__(src_str=src_str, 
                                            tgt_str=tgt_str,
                                            use_program=use_program,
                                            use_agent_utterance=use_agent_utterance,
                                            use_context=use_context,
-                                           fxn_of_interest=fxn_of_interest)
+                                           fxn_of_interest=fxn_of_interest,
+                                           line_idx=line_idx,
+                                           expression_probs=expression_probs)
     @overrides
     def fill_lists_from_program(self, program: Program):            
         def get_arg_num(eid):
@@ -259,8 +263,8 @@ class TreeDSTGraph(CalFlowGraph):
 
             for i, (parent_node_idx, argn) in enumerate(parent_node_lookup[id]):
                 # NOTE (elias): tree DST specific: for lambdas, only add one, not 2 
-                if e.op.name == "lambda_arg" and self.node_name_list[-1] == "lambda_arg":
-                    pdb.set_trace()
+                #if e.op.name == "lambda_arg" and self.node_name_list[-1] == "lambda_arg":
+                    # pdb.set_trace()
                     # skip the second lambda arg, we'll add it in post-hoc 
                     # continue 
 
@@ -327,9 +331,10 @@ class TreeDSTGraph(CalFlowGraph):
     def prediction_to_program(node_name_list: List[str],
                               node_idx_list: List[int], 
                               edge_head_list: List[int], 
-                              edge_type_list: List[str]): 
+                              edge_type_list: List[str],
+                              node_probs_list: List[float]): 
 
-        graph = TreeDSTGraph.lists_to_ast(node_name_list, node_idx_list, edge_head_list, edge_type_list)
+        graph = TreeDSTGraph.lists_to_ast(node_name_list, node_idx_list, edge_head_list, edge_type_list, node_probs_list=node_probs_list)
 
         def get_arg_children(op_node):
             outgoing_edges = [e for e in graph.edges if e[0] == op_node and graph.edges[e]['type'].startswith("arg")]
@@ -420,10 +425,12 @@ class TreeDSTGraph(CalFlowGraph):
             return detokenized
 
         expressions = []
+        expression_probs = []
         add_to_next = []
         is_lambda = False
         for node in sorted(graph.nodes):
             op = None
+            op_prob = 1.0
             if graph.nodes[node]['function_type'] is not None: 
                 if graph.nodes[node]['function_type'] == "build":
                     empty_base = True
@@ -445,6 +452,12 @@ class TreeDSTGraph(CalFlowGraph):
                                        op_fields = field_names,
                                        empty_base = empty_base, 
                                        push_go = True)
+
+                    if graph.nodes[node]['node_prob'] is not None:
+                        # construct prob taking into account all children 
+                        op_prob = graph.nodes[node]['node_prob']
+                        for child in children + field_children:
+                            op_prob *= graph.nodes[child]['node_prob']
 
                 elif graph.nodes[node]['function_type'] == "value": 
                     children = get_arg_children(node)
@@ -483,9 +496,18 @@ class TreeDSTGraph(CalFlowGraph):
                     inner_dict = {"schema": name, "underlying": underlying}
                     op = ValueOp(value=json.dumps(inner_dict))
 
+                    if graph.nodes[node]['node_prob'] is not None:
+                        # construct prob taking into account all children
+                        op_prob = graph.nodes[node]['node_prob']
+                        for child in children: 
+                            op_prob *= graph.nodes[child]['node_prob']
+
                 elif graph.nodes[node]['function_type'] == "call": 
                     name = graph.nodes[node]['node_name']
                     op = CallLikeOp(name=name)
+
+                    if graph.nodes[node]['node_prob'] is not None:
+                        op_prob = graph.nodes[node]['node_prob']
             else:
                 continue
 
@@ -512,6 +534,7 @@ class TreeDSTGraph(CalFlowGraph):
 
                 curr_expr = Expression(id=f"[{eid}]", op = op, arg_ids = children_ids, type_args = type_args)
                 expressions.append(curr_expr)
+                expression_probs.append(op_prob)
 
         if is_lambda: 
             # decrease all expression ids by 1 
@@ -523,15 +546,18 @@ class TreeDSTGraph(CalFlowGraph):
 
                 new_expr = Expression(id=f"[{expr_id}]", op = expr.op, arg_ids = [f"[{child_id}]" for child_id in child_ids], type_args = expr.type_args)
                 expressions[i] = new_expr
+                expression_probs[i] = op_prob
 
         expressions.reverse()
-        return Program(expressions)
+        expression_probs.reverse()
+        return Program(expressions), expressions, expression_probs
 
     @staticmethod
     def lists_to_ast(node_name_list: List[str], 
                      node_idx_list: List[str],
                      edge_head_list: List[int], 
-                     edge_type_list: List[int]) -> List[Any]:
+                     edge_type_list: List[int],
+                     node_probs_list: List[float]) -> List[Any]:
         """
         convert predicted lists back to an AST 
         """
@@ -547,7 +573,7 @@ class TreeDSTGraph(CalFlowGraph):
                     node_idx_to_list_idx_mapping[k] -= 1
 
         offset = 0
-        for i, (node_name, node_idx, edge_head, edge_type) in enumerate(zip(node_name_list, node_idx_list, edge_head_list, edge_type_list)):
+        for i, (node_name, node_idx, edge_head, edge_type, node_prob) in enumerate(zip(node_name_list, node_idx_list, edge_head_list, edge_type_list, node_probs_list)):
             if edge_type.startswith("fxn_arg"):
                 function_type = "build"
             elif edge_type.startswith("val_arg"):
@@ -569,7 +595,7 @@ class TreeDSTGraph(CalFlowGraph):
                 offset += 1
                 update_mapping_after_n(node_idx) 
 
-            graph.add_node(node_idx, node_name = node_name, function_type= function_type)
+            graph.add_node(node_idx, node_name = node_name, function_type= function_type, node_prob=node_prob)
 
             # root self-edges
             if edge_head < 0:

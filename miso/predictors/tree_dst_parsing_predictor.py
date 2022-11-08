@@ -31,7 +31,7 @@ class TreeDSTParsingPredictor(CalflowParsingPredictor):
     def dump_line(self, outputs: JsonDict) -> str:
         # function hijacked from parent class to return a decomp arborescence instead of printing a line 
         src_str = " ".join(outputs['src_str'])
-        pdb.set_trace()
+        #pdb.set_trace()
         pred_graph = TreeDSTGraph.from_prediction(src_str,
                                                 outputs['nodes'], 
                                                 outputs['node_indices'], 

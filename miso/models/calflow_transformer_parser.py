@@ -181,6 +181,7 @@ class CalFlowTransformerParser(CalFlowParser):
                                        last_predictions: torch.Tensor,
                                        state: Dict[str, torch.Tensor],
                                        auxiliaries: Dict[str, List[Any]],
+                                       timestep: int,
                                        misc: Dict,
                                        ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, List[Any]]]:
 
@@ -665,7 +666,7 @@ class CalFlowTransformerParser(CalFlowParser):
             start_predictions=start_predictions,
             start_state=start_state,
             auxiliaries=auxiliaries,
-            step=lambda x, y, z: self._take_one_step_node_prediction(x, y, z, misc),
+            step=lambda x, y, z, s: self._take_one_step_node_prediction(x, y, z, s, misc),
             tracked_state_name="output",
             tracked_auxiliary_name="target_dynamic_vocabs"
         )
