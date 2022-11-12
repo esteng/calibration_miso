@@ -7,50 +7,12 @@ import numpy as np
 import re 
 from dataflow.core.lispress import parse_lispress, render_compact, render_pretty
 from dataflow.core.linearize import lispress_to_seq
-
-def read_nucleus_file(miso_pred_file):
-    with open(miso_pred_file, "r") as f:
-        data = [json.loads(x) for x in f.readlines()]
-    to_ret = []
-    data_by_idx = defaultdict(list)
-    data_by_src_str = defaultdict(list)
-    for line in data:
-        data_by_src_str[line['src_str']].append(line) 
-        data_by_idx[line['line_idx']].append(line) 
-
-    for src_str, lines in data_by_src_str.items():
-        total_probs = [np.exp(np.sum(np.log(x['expression_probs']))) 
-                                if x['expression_probs'] is not None else 0.0 
-                                    for x in lines ]
-        mean_probs = [np.mean(x['expression_probs']) 
-                                if x['expression_probs'] is not None and np.sum(x['expression_probs']) > 0.0 
-                                else 0.0 for x in lines ]
-        min_probs = []
-        for x in lines:
-            if x['expression_probs'] is not None and len(x['expression_probs']) > 0:
-                min_probs.append(np.min(x['expression_probs']))
-            else:
-                min_probs.append(0.0)
-
-        combo_lines = zip(lines, min_probs, mean_probs, total_probs)
-        sorted_combo_lines = sorted(combo_lines, key=lambda x: x[-1], reverse=True)
-
-        data_by_src_str[src_str] = sorted_combo_lines
-        idx = lines[0]['line_idx']
-        data_by_idx[idx] = sorted_combo_lines
-    return data_by_src_str, data_by_idx
-
-def read_gold_file(file):
-    with open(file) as f:
-        if file.endswith(".tgt"):
-            to_ret = [render_compact(parse_lispress(line)) for line in f.readlines()]
-        else:
-            to_ret = [re.sub("__StartOfProgram", "", x).strip() for x in f.readlines()]
-    return to_ret 
-
+from calibration_metric.metric import ECEMetric
+from calibration_utils import single_exact_match, read_nucleus_file, read_gold_file
 
 def get_low_prob(iterator, is_miso = False, threshold = 0.6):
     low_prob_idxs = []
+    probs_by_idx = {}
     for idx, example in iterator:
         if is_miso: 
             try:
@@ -63,14 +25,16 @@ def get_low_prob(iterator, is_miso = False, threshold = 0.6):
 
         if min_prob < threshold:
             low_prob_idxs.append(idx) 
-    return low_prob_idxs
+        probs_by_idx[idx] = min_prob
+    return low_prob_idxs, probs_by_idx
 
-def get_combined_acc(bart_outputs, beam_outputs, gold_tgt_by_idx, miso_idxs):
+def get_combined_acc(bart_outputs, beam_outputs, gold_tgt_by_idx, miso_idxs, miso_probs_by_idx):
     all_pred_gold_pairs = []
-
+    all_probs = []
     for idx, gold_tgt in gold_tgt_by_idx.items(): 
         # if confident take miso 
         if str(idx) not in miso_idxs:
+            prob = miso_probs_by_idx[idx]
             model_name = "miso"
             try:
                 pred_str = beam_outputs[idx]
@@ -84,6 +48,7 @@ def get_combined_acc(bart_outputs, beam_outputs, gold_tgt_by_idx, miso_idxs):
             except KeyError:
                 pdb.set_trace() 
 
+            prob = np.min(np.exp(np.array(bart_example['token_logprobs'][0])))
             pred_str = bart_example['outputs'][0]
             gold_str = bart_example['test_datum_canonical']
         try:
@@ -93,13 +58,14 @@ def get_combined_acc(bart_outputs, beam_outputs, gold_tgt_by_idx, miso_idxs):
 
         gold_tgt = render_compact(parse_lispress(gold_str))
         all_pred_gold_pairs.append((pred_tgt, gold_tgt, model_name))
-
+        all_probs.append(prob)
     # get accuracy
     correct = 0
     for pred, gold, model_name in all_pred_gold_pairs:
-        if pred == gold:
+        match, __ = single_exact_match(pred, gold)
+        if match:
             correct += 1
-    return correct / len(all_pred_gold_pairs), all_pred_gold_pairs
+    return correct / len(all_pred_gold_pairs), all_pred_gold_pairs, all_probs
 
 if __name__ == "__main__": 
     gold_path = "/brtx/601-nvme1/estengel/resources/data/smcalflow.agent.data.from_benchclamp"
@@ -172,20 +138,70 @@ if __name__ == "__main__":
 
     # get indices 
     print("getting indices")
-    test_miso_low_prob_idxs = get_low_prob(test_miso_data.items(), is_miso=True, threshold=best_threshold) 
+    test_miso_low_prob_idxs, test_miso_probs_by_idx = get_low_prob(test_miso_data.items(), is_miso=True, threshold=best_threshold) 
+    print(f"MISO has {len(test_miso_low_prob_idxs)}")
     print("getting acc")
-    test_acc, test_preds = get_combined_acc(test_bart_data, test_miso_beam_by_idx, test_gold_tgt_by_idx, test_miso_low_prob_idxs)
+    test_acc, test_preds, test_probs = get_combined_acc(test_bart_data, 
+                                            test_miso_beam_by_idx, 
+                                            test_gold_tgt_by_idx, 
+                                            test_miso_low_prob_idxs, 
+                                            test_miso_probs_by_idx)
+    print(f"Total: {len(test_preds)}")
     print(f"Ensemble accuracy: {test_acc*100:.1f}")
 
+    test_accs = []
+    for pred, gold, model_name in test_preds:
+        match, __ = single_exact_match(pred, gold)
+        if match:
+            test_accs.append(1)
+        else:
+            test_accs.append(0)
+    ece_score = ECEMetric(n_bins=10)(np.array(test_probs), np.array(test_accs))
+    print(f"ECE: {ece_score*100:.2f}")
+    
+    # get all bart_probs:
+    bart_probs = []
+    bart_accs = []
+    for bart_example in test_bart_data.values():
+        prob = np.min(np.exp(np.array(bart_example['token_logprobs'][0])))
+        pred_str = bart_example['outputs'][0]
+        gold_str = bart_example['test_datum_canonical']
+        match, __ = single_exact_match(pred_str, gold_str)
+        if match:
+            bart_accs.append(1)
+        else:
+            bart_accs.append(0)
+        bart_probs.append(prob)
 
-    with open("analysis/ensemble_data/test_pred.tgt", "w") as pf, open("analysis/ensemble_data/test_gold.tgt", "w") as tf:
-        for p,g, m in test_preds:
-            pf.write(f"{p}\n")
-            tf.write(f"{g}\n")
+        
+    ece_score = ECEMetric(n_bins=10)(np.array(bart_probs), np.array(bart_accs))
+    print(f"BART ECE: {ece_score*100:.2f}")
 
-    # for p,g, m in test_preds:
-    #     if p != g:
-    #         print(p)
-    #         print(g)
-    #         print()
-    #         pdb.set_trace()
+    miso_probs, miso_accs = [], []
+    skipped = 0
+    # get all miso_probs:
+    for idx, gold_tgt in test_gold_tgt_by_idx.items():
+        try:
+            prob = test_miso_probs_by_idx[idx]
+            pred_str = test_miso_beam_by_idx[idx]
+        except KeyError:
+            skipped += 1
+            continue
+        gold_str = gold_tgt 
+        match, __ = single_exact_match(pred_str, gold_str)
+        if match:
+            miso_accs.append(1)
+        else:
+            miso_accs.append(0)
+        miso_probs.append(prob)
+
+    print(f'skipped {skipped} examples')
+    ece_score = ECEMetric(n_bins=10)(np.array(miso_probs), np.array(miso_accs))
+    print(f"MISO ECE: {ece_score*100:.2f}")
+
+    # with open("analysis/ensemble_data/test_pred.tgt", "w") as pf, open("analysis/ensemble_data/test_gold.tgt", "w") as tf:
+        # for p,g, m in test_preds:
+            # pf.write(f"{p}\n")
+            # tf.write(f"{g}\n")
+
+

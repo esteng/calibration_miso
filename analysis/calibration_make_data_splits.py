@@ -1,12 +1,7 @@
 import json
-import pathlib
-from collections import defaultdict
 import numpy as np 
 import re 
-from dataflow.core.lispress import parse_lispress, render_compact, render_pretty
-from dataflow.core.linearize import lispress_to_seq
-
-from calibration_utils import read_nucleus_file, read_gold_file, single_exact_match
+from calibration_utils import read_nucleus_file, read_gold_file
 
 def get_data(miso_path, bart_path, t5_path, gold_src_path, gold_tgt_path, gold_idx_path, gold_datum_id_path): 
     gold_src = read_gold_file(gold_src_path)
@@ -47,7 +42,7 @@ def get_low_prob(iterator, is_miso = False, threshold = 0.6):
             low_prob_idxs.append(idx) 
     return low_prob_idxs
 
-def get_low_prob_idxs(data_by_model, gold_idx_list):
+def get_low_prob_idxs(gold_idx_list, data_by_model):
     low_idxs_by_model = {}
     for model, data in data_by_model.items():
         if model == "miso":
@@ -96,12 +91,12 @@ if __name__ == "__main__":
     test_calflow_gold_src_path = f"{calflow_gold_path}/test_all.src_tok"
     test_calflow_gold_tgt_path = f"{calflow_gold_path}/test_all.tgt"
     test_calflow_gold_idx_path = f"{calflow_gold_path}/test_all.idx"
-    test_calflow_datum_path = f"{calflow_gold_path}/test.datum_id"
+    test_calflow_datum_path = f"{calflow_gold_path}/test_all.datum_id"
 
     valid_calflow_gold_src_path = f"{calflow_gold_path}/dev_all.src_tok"
     valid_calflow_gold_tgt_path = f"{calflow_gold_path}/dev_all.tgt"
     valid_calflow_gold_idx_path = f"{calflow_gold_path}/dev_all.idx"
-    valid_calflow_datum_path = f"{calflow_gold_path}/dev.datum_id"
+    valid_calflow_datum_path = f"{calflow_gold_path}/dev_all.datum_id"
 
 
     valid_calflow_bart = "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_calflow_last_user_all_0.0001_10000_dev_eval_unconstrained-beam_bs_5/model_outputs.20221102T231848.jsonl"
@@ -125,9 +120,9 @@ if __name__ == "__main__":
 
     valid_treedst_bart = "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_tree_dst_last_user_all_0.0001_10000_dev_eval_unconstrained-beam_bs_5/model_outputs.20221104T023605.jsonl" 
     # not ready yet 
-    valid_treedst_t5 = "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-large-lm-adapt_tree_dst_last_user_all_0.0001_10000_dev_eval_unconstrained-beam_bs_5/model_outputs.20221106T135426.jsonl"
+    valid_treedst_t5 = "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-large-lm-adapt_tree_dst_last_user_all_0.0001_10000_dev_eval_unconstrained-beam_bs_5/model_outputs.20221110T083457.jsonl"
     valid_treedst_miso = "/brtx/603-nvme1//estengel/calflow_calibration/tree_dst/tune_roberta/translate_output_calibrated/valid.tgt"
-    valid_treedst_models_and_paths = {"miso": test_treedst_miso, "bart": test_treedst_bart, "t5": test_treedst_t5} 
+    valid_treedst_models_and_paths = {"miso": valid_treedst_miso, "bart": valid_treedst_bart, "t5": valid_treedst_t5} 
 
     valid_treedst_gold_src_path = f"{treedst_gold_path}/valid.src_tok"
     valid_treedst_gold_tgt_path = f"{treedst_gold_path}/valid.tgt"
@@ -138,24 +133,32 @@ if __name__ == "__main__":
     arg_dict = {"calflow": {"test": (test_calflow_models_and_paths["miso"], 
                                             test_calflow_models_and_paths["bart"], 
                                             test_calflow_models_and_paths["t5"], 
+                                            test_calflow_gold_src_path,
                                             test_calflow_gold_tgt_path, 
-                                            test_calflow_gold_idx_path),
+                                            test_calflow_gold_idx_path,
+                                            test_calflow_datum_path),
                             "valid": (valid_calflow_models_and_paths["miso"],
                                             valid_calflow_models_and_paths["bart"],      
                                             valid_calflow_models_and_paths["t5"],
+                                            valid_calflow_gold_src_path,
                                             valid_calflow_gold_tgt_path,
-                                            valid_calflow_gold_idx_path)
+                                            valid_calflow_gold_idx_path,
+                                            valid_calflow_datum_path)
                             },
                 "treedst": {"test": (test_treedst_models_and_paths["miso"],
                                             test_treedst_models_and_paths["bart"],
                                             test_treedst_models_and_paths["t5"],
+                                            test_treedst_gold_src_path,
                                             test_treedst_gold_tgt_path,
-                                            test_treedst_gold_idx_path),
+                                            test_treedst_gold_idx_path,
+                                            test_treedst_datum_path),
                             "valid": (valid_treedst_models_and_paths["miso"],
                                             valid_treedst_models_and_paths["bart"],
                                             valid_treedst_models_and_paths["t5"],
+                                            valid_treedst_gold_src_path,
                                             valid_treedst_gold_tgt_path,
-                                            valid_treedst_gold_idx_path)
+                                            valid_treedst_gold_idx_path,
+                                            valid_treedst_datum_path)
                             }                             
                 }
 
@@ -166,9 +169,12 @@ if __name__ == "__main__":
 
     for dataset in ["calflow", "treedst"]:
         for split in ["test", "valid"]:
-            miso_path, bart_path, t5_path, gold_path, idx_path = arg_dict[dataset][split]
+            miso_path, bart_path, t5_path, gold_src_path, gold_tgt_path, gold_idx_path, gold_datum_id_path = arg_dict[dataset][split]
             print(f"\tReading {dataset} {split}...")
-            data_and_idx_dict[dataset][split] = get_data(miso_path, bart_path, t5_path, gold_path, idx_path)
+            try:
+                data_and_idx_dict[dataset][split] = get_data(miso_path, bart_path, t5_path, gold_src_path, gold_tgt_path, gold_idx_path, gold_datum_id_path)
+            except AssertionError:
+                print(f"Error reading {dataset} {split}...")
 
     # get the low prob idxs
     low_prob_idxs_dict =  {"calflow": {"test": None, "valid": None},
@@ -182,12 +188,13 @@ if __name__ == "__main__":
         for split in ["test", "valid"]:
             print(f"\tGetting low prob idxs for {dataset} {split}...")
             tgt_by_idx, src_list, tgt_list, idx_list, datum_id_list, data_by_model = data_and_idx_dict[dataset][split]
-            low_prob_idxs_dict[dataset][split] = get_low_prob_idxs(tgt_by_idx, idx_list, data_by_model)
+            low_prob_idxs_dict[dataset][split] = get_low_prob_idxs(idx_list, data_by_model)
+            print(f"len(low_prob_idxs_dict[dataset][split]['miso']) = {len(low_prob_idxs_dict[dataset][split]['miso'])}")
             hard_idxs_dict[dataset][split] = get_union(low_prob_idxs_dict[dataset][split])
 
             print(f"Writing {dataset} {split}...")
-            with open(f"../data_subsets/{dataset}/{split}/hard.jsonl", "w") as hard_f,\
-                open(f"../data_subsets/{dataset}/{split}/easy.jsonl", "w") as easy_f:
+            with open(f"data_subsets/{dataset}/{split}/hard.jsonl", "w") as hard_f,\
+                open(f"data_subsets/{dataset}/{split}/easy.jsonl", "w") as easy_f:
                 for idx, src, tgt, datum_id in zip(idx_list, src_list, tgt_list, datum_id_list):
                     to_dump = get_line_to_dump(idx, src, tgt, datum_id)
                     if idx in hard_idxs_dict[dataset][split]:
