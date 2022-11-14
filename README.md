@@ -1,21 +1,28 @@
 # README 
-Code for: When More Data Hurts: A Troubling Quirk in Developing Broad-Coverage Natural Language Understanding Systems 
+Code for: Calibrated Interpretation: Confidence Estimation in Semantic Parsi
 
 Author: Elias Stengel-Eskin
 
 Personal Email: elias.stengel@gmail.com
 
 ## About the repo 
-This repo started as a fork of [MISO](https://github.com/esteng/miso_uds) which is a semantic parsing codebase that was released with [Joint Universal Syntactic and Semantic Parsing](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing). 
+This repo is a fork of [this repo](https://github.com/microsoft/nlu-incremental-symbol-learning), which is itself a fork of a fork of [MISO](https://github.com/esteng/miso_uds) which is a semantic parsing codebase that was released with [Joint Universal Syntactic and Semantic Parsing](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing). 
 
 MISO was built over the course of the following publications:  
 - [AMR Parsing as Sequence-to-Graph Transduction, Zhang et al., ACL 2019](https://www.aclweb.org/anthology/P19-1009/)
 - [Broad-Coverage Semantic Parsing as Transduction, Zhang et al., EMNLP 2019](https://www.aclweb.org/anthology/D19-1392/)
 - [Universal Decompositional Semantic Parsing, Stengel-Eskin et al. ACL 2020](https://www.aclweb.org/anthology/2020.acl-main.746/)
 - [Joint Universal Syntactic and Semantic Parsing, Stengel-Eskin et al., TACL 2021](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing)
+- [When More Data Hurts: A Troubling Quirk in Developing Broad-Coverage Natural Language Understanding Systems, Stengel-Eskin et al., EMNLP 2022](https://arxiv.org/abs/2205.12228)
 
 It is a flexible sequence-to-graph parsing framework built on top of [allennlp](https://github.com/allenai/allennlp).  
 
+
+## Easy and Hard splits
+The directory `data_subsets` contains the easy and hard splits of TreeDST and SMCalFlow described in the paper. 
+These can also be downloaded directly here: [TODO](TODO).
+
+# MISO Documentation
 ## Installation 
 
 All dependencies can be installed with `./install_requirements.sh` 
@@ -35,15 +42,6 @@ mv data_clean/* .
 rm -r data_clean 
 ```
 
-## Downloading models 
-The models can be downloaded with the following command: 
-
-```
-wget https://veliass.blob.core.windows.net/ifl-models/models.tar.gz 
-tar -xzvf models.tar.gz
-```
-
-The models distributed are the full dataset models reported in Table 1. The other models are too numerous to be distributed but can be replicated using the config files. 
 
 ## File Organization 
 Important directories: 
@@ -59,19 +57,10 @@ In the released configs, the data dir argument is an environment variable
 
 
 ## Important Scripts
-- `scripts/sample_functions.py`: samples functions (e.g. FindManager) to create the different splits. Can be used to manually curate examples. 
-- `scripts/make_subsamples.sh`: iteratively runs sampling for each split (5000-max), curating the first one and then using those examples later. 
-- `scripts/make_subsamples_uncurated.sh`: same idea, but doesn't require curation (for non-100 splits, no curation is done).
-- `scripts/make_configs.py`: can be used to modify a base jsonnet config to change the path to the split
 - `scripts/prepare_data.sh`: Data is assumed to be pre-processed according to [Task Oriented Parsing as Dataflow Synethesis](https://github.com/microsoft/task_oriented_dialogue_as_dataflow_synthesis) instructions. This is a modified version of the instructions in the README there to include agent utterances and previous user turns. 
-- `scripts/collect_results.py`: script to collect exact match results from predictions, written to `CHECKPOINT_DIR/translate_output`. Aggregates all scores into a csv specified as an arg.
 - `experiments/calflow.sh`: main training/testing commands for calflow
+- `experiments/tree_dst.sh`: main training/testing commands for TreeDST
 
-## Other scripts 
-- `scripts/split_valid.py`: splits all valid dialogs into dev and test subsets. 
-- `scripts/error_analysis.py`: for a given function, analyze predicted plans into 3 groups: correct predictions, incorrect examples wihtout the function, incorrect examples with the function. 
-- `scripts/oversample.py`: either over-sample examples for a given function (e.g. turn 5000-100 FindManager into 5000-200 by doubling the 100 FindManager examples) or over-sample the rest of the training data to get a split of e.g. 200k-100 
-where 200k is upsampled from the max setting. 
 
 ## Training Models 
 Models can be trained locally using `experiments/calflow.sh`. 
@@ -106,3 +95,7 @@ FindManager Precision: The percentage of predicted programs that have FXN in the
 FindManager Recall: Same as Coarse 
 FindManager F1: Harmonic mean of precision and recall 
 ```
+
+## Getting logits
+To get the predicted token logits under a forced decode, see the `log_losses` function in `experiments/calflow.sh`. 
+To get token-level predicted probabilities without a forced decode, use `eval_calibrate`. 
