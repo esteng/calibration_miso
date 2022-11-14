@@ -1,5 +1,5 @@
 # README 
-Code for: Calibrated Interpretation: Confidence Estimation in Semantic Parsi
+Code for: Calibrated Interpretation: Confidence Estimation in Semantic Parsing
 
 Author: Elias Stengel-Eskin
 
