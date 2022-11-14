@@ -1,4 +1,4 @@
-__User  __Agent  __User Schedule my performance review for next Monday at 10 am , in conference room 124 . __StartOfProgram
+__User Schedule my performance review for next Monday at 10 am , in conference room 124 . __StartOfProgram
 __User  When does Jessica have a game at Central State Ballpark ?  __Agent  Sorry , I ca n't handle that yet .  __User What time is Jessica 's game at Central State Ballpark ? __StartOfProgram
 __User  I missed my last dentist appointment remove it from my schedule .  __Agent  Is this what you want me to cancel ?  __User Display the event __StartOfProgram
 __User  Correct  __Agent  I 've put that on your calendar .  __User Make a repeating event called " Movie Playing : Infinity War " , starting on Friday . __StartOfProgram

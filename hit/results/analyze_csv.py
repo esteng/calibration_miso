@@ -77,15 +77,17 @@ def decode(rewritten, checkpoint_dir):
     # write everything to a temp file 
     tempfile_src = pathlib.Path(__file__).parent / "temp.src_tok"
     tempfile_tgt = pathlib.Path(__file__).parent / "temp.tgt"
-    with open(tempfile_src,"w") as f1, open(tempfile_tgt,"w") as f2:
-        for src, tgt in rewritten:
+    tempfile_idx = pathlib.Path(__file__).parent / "temp.idx"
+    with open(tempfile_src,"w") as f1, open(tempfile_tgt,"w") as f2, open(tempfile_idx,"w") as f3:
+        for i, (src, tgt) in enumerate(rewritten):
             f1.write(src + "\n")
             f2.write(tgt + "\n")
+            f3.write(str(i) + "\n")
 
     # run the decoding script
     decode_command = ["sh", "/home/estengel/incremental-function-learning/experiments/calflow.sh", "-a", "eval_fxn"]
     env = os.environ.copy()
-    # print(temp_file)
+    print(tempfile_src)
     env['CHECKPOINT_DIR'] = checkpoint_dir
     env['TEST_DATA'] = str(tempfile_src.parent / "temp")
     env['FXN'] = "none"
@@ -398,7 +400,7 @@ def run_choose_and_rewrite(turk_data,
 
         for turk_entry  in aggregated_turk_entries_rewrite:
             # get user context 
-            gold_src = split_source(json_entry['gold_src'])
+            gold_src = [x for x in split_source(json_entry['gold_src']) if x != '']
             manual_entry = tokenize(turk_entry['manual_entry'])
             if len(gold_src) == 1:
                 src_str = f"__User {manual_entry} __StartOfProgram"
@@ -426,7 +428,10 @@ def run_choose_and_rewrite(turk_data,
             if interact:
                 pdb.set_trace()
         rewritten_total += 1
-
+        print(f"rewritten inupt: {rewritten_input}") 
+        print(f"rewritten: {miso_rewritten_lispress}")
+        print(f"gold: {gold_tgt}")
+        print()
         rewritten_data[i]['rewritten'] = miso_rewritten_lispress
         rewritten_data[i]['is_correct'] = miso_rewritten_lispress == gold_tgt
         rewritten_data[i]['is_correct_set'] = miso_rewritten_lispress == gold_tgt
