@@ -1,6 +1,7 @@
 from typing import Tuple
 import json
 import re 
+import pdb 
 import numpy as np 
 from collections import defaultdict
 
@@ -8,6 +9,29 @@ from dataflow.core.lispress import parse_lispress, render_compact
 from dataflow.core.turn_prediction import TurnPrediction, TurnAnswer
 from dataflow.core.dialogue import TurnId, ProgramExecutionOracle
 from dataflow.core.lispress import try_round_trip
+
+from semantic_parsing_with_constrained_lm.domains.sql.sql_metric import SQLTestSuiteMatch
+from semantic_parsing_with_constrained_lm.configs.lib.benchclamp import (
+    COSQL_TABLES_FILE,
+    SPIDER_TABLES_FILE,
+    TEST_SUITE_DATABASE_PATH,
+    TEST_SUITE_PATH,
+)
+from semantic_parsing_with_constrained_lm.configs.benchclamp_config import LOG_DIR, VERSION
+
+spider_metric = SQLTestSuiteMatch(
+                    db_path=str(TEST_SUITE_DATABASE_PATH),
+                    test_suite_path=str(TEST_SUITE_PATH),
+                    table_file=str(SPIDER_TABLES_FILE),
+                    log_dir=str(LOG_DIR / VERSION / "analysis_spider")) 
+
+cosql_metric = SQLTestSuiteMatch(
+                    db_path=str(TEST_SUITE_DATABASE_PATH),
+                    test_suite_path=str(TEST_SUITE_PATH),
+                    table_file=str(COSQL_TABLES_FILE),
+                    log_dir=str(LOG_DIR / VERSION / "analysis_cosql")
+                )
+
 
 def evaluate_prediction_exact_match(
     pred: TurnPrediction, gold: TurnAnswer
@@ -97,6 +121,35 @@ def get_probs_and_accs_benchclamp(bclamp_data):
         mean_seq_prob = np.mean(token_probs) 
         min_probs.append(min_seq_prob)
         mean_probs.append(mean_seq_prob)
+        accs.append(is_correct)
+    return min_probs, mean_probs, accs
+
+def get_probs_and_accs_sql(bclamp_data):
+    min_probs, mean_probs, accs = [], [], []
+    for i, line in enumerate(bclamp_data): 
+        # is_correct = line['metrics']['exact_match/top1'] == "correct"
+        top_preds = line['outputs']
+        gold = line['test_datum_canonical']
+
+        # with open(LOG_DIR/VERSION/"analysis_spider"/"gold.txt", "w") as gf,\
+            # open(LOG_DIR/VERSION/"analysis_spider"/"pred.txt", "w") as pf:
+            # gf.write(gold.strip() + "\n")
+            # pf.write(top_pred.strip()+ "\n")
+
+        result = spider_metric.compute()
+
+        token_probs = np.exp(line['token_logprobs'][0])
+        # print(token_probs)
+        min_seq_prob = np.min(token_probs) 
+        mean_seq_prob = np.mean(token_probs) 
+        min_probs.append(min_seq_prob)
+        mean_probs.append(mean_seq_prob)
+
+        # write to file 
+
+        spider_metric.compute()
+
+
         accs.append(is_correct)
     return min_probs, mean_probs, accs
 
