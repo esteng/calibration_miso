@@ -3,6 +3,7 @@ import json
 import re 
 import pdb 
 import numpy as np 
+import importlib
 from collections import defaultdict
 
 from dataflow.core.lispress import parse_lispress, render_compact
@@ -17,7 +18,25 @@ from semantic_parsing_with_constrained_lm.configs.lib.benchclamp import (
     TEST_SUITE_DATABASE_PATH,
     TEST_SUITE_PATH,
 )
-from semantic_parsing_with_constrained_lm.configs.benchclamp_config import LOG_DIR, VERSION
+from semantic_parsing_with_constrained_lm.configs.benchclamp_config import (LOG_DIR, VERSION)
+from semantic_parsing_with_constrained_lm.domains.benchclamp_data_setup import data_from_textio
+from semantic_parsing_with_constrained_lm.domains.sql.sql_datum import SqlDatum
+
+def get_data(path, is_spider = True):
+    with open(path, "r") as f:
+        data = data_from_textio(f)
+    to_ret = [] 
+    for datum in data: 
+        to_ret.append(SqlDatum(
+                        dialogue_id=datum.dialogue_id,
+                        turn_part_index=datum.turn_part_index,
+                        natural="",
+                        canonical=datum.plan,
+                        agent_context="",
+                        schema_name=datum.schema_name,
+                    )
+        )
+    return to_ret 
 
 spider_metric = SQLTestSuiteMatch(
                     db_path=str(TEST_SUITE_DATABASE_PATH),
@@ -124,19 +143,20 @@ def get_probs_and_accs_benchclamp(bclamp_data):
         accs.append(is_correct)
     return min_probs, mean_probs, accs
 
-def get_probs_and_accs_sql(bclamp_data):
+def get_probs_and_accs_sql(bclamp_data, gold_path):
+
+    gold_data = get_data(gold_path)
+
     min_probs, mean_probs, accs = [], [], []
     for i, line in enumerate(bclamp_data): 
         # is_correct = line['metrics']['exact_match/top1'] == "correct"
         top_preds = line['outputs']
-        gold = line['test_datum_canonical']
+        gold = gold_data[i]
 
-        # with open(LOG_DIR/VERSION/"analysis_spider"/"gold.txt", "w") as gf,\
-            # open(LOG_DIR/VERSION/"analysis_spider"/"pred.txt", "w") as pf:
-            # gf.write(gold.strip() + "\n")
-            # pf.write(top_pred.strip()+ "\n")
-
+        spider_metric.update(top_preds, gold)
         result = spider_metric.compute()
+
+        spider_metric.reset()
 
         token_probs = np.exp(line['token_logprobs'][0])
         # print(token_probs)
@@ -145,12 +165,7 @@ def get_probs_and_accs_sql(bclamp_data):
         min_probs.append(min_seq_prob)
         mean_probs.append(mean_seq_prob)
 
-        # write to file 
-
-        spider_metric.compute()
-
-
-        accs.append(is_correct)
+        accs.append(result['execution_acc'])
     return min_probs, mean_probs, accs
 
 
