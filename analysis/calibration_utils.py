@@ -5,6 +5,8 @@ import pdb
 import numpy as np 
 import importlib
 from collections import defaultdict
+from tqdm import tqdm 
+from multiprocessing import Pool
 
 from dataflow.core.lispress import parse_lispress, render_compact
 from dataflow.core.turn_prediction import TurnPrediction, TurnAnswer
@@ -42,13 +44,16 @@ spider_metric = SQLTestSuiteMatch(
                     db_path=str(TEST_SUITE_DATABASE_PATH),
                     test_suite_path=str(TEST_SUITE_PATH),
                     table_file=str(SPIDER_TABLES_FILE),
-                    log_dir=str(LOG_DIR / VERSION / "analysis_spider")) 
+                    log_dir=str(LOG_DIR / VERSION / "analysis_spider"),
+                    do_print=False
+                ) 
 
 cosql_metric = SQLTestSuiteMatch(
                     db_path=str(TEST_SUITE_DATABASE_PATH),
                     test_suite_path=str(TEST_SUITE_PATH),
                     table_file=str(COSQL_TABLES_FILE),
-                    log_dir=str(LOG_DIR / VERSION / "analysis_cosql")
+                    log_dir=str(LOG_DIR / VERSION / "analysis_cosql"),
+                    do_print=False
                 )
 
 
@@ -143,29 +148,55 @@ def get_probs_and_accs_benchclamp(bclamp_data):
         accs.append(is_correct)
     return min_probs, mean_probs, accs
 
-def get_probs_and_accs_sql(bclamp_data, gold_path):
+def sql_worker(bclamp_datum_gold_datum):
+    bclamp_datum, gold_datum = bclamp_datum_gold_datum
+    # is_correct = line['metrics']['exact_match/top1'] == "correct"
+    top_preds = bclamp_datum['outputs']
+
+    spider_metric.update(top_preds, gold_datum)
+    result = spider_metric.compute()
+
+    spider_metric.reset()
+
+    token_probs = np.exp(bclamp_datum['token_logprobs'][0])
+    # print(token_probs)
+    min_seq_prob = np.min(token_probs) 
+    mean_seq_prob = np.mean(token_probs) 
+    acc = result['execution_acc']
+        # min_probs.append(min_seq_prob)
+        # mean_probs.append(mean_seq_prob)
+
+        # accs.append(result['execution_acc'])
+    return min_seq_prob, mean_seq_prob, acc
+def get_probs_and_accs_sql(bclamp_data, gold_path, n_workers=1):
 
     gold_data = get_data(gold_path)
 
-    min_probs, mean_probs, accs = [], [], []
-    for i, line in enumerate(bclamp_data): 
-        # is_correct = line['metrics']['exact_match/top1'] == "correct"
-        top_preds = line['outputs']
-        gold = gold_data[i]
+    if n_workers == 1:
+        min_probs, mean_probs, accs = [], [], []
+        for i, line in tqdm(enumerate(bclamp_data), total=len(bclamp_data)): 
+            # is_correct = line['metrics']['exact_match/top1'] == "correct"
+            top_preds = line['outputs']
+            gold = gold_data[i]
 
-        spider_metric.update(top_preds, gold)
-        result = spider_metric.compute()
+            spider_metric.update(top_preds, gold)
+            result = spider_metric.compute()
 
-        spider_metric.reset()
+            spider_metric.reset()
 
-        token_probs = np.exp(line['token_logprobs'][0])
-        # print(token_probs)
-        min_seq_prob = np.min(token_probs) 
-        mean_seq_prob = np.mean(token_probs) 
-        min_probs.append(min_seq_prob)
-        mean_probs.append(mean_seq_prob)
+            token_probs = np.exp(line['token_logprobs'][0])
+            # print(token_probs)
+            min_seq_prob = np.min(token_probs) 
+            mean_seq_prob = np.mean(token_probs) 
+            min_probs.append(min_seq_prob)
+            mean_probs.append(mean_seq_prob)
 
-        accs.append(result['execution_acc'])
+            accs.append(result['execution_acc'])
+    else:
+        zipped_data = zip(bclamp_data, gold_data)
+        pool = Pool(n_workers)
+        results = pool.map(sql_worker, zipped_data)
+        min_probs, mean_probs, accs = zip(*results)
     return min_probs, mean_probs, accs
 
 
