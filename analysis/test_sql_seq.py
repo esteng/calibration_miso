@@ -20,9 +20,9 @@ sys.path.insert(0, "/home/estengel/semantic_parsing_with_constrained_lm/src/")
 
 bart_data = read_benchclamp_file("/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T031316.jsonl")
 # bart_min_probs, bart_mean_probs, bart_accs = get_probs_and_accs_benchclamp(bart_data) 
-bart_min_probs, bart_mean_probs, bart_accs = get_probs_and_accs_sql(bart_data[0:100], "/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/Spider/test_all.jsonl") 
+# bart_min_probs, bart_mean_probs, bart_accs = get_probs_and_accs_sql(bart_data[0:100], "/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/Spider/test_all.jsonl") 
 
-pdb.set_trace()
+# pdb.set_trace()
 mbart_min_probs, mbart_mean_probs, mbart_accs = get_probs_and_accs_sql(bart_data[0:100], "/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/Spider/test_all.jsonl", n_workers = 10) 
 pdb.set_trace()
 
