@@ -45,7 +45,7 @@ spider_metrics = [SQLTestSuiteMatch(
                     test_suite_path=str(TEST_SUITE_PATH),
                     table_file=str(SPIDER_TABLES_FILE),
                     log_dir=str(LOG_DIR / VERSION / f"analysis_spider_{i}"),
-                    do_print=False
+                    do_print=True
                 ) for i in range(10)]
 
 cosql_metrics = [SQLTestSuiteMatch(
@@ -135,10 +135,10 @@ def read_benchclamp_file(path):
         data = [json.loads(x) for x in f1]
     return data
 
-def get_probs_and_accs_benchclamp(bclamp_data):
+def get_probs_and_accs_benchclamp(bclamp_data, k = 1):
     min_probs, mean_probs, accs = [], [], []
     for line in bclamp_data: 
-        is_correct = line['metrics']['exact_match/top1'] == "correct"
+        is_correct = line['metrics'][f'exact_match/top{k}'] == "correct"
         token_probs = np.exp(line['token_logprobs'][0])
         # print(token_probs)
         min_seq_prob = np.min(token_probs) 
@@ -169,7 +169,7 @@ def sql_worker(bclamp_datum, gold_datum, spider_metric):
     return min_seq_prob, mean_seq_prob, acc
 
 
-def get_execution_acc_by_bin(bin_number, bclamp_data, gold_data):
+def get_execution_acc_by_bin(bin_number, bins, bclamp_data, gold_data):
     # group data by bin number 
     data_by_bin_number = defaultdict(list)
     for bin_num, bclamp_datum, gold_datum in zip(bin_number, bclamp_data, gold_data):
@@ -179,6 +179,7 @@ def get_execution_acc_by_bin(bin_number, bclamp_data, gold_data):
     metric = spider_metrics[0]
     results_by_bin = {}
     for bin_num, data in data_by_bin_number.items():
+        print(f"Bin number: {bin_num} with confidence {bins[bin_num]}")
         for bclamp_datum, gold_datum in data:
             top_preds = bclamp_datum['outputs']
             # write each pred 
@@ -189,9 +190,9 @@ def get_execution_acc_by_bin(bin_number, bclamp_data, gold_data):
         results_by_bin[bin_num] = bin_result['execution_acc']
     return results_by_bin
 
-def get_accs_sql(bclamp_data, gold_path, bin_number):
+def get_accs_sql(bclamp_data, gold_path, bin_number, bins):
     gold_data = get_data(gold_path)
-    results_by_bin = get_execution_acc_by_bin(bin_number, bclamp_data, gold_data)
+    results_by_bin = get_execution_acc_by_bin(bin_number, bins, bclamp_data, gold_data)
     return results_by_bin
 
 
