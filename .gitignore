@@ -6,3 +6,5 @@ synth/data
 */__pycache__
 */__pycache__/*
 
+analysis/logs
+analysis/logs/*
