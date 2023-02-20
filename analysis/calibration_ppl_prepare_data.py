@@ -49,14 +49,16 @@ def write_file(bclamp_path, ece_metric):
         model = "bart-large"
     elif "bart-base" in bclamp_path:
         model = "bart-base"
-    elif "code-t5" in bclamp_path:
-        model = "code-t5"
+    elif "codet5-base" in bclamp_path:
+        model = "codet5-base"
     elif "t5-large" in bclamp_path:
         model = "t5-large"
-    elif "t5-base" in bclamp_path:
+    elif "t5-base" in bclamp_path and "codet5" not in bclamp_path:
         model = "t5-base"
     elif "t5-small" in bclamp_path:
         model = "t5-small"
+    else:
+        raise ValueError(f"model not found {bclamp_path}")
 
     for bin_num in data_by_bin.keys():
         bin_conf = data_by_bin[bin_num][0][0]

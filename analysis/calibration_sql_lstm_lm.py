@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
     conf_and_ppl = sorted(conf_and_ppl, key=lambda x: x[0])
     tgt_str = "target" if args.use_target else "source"
-    with open(f"spider_test_by_bart_bin/conf_and_ppl_{tgt_str}.json", "w") as f:
+    with open(f"{args.test_dir}/conf_and_ppl_{tgt_str}.json", "w") as f:
         json.dump(conf_and_ppl, f)
     for conf, ppl in conf_and_ppl:
         print(f"Confidence: {conf}, Average PPL: {ppl}")

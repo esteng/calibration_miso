@@ -143,7 +143,7 @@ def get_probs_and_accs_benchclamp(bclamp_data, k = 1):
             token_probs = np.exp(line['token_logprobs'][0])
         except:
             print(f"Warning: Missing logprob")
-            continue
+            token_probs = np.zeros(10)
         # print(token_probs)
         min_seq_prob = np.min(token_probs) 
         mean_seq_prob = np.mean(token_probs) 
