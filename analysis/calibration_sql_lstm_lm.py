@@ -1,3 +1,5 @@
+import pdb 
+import json 
 import pathlib
 import argparse
 from tqdm import tqdm 
@@ -40,7 +42,7 @@ def get_ppl(dataloader, model, vocab, criterion):
             num_examples += batch.shape[0]
         ppl = torch.exp(total_loss/num_examples)
         print(f"Perplexity: {ppl}")
-    return ppl
+    return ppl.item()
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -65,7 +67,7 @@ if __name__ == "__main__":
     dev_sents = get_and_tokenize(dev_data, key, tokenizer, 1) 
 
     all_tokens = [token for sent in train_sents for token in sent]
-    vocab = torchtext.vocab.build_vocab_from_iterator(all_tokens, min_freq=3) 
+    vocab = torchtext.vocab.build_vocab_from_iterator(train_sents, min_freq=1) 
     vocab.insert_token('<unk>', 0)           
     vocab.insert_token('<eos>', 1)  
     vocab.insert_token('<pad>', 2)  
@@ -92,8 +94,11 @@ if __name__ == "__main__":
     criterion = torch.nn.CrossEntropyLoss(ignore_index=vocab["<pad>"])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    # train 
-    for epoch in range(10):
+    detokenizer = vocab.get_itos()
+    # train  to convergence 
+    best_dev_ppl = float("inf")
+    n_epochs_since_improvement = 0
+    for epoch in range(100):
         model.train()
         for i, batch in tqdm(enumerate(train_dataloader)):
             optimizer.zero_grad()
@@ -105,27 +110,52 @@ if __name__ == "__main__":
                 print(loss.item())
 
         dev_ppl = get_ppl(dev_dataloader, model, vocab, criterion)
+        if dev_ppl < best_dev_ppl:
+            best_dev_ppl = dev_ppl
+            n_epochs_since_improvement = 0
+        else:
+            n_epochs_since_improvement += 1
+        if n_epochs_since_improvement > 5:
+            break 
         # sanity check: generate some sentences
         model.eval()
         with torch.no_grad():
-            inputs = ["How many", "What is", "List"]
+            if not args.use_target:
+                inputs = ["How many", "What is", "List"]
+            else:
+                inputs = ["SELECT COUNT", "SELECT", "SELECT * FROM"]
+            outputs = []
             for inp in inputs:
+                prefix = inp
+                curr_seq = []
                 # tokenize
-                inp = tokenizer.tokenize(inp)
+                tok_inp = tokenizer.tokenize(inp)
                 # convert to ids
-                inp = [vocab[token] for token in inp]
+                inp_ids = [vocab[token] for token in tok_inp]
                 # convert to tensor
-                inp = torch.LongTensor(inp).to(device)
+                inp_ids = torch.LongTensor(inp_ids).to(device)
                 # add batch dimension
-                inp = inp.unsqueeze(0)
+                inp_ids = inp_ids.unsqueeze(0)
                 # generate
-                curr_tok = inp[:, -1]
-                seq # TODO: add seqs and decode
+                curr_tok = inp_ids[:, -1]
+                # curr_seq.append(curr_tok) # TODO: add seqs and decode
                 for i in range(20):
-                    out = model(inp)
+                    out = model(inp_ids)
                     out = out[:, -1, :]
                     curr_tok = torch.argmax(out, dim=-1)
-                    inp = torch.cat([inp, curr_tok.unsqueeze(1)], dim=1)
+                    curr_seq.append(curr_tok)
+                    inp_ids = torch.cat([inp_ids, curr_tok.unsqueeze(1)], dim=1)
+                    if curr_tok == vocab["<eos>"]:
+                        break
+
+                curr_seq = torch.cat(curr_seq, dim=0)
+                detokenized = [detokenizer[x] for x in curr_seq]
+                # use tokenizer to get rid of special tokens
+                detokenized = tokenizer.convert_tokens_to_string(detokenized)
+                full_str = f"{prefix} {detokenized}"
+                print(full_str)
+                # outputs.append([detokenizer[x] for x in curr_seq])
+                # pdb.set_trace()
 
 
     conf_and_ppl = []
@@ -140,5 +170,8 @@ if __name__ == "__main__":
         conf_and_ppl.append((bin_confidence, test_ppl))
 
     conf_and_ppl = sorted(conf_and_ppl, key=lambda x: x[0])
+    tgt_str = "target" if args.use_target else "source"
+    with open(f"spider_test_by_bart_bin/conf_and_ppl_{tgt_str}.json", "w") as f:
+        json.dump(conf_and_ppl, f)
     for conf, ppl in conf_and_ppl:
         print(f"Confidence: {conf}, Average PPL: {ppl}")
