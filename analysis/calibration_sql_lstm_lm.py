@@ -34,15 +34,24 @@ def get_ppl(dataloader, model, vocab, criterion):
     model.eval()
     num_examples = 0
     with torch.no_grad():
-        total_loss = 0
+        # total_loss = 0
+        all_losses = []
         for i, batch in tqdm(enumerate(dataloader)):
+            # shift by 1, cutting off last token 
             out = model(batch[:, :-1])
+            # shift left by 1 for computing loss 
             loss = criterion(out.view(-1, len(vocab)), batch[:, 1:].reshape(-1))
-            total_loss += loss
+            # inner_ppl = torch.exp(loss)
+            # all_ppls.append(inner_ppl)
+            all_losses.append(loss)
+            # total_loss += loss
             num_examples += batch.shape[0]
-        ppl = torch.exp(total_loss/num_examples)
+        # flatten the list of tensors into single tensor
+        all_losses = torch.cat(all_losses)
+        ppl = torch.exp(torch.mean(all_losses)).item()
+        # ppl = torch.exp(total_loss/num_examples)
         print(f"Perplexity: {ppl}")
-    return ppl.item()
+    return ppl
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -92,6 +101,7 @@ if __name__ == "__main__":
 
     model = LSTM_LM().to(device)
     criterion = torch.nn.CrossEntropyLoss(ignore_index=vocab["<pad>"])
+    no_red_criterion = torch.nn.CrossEntropyLoss(ignore_index=vocab["<pad>"], reduction="none")
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     detokenizer = vocab.get_itos()
@@ -109,7 +119,7 @@ if __name__ == "__main__":
             if i % 100 == 0:
                 print(loss.item())
 
-        dev_ppl = get_ppl(dev_dataloader, model, vocab, criterion)
+        dev_ppl = get_ppl(dev_dataloader, model, vocab, no_red_criterion)
         if dev_ppl < best_dev_ppl:
             best_dev_ppl = dev_ppl
             n_epochs_since_improvement = 0
@@ -165,7 +175,7 @@ if __name__ == "__main__":
         test_data = read_data(test_file)
         test_sents = get_and_tokenize(test_data, key, tokenizer, 1) 
         test_dataloader = get_dataloader(test_sents, vocab)
-        test_ppl = get_ppl(test_dataloader, model, vocab, criterion)
+        test_ppl = get_ppl(test_dataloader, model, vocab, no_red_criterion)
         
         conf_and_ppl.append((bin_confidence, test_ppl))
 

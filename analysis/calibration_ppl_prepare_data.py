@@ -1,4 +1,5 @@
 import json
+import argparse
 from collections import defaultdict 
 import pathlib 
 
@@ -15,15 +16,17 @@ def write_file(bclamp_path, ece_metric):
 
     if "spider" in bclamp_path:
         dataset = "spider"
+    elif "calflow" in bclamp_path:
+        dataset = "calflow"
     else:
         dataset = "cosql"
     bart_data = read_benchclamp_file(bclamp_path)
     # bart_min_probs, bart_mean_probs, bart_accs = get_probs_and_accs_benchclamp(bart_data) 
     if dataset == "spider":
-        spider_gold_path = "/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/Spider/test_all.jsonl"
         input_test_data = read_benchclamp_file("/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/Spider/test_all.jsonl")
+    elif dataset == "calflow":
+        input_test_data = read_benchclamp_file("/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/CalFlowV2/test_all.jsonl")
     else:
-        spider_gold_path = "/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/CoSQL/test_all.jsonl"
         input_test_data = read_benchclamp_file("/brtx/601-nvme1/estengel/resources/data/benchclamp/processed/CoSQL/test_all.jsonl")
 
     bart_min_probs, bart_mean_probs, bart_exact_accs = get_probs_and_accs_benchclamp(bart_data) # , spider_gold_path) 
@@ -41,10 +44,8 @@ def write_file(bclamp_path, ece_metric):
 
         data_by_bin[bin_number].append((bin_confidence, bin_acc, datum, input_datum))
 
-    if dataset == "spider":
-        save_prefix = "spider"
-    else:
-        save_prefix = "cosql"
+    save_prefix = dataset
+
     if "bart-large" in bclamp_path:
         model = "bart-large"
     elif "bart-base" in bclamp_path:
@@ -73,17 +74,30 @@ def write_file(bclamp_path, ece_metric):
                 f1.write(json.dumps(input_datum) + "\n")
 
 if __name__ == "__main__":
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset", type=str, default="spider")
+    args = parser.parse_args()
     ece_metric = ECEMetric(n_bins=20, binning_strategy="adaptive")
 
-    paths = ["/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T031316.jsonl",
-            "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-small-lm-adapt_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230203T092044.jsonl",
-            "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-base-lm-adapt_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230206T093954.jsonl",
-            "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-large-lm-adapt_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T064137.jsonl",
-            "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-base_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T060905.jsonl",
-            "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T031316.jsonl",
-            "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/codet5-base_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T214405.jsonl"]
+    if args.dataset == "spider":
+
+        paths = ["/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T031316.jsonl",
+                "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-small-lm-adapt_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230203T092044.jsonl",
+                "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-base-lm-adapt_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230206T093954.jsonl",
+                "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-large-lm-adapt_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T064137.jsonl",
+                "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-base_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T060905.jsonl",
+                "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_spider_past_none_db_val_all_0.0001_5000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T031316.jsonl",
+                "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/codet5-base_spider_past_none_db_val_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20230208T214405.jsonl"]
+    elif args.dataset == "calflow":
+            paths = ["", # t5_small
+                    "", # t5_base
+                    "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/t5-large-lm-adapt_calflow_last_user_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20221102T103315.jsonl",
+                    "", # bart_base
+                    "/brtx/602-nvme1/estengel/calflow_calibration/benchclamp/logs/1.0/bart-large_calflow_last_user_all_0.0001_10000_test_eval_unconstrained-beam_bs_5/model_outputs.20221101T105421.jsonl", # bart_large
+                    ]
 
     for path in paths:
+        if path == "":
+            continue
         print(path)
         write_file(path, ece_metric)
