@@ -5,7 +5,7 @@ import pdb
 from typing import Tuple, List, Any
 import numpy as np
 
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, RobertaTokenizer
 
 from calibration_metric.utils.reader import Reader
 
@@ -22,7 +22,15 @@ class TypeTopLogitFormatSequenceReader(Reader):
     def __init__(self, file: str, ignore_tokens: List[Any] = None, model_name: str = "t5-small"):
         self.file = file
         self.ignore_tokens = ignore_tokens
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            if "t5-" in model_name:
+                self.delimiter = "▁"
+            else:
+                self.delimiter = "Ġ"
+        except:
+            self.tokenizer = RobertaTokenizer.from_pretrained(model_name)
+            self.delimiter = "Ġ"
 
     def parse_line_into_types(self, top_logits: np.array, labels: List):
         sql_funcs = ["SELECT", "WHERE", "GROUP BY", "HAVING", "ORDER", "BY", "FROM",
@@ -34,15 +42,17 @@ class TypeTopLogitFormatSequenceReader(Reader):
         # convert to detokenized 
         tok_idx_to_str_idx = {}
         str_idx_to_tok_idx = defaultdict(list)
-        
         missing = []
         str_toks = []
         curr_tok = []
         str_idx = -1
         # no eos 
         for i, tok in enumerate(labels_as_toks[0:-1]):
+            if tok is None:
+                print("None token")
+                continue
             # is not a subword 
-            if tok.startswith("▁"):
+            if tok.startswith(self.delimiter):
                 if len(curr_tok) > 0:
                     str_toks.append(curr_tok)
                 # start of a new token  
@@ -69,7 +79,7 @@ class TypeTopLogitFormatSequenceReader(Reader):
 
         for i, token in enumerate(str_toks): 
             token = "".join(token)
-            token = re.sub("^▁", "", token)
+            token = re.sub(f"^{self.delimiter}", "", token)
             # pdb.set_trace()
             type_idxs = str_idx_to_tok_idx[i]
             # rules:
@@ -172,9 +182,11 @@ class TypeTopLogitFormatSequenceReader(Reader):
 
                 for type_type in [0, 1, 2, 3]:
                     top_logits_for_type = top_logits[types == type_type]
+                    top_logit_idxs_for_type = top_logit_idxs[types == type_type]
                     labels_for_type = labels[types == type_type]
 
-                    is_correct = self.check_tokens(top_logits_for_type, labels_for_type) 
+                    # pdb.set_trace()
+                    is_correct = self.check_tokens(top_logit_idxs_for_type, labels_for_type) 
 
                     for timestep in range(top_logits_for_type.shape[0]):
                         # ignore tokens if specified
@@ -191,8 +203,9 @@ class TypeTopLogitFormatSequenceReader(Reader):
         # return (np.array(all_top_preds), np.array(all_is_correct))
 
 if __name__ == "__main__":
-    path = "/brtx/604-nvme2/estengel/calflow_calibration/benchclamp/1.0/t5-small-lm-adapt_spider_past_none_db_val_all_0.0001/checkpoint-10000/outputs/test_all.logits"
+    # path = "/brtx/604-nvme2/estengel/calflow_calibration/benchclamp/1.0/t5-small-lm-adapt_spider_past_none_db_val_all_0.0001/checkpoint-10000/outputs/test_all.logits"
+    path = "/brtx/604-nvme2/estengel/calflow_calibration/benchclamp/1.0/bart-base_spider_past_none_db_val_all_0.0001/checkpoint-5000/outputs/test_all.logits"
 
-    reader = TypeTopLogitFormatSequenceReader(path)
+    reader = TypeTopLogitFormatSequenceReader(path, model_name="facebook/bart-base")
     top_preds, is_corect = reader.read()
     pdb.set_trace()
