@@ -24,7 +24,7 @@ class TypeTopLogitFormatSequenceReader(Reader):
         self.ignore_tokens = ignore_tokens
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            if "t5-" in model_name:
+            if "t5-" in model_name and "code" not in model_name:
                 self.delimiter = "▁"
             else:
                 self.delimiter = "Ġ"
@@ -78,7 +78,7 @@ class TypeTopLogitFormatSequenceReader(Reader):
         prev_was_quote = False
 
         for i, token in enumerate(str_toks): 
-            token = "".join(token)
+            token = "".join(token).upper()
             token = re.sub(f"^{self.delimiter}", "", token)
             # pdb.set_trace()
             type_idxs = str_idx_to_tok_idx[i]
