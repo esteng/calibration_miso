@@ -185,7 +185,6 @@ class TypeTopLogitFormatSequenceReader(Reader):
                     top_logit_idxs_for_type = top_logit_idxs[types == type_type]
                     labels_for_type = labels[types == type_type]
 
-                    # pdb.set_trace()
                     is_correct = self.check_tokens(top_logit_idxs_for_type, labels_for_type) 
 
                     for timestep in range(top_logits_for_type.shape[0]):
