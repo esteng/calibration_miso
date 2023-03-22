@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 #SBATCH -o /home/estengel/incremental-function-learning/analysis/logs/train_spider_lstm.out 
-#SBATCH --partition=brtx6-10,brtx6
+#SBATCH --partition=brtx6
 #SBATCH --gpus=1
 
 

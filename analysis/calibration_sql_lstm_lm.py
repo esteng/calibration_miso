@@ -60,6 +60,7 @@ if __name__ == "__main__":
     parser.add_argument("--test_dir", type=pathlib.Path, default=None, required=True)
     parser.add_argument("--use_target", action='store_true')
     parser.add_argument("--tokenizer", type=str, default="gpt2")
+    parser.add_argument("--model_size", type=int, default=256)
     parser.add_argument("--max_len", type=int, default=None)
     args = parser.parse_args()
 
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     dev_sents = get_and_tokenize(dev_data, key, tokenizer, 1) 
 
     all_tokens = [token for sent in train_sents for token in sent]
-    vocab = torchtext.vocab.build_vocab_from_iterator(train_sents, min_freq=1) 
+    vocab = torchtext.vocab.build_vocab_from_iterator(train_sents, min_freq=5) 
     vocab.insert_token('<unk>', 0)           
     vocab.insert_token('<eos>', 1)  
     vocab.insert_token('<pad>', 2)  
@@ -89,9 +90,9 @@ if __name__ == "__main__":
     class LSTM_LM(torch.nn.Module):
         def __init__(self):
             super(LSTM_LM, self).__init__()
-            self.embedding = torch.nn.Embedding(len(vocab), 256)
-            self.lstm = torch.nn.LSTM(256, 256, num_layers=2, batch_first=True)
-            self.linear = torch.nn.Linear(256, len(vocab))
+            self.embedding = torch.nn.Embedding(len(vocab), args.model_size)
+            self.lstm = torch.nn.LSTM(args.model_size, args.model_size, num_layers=2, batch_first=True)
+            self.linear = torch.nn.Linear(args.model_size, len(vocab))
 
         def forward(self, x):
             x = self.embedding(x)
