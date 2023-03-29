@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import List, Dict, Tuple, Any
 import logging
 import pdb 
@@ -25,7 +28,7 @@ from miso.modules.label_smoothing import LabelSmoothing
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-@Model.register("calflow_transformer_parser")
+# @Model.register("calflow_transformer_parser")
 class CalFlowTransformerParser(CalFlowParser):
 
     def __init__(self,
@@ -178,6 +181,7 @@ class CalFlowTransformerParser(CalFlowParser):
                                        last_predictions: torch.Tensor,
                                        state: Dict[str, torch.Tensor],
                                        auxiliaries: Dict[str, List[Any]],
+                                       timestep: int,
                                        misc: Dict,
                                        ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, List[Any]]]:
 
@@ -548,9 +552,13 @@ class CalFlowTransformerParser(CalFlowParser):
                         if index < self._vocab_size:
                             node = self.vocab.get_token_from_index(index, self._target_output_namespace)
                         elif self._vocab_size <= index < self._vocab_size + source_dynamic_vocab_size:
-                            node = "SourceCopy"
+                            try:
+                                source_token_str = meta_data[i]['source_dynamic_vocab'].idx_to_token[index - self._vocab_size]
+                            except KeyError:
+                                continue
+                            node = f"SourceCopy_{source_token_str}"
                         else:
-                            node = "TargetCopy"
+                            node = "TargetCopy_{0}".format(index - self._vocab_size - source_dynamic_vocab_size)
                         timestep_dist[node] = prob_dist[i, timestep, index].cpu().item()
                     dists.append(timestep_dist) 
                 prob_list.append(dists)
@@ -658,7 +666,7 @@ class CalFlowTransformerParser(CalFlowParser):
             start_predictions=start_predictions,
             start_state=start_state,
             auxiliaries=auxiliaries,
-            step=lambda x, y, z: self._take_one_step_node_prediction(x, y, z, misc),
+            step=lambda x, y, z, s: self._take_one_step_node_prediction(x, y, z, s, misc),
             tracked_state_name="output",
             tracked_auxiliary_name="target_dynamic_vocabs"
         )

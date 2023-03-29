@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from scipy.stats import pearsonr
 import numpy as np
 import logging

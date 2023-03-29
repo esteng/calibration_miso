@@ -1,0 +1,11 @@
+user_turn_0,agent_turn_0,user_turn_1,paraphrase
+,, can you see when my next meeting is involving a lunch ?, What day is my next lunch ?
+,, What time is my appointment with Jerri Skinner on Friday ?, What time am I meeting Jerri Skinner on Friday ?
+ What time is my appointment with Jerri Skinner on Friday ? , I did n't find any events with Jerri Skinner . , Can you add an appointment with Jerri Skinner at 9 am ?, Create an appointment at 9 am with Jerri Skinner
+ Can you add an appointment with Jerri Skinner at 9 am ? , Is this good ? , I need it to last 2 hours .," Yes , but can you make it two hours ?"
+ I need it to last 2 hours . , How 's this ? ," good , thanks .", That is correct .
+,, Make an event with Abby and her boss, Make a meeting with Abby and Abby 's Manager
+ Make an event with Abby and her boss , Here are some times when you and Abby Gonano are free . , I 'll pick number 2 ., Let 's go with the second one
+ I 'll pick number 2 . , I 've put that on your calendar . , Can you find my appointment in January with Sal and his boss ?, Can you find my event in January with the manager ?
+ Can you find my appointment in January with Sal and his boss ? ," Your "" Snowboarding "" is on January 15 , 2020 from 8 : 00 to 4 : 00 PM . ", Make that start at 9 instead, Can you change the time to 9 AM
+ Make that start at 9 instead , How is this ? , That will be fine, Looks good .

@@ -1,0 +1,100 @@
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Can you make it at conference room b ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User Do I have any other meetings with Jenny soon ? __StartOfProgram
+__User What do I have scheduled for the day after Thanksgiving ? __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Can you move it to tomorrow as well ? __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Perfect , could you also accept my Brunch with Kim ? Tell her ill bring the Champagne . __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User lets redo this request please __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User Yes that is __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Great , very good . __StartOfProgram
+__User What events do I have for tomorrow ? __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User I want it from 9 pm __StartOfProgram
+__User Can you tell me all my events for the first week of February ? __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User Change the time to 02 : 00 PM - 03 : 00 PM UTC __StartOfProgram
+__User Hi , I need you to schedule a meeting for tomorrow with my manager and Elli 's manager . __StartOfProgram
+__User I am gettign my hair cut on Tuesday at 5 . __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User Add meeting with Jake for a whole day __StartOfProgram
+__User What free time do I have to schedule a ball game after 12 ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User One last thing . Are there any meetings this week with Damon Ellery ? __StartOfProgram
+__User Hi there , my name is Megan . I need some help creating and scheduling some events for next week . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User add all the pool parties __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User I wo n't need an entire hour for that , lets change that to only last 45 minutes and make sure I am shown as busy during that time __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User I 'll take the earlier morning one . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User Paige ? It was a typo . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes also decline my AC / CD Reunion and say i am going to see Journey instead __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Update the location of Chelsea 's graduation to the Grand Opera House __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Add cancel fortnite competition to my schedule for Monday at 9 __StartOfProgram
+__User Please invite Kevin and Steve to tomorrow 's 3 : 30 meeting , and remove John , Kayla and Thomas __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User ok .. select this one . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . And Add Jaime to the Softball meeting . __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User I 'd like the first one . On that same day , I need to workout . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Great . Now Joe wo n't be there for the cruise planning but Rachel and Danny will . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User select first meeting __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User Is kim free in May __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move my meeting with David to one hour after my appointment tomorrow . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User what about Madison ? __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User The first one does . __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User Can you tell me when I have a drs appt this week ? __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User Yessir , or ma'am , thank you __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Can you add conference room C as the location ? __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User cancel brunch and make it lunch __StartOfProgram
+__User do you helping mind . __StartOfProgram
+__User Find the next Thanksgiving __StartOfProgram
+__User What meetings do I have in the morning ? __StartOfProgram
+__User Search for events taking place in Cheryl 's office next week . __StartOfProgram
+__User Change my meeting today with Emily from 3 pm to 4 pm . __StartOfProgram
+__User Hi , am I free next Saturday night ? __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th works __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User Let me know what is scheduled between 7 pm and 9 pm on Sunday . __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User I had a baseball game on Thursday ? __StartOfProgram
+__User I need to know every events I had last year , please . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User the first one will work the best __StartOfProgram
+__User find the type of event scheduled for January 2 nd __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Can you see up a meeting with Adam Wallen for Friday around 2 pm ? __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User needs to be for a week actually __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User Alright , schedule the one PM event . __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User cancel this and vote trump __StartOfProgram
+__User yes __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User also last year i had an easter brunch on easter __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User Show me my events next week that are not dance parties __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User First one is good __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What is the second event ? __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User day after tomorrow doctor event __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User The second one would be a better time to meet at Cambridge . __StartOfProgram
+__User What is the date of the first day of my vacation ? __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User Spartan 008 - Li ? __StartOfProgram
+__User create a timer for me __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User No , change it to 4 pm . __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User Where can I find Sushi Connections ? __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be with my Team in Wichitaiiaiai for all of next week __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User I need a meeting with doctor john tomorrow at 11 : 30 pm . __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User What will it be like tomorrow ? __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User I also need to move my birthday party to a different time __StartOfProgram
+__User I need to visit City Hall sometime next week . __StartOfProgram
+__User Schedule visit with college recruiter next weekend . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User yes cancel this boys night __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User Nevermind , just put that on my calendar __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain Saturday during the picnic ? __StartOfProgram
+__User Delete birthday tomorrow with Emily , Joseph , Lois and Stewie __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Is there any other meeting this week ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User So do I have any events in June with people coming ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User When is sunset schedule for ? __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User ok make sure to delete the meeting with martin afterword __StartOfProgram
+__User What soccer games do I have scheduled with Tara this week ? __StartOfProgram
+__User Make an event for my birthday for Thursday of next week __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User And schedule the Thursday noon even with Tom . __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User What about on Friday ? __StartOfProgram
+__User Please update my work lunch from 1 p.m. to 1 : 30 p.m. __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User Make my conference call on Wednesday one hour . __StartOfProgram
+__User I 'd like to know if Josh , Rachel , and Ludwig are coming to the bbq this weekend . __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Great But I need to change something else I need to uninvite Kim on the first and invite Jennifer __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Thank you . What about Cracker Barrel in Lebanon , TN ? __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User Will I be busy on March 21 next year ? __StartOfProgram
+__User fire Kristen Clifford tomorrow at 2 pm __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Schedule for Wednesday __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User Let me rephrase . Enter on my calendar " meeting with Harry Potter " on July 20 at 1 : 00 PM for one hour . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User I would like you to input my appointment entitled lunch with Barack Obama on Wednesday noon next week for one hour . __StartOfProgram
+__User Jenica 's Birthday party is tomorrow at the Holy Grail at 7 pm . We will definitely go on for at least 5 hours . __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Can you please add a lunch around 1 PM __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What is the 10 day forecast for Amherst , NY ? __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User yer __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User do nt change it to yesterday , these are for tomorrow ! __StartOfProgram

@@ -1,0 +1,7 @@
+__User Schedule my performance review for next Monday at 10 am , in conference room 124 . __StartOfProgram
+__User  When does Jessica have a game at Central State Ballpark ?  __Agent  Sorry , I ca n't handle that yet .  __User What time is Jessica 's game at Central State Ballpark ? __StartOfProgram
+__User  I missed my last dentist appointment remove it from my schedule .  __Agent  Is this what you want me to cancel ?  __User Display the event __StartOfProgram
+__User  Correct  __Agent  I 've put that on your calendar .  __User Make a repeating event called " Movie Playing : Infinity War " , starting on Friday . __StartOfProgram
+__User  what are the wind speeds  __Agent  The wind speed will be 5 . 91 mph in Fairfax tomorrow .  __User what time is sunset ? __StartOfProgram
+__User  YES April 8  __Agent  I 've put that on your calendar .  __User Add attendees : Paige Ashworth , Cher Roydon , Jerri Skinner , Fiona Mason , Cecelia Waller , Wade Blakeley , Damon Ellery , Karl Boon , Jeong - Ho Kim , Janice Kang , Scot Hanson , Barack Obama , Cornelio Hernandez , Kristen Clifford . __StartOfProgram
+__User  My manager , Ray Southerland , will join toward the end of the meeting .  __Agent  How about now ?  __User Please also add Elli Parker and her manager . __StartOfProgram

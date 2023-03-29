@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from miso.data.dataset_readers.calflow_parsing.calflow_graph import CalFlowGraph
 from typing import List, Tuple, Iterable, cast, Dict, Deque, Set
 from collections import deque
@@ -258,7 +261,6 @@ class NoSourceConstantRatioUpsampleIterator(BucketIterator):
             else:
                 not_interest.append(instance)
 
-        pdb.set_trace() 
         # num_to_sample = int(upsample_factor * len(interest)) - len(interest)
         num_to_sample = int(self.upsample_factor * len(instance_list))
         interest_idxs = [i for i in range(len(interest))]

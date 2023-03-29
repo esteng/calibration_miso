@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import logging
 import math
 import numpy
@@ -402,7 +405,6 @@ class CalflowTrainer(Trainer):
                     recover: bool = False,
                     cache_directory: str = None,
                     cache_prefix: str = None):
-        print(params)
         pieces = TrainerPieces.from_params(params,  # pylint: disable=no-member
                                            serialization_dir,
                                            recover,
@@ -500,6 +502,7 @@ def _from_params(cls,  # type: ignore
 
     # model params 
     parameters = [[n, p] for n, p in model.named_parameters() if p.requires_grad and n not in tune_bert_names]
+
     optimizer = Optimizer.from_params(parameters, params.pop("optimizer"))
     if "moving_average" in params:
         moving_average = MovingAverage.from_params(params.pop("moving_average"), parameters=parameters)

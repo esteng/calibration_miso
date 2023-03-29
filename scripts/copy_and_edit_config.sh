@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 
 cfg=amlt_configs/transformer/FindManager_12_seed/5000_200.yaml
 

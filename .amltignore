@@ -1,5 +1,0 @@
-resources/data/*
-test/data/*
-test/configs/*
-test/*.py
-

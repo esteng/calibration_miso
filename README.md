@@ -1,70 +1,101 @@
 # README 
-This is a readme for the Incremental Function Learning project 
+Code for: Calibrated Interpretation: Confidence Estimation in Semantic Parsi
 
 Author: Elias Stengel-Eskin
+
 Personal Email: elias.stengel@gmail.com
+
+## About the repo 
+This repo is a fork of [this repo](https://github.com/microsoft/nlu-incremental-symbol-learning), which is itself a fork of a fork of [MISO](https://github.com/esteng/miso_uds) which is a semantic parsing codebase that was released with [Joint Universal Syntactic and Semantic Parsing](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing). 
+
+MISO was built over the course of the following publications:  
+- [AMR Parsing as Sequence-to-Graph Transduction, Zhang et al., ACL 2019](https://www.aclweb.org/anthology/P19-1009/)
+- [Broad-Coverage Semantic Parsing as Transduction, Zhang et al., EMNLP 2019](https://www.aclweb.org/anthology/D19-1392/)
+- [Universal Decompositional Semantic Parsing, Stengel-Eskin et al. ACL 2020](https://www.aclweb.org/anthology/2020.acl-main.746/)
+- [Joint Universal Syntactic and Semantic Parsing, Stengel-Eskin et al., TACL 2021](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00396/106796/Joint-Universal-Syntactic-and-Semantic-Parsing)
+- [When More Data Hurts: A Troubling Quirk in Developing Broad-Coverage Natural Language Understanding Systems, Stengel-Eskin et al., EMNLP 2022](https://arxiv.org/abs/2205.12228)
+
+It is a flexible sequence-to-graph parsing framework built on top of [allennlp](https://github.com/allenai/allennlp).  
+
+
+## Easy and Hard splits
+The directory `data_subsets` contains the easy and hard splits of TreeDST and SMCalFlow described in the paper. 
+These can also be downloaded directly here: [TODO](TODO).
+
+# MISO Documentation
+## Installation 
+
+All dependencies can be installed with `./install_requirements.sh` 
+
+## Downloading Data
+The first step to replicating experiments is to download the data and glove embeddings.
+
+From the project home directory:
+
+```
+mkdir -p data 
+cd data
+# This may take some time 
+wget https://veliass.blob.core.windows.net/ifl-data/data_clean.tar.gz
+tar -xzvf data_clean.tar.gz 
+mv data_clean/* .
+rm -r data_clean 
+```
+
 
 ## File Organization 
 Important directories: 
 - `miso`: contains all the parsing code for the different MISO models 
-- `amlt_configs`: contains amulet configs for running jobs 
 - `scripts`: contains helper scripts for analysis and creating config files/data splits 
-- `analysis`: contains analysis ipynb and scripts 
 - `experiments`: contains bash files for running MISO parser (see MISO_README.md for more details) 
 
-Everything is run through amulet, and the scripts assume that your data is organized in the following way. 
-All data should be in container mounted as `/mnt/default/resources/data`. I used blobfuse to mount this container locally so that data can easily be added and modified though the CLI.
-After modifying data, before running a model, it needs to be uploaded using `amlt upload --config-file <path_to_config>`. Because the data dir is shared between all configs, this only needs
-to happen once after modification, rather than for each config. 
-
-The main change between different `.jsonnet` files is the data path at the top. This points the model to the correct data split to use, e.g. `/mnt/default/resources/data/smcalflow_samples_curated/FindManager/5000_100/` 
-points to the model to the 5000 train sample subset with 100 FindManager examples. 
-The assumption is that each experiment has a jsonnet file, and a corresponding amulet config.
-For example, the experiment which trains a transformer model with the `seed=12` for the 5000-100 FindManager split has the amulet config `amlt_configs/transformer/FindManager_12_seed/5000_100.yaml` which points 
-to the `.jsonnet` file `miso/training_configs/calflow_transformer/FindManager/12_seed/5000_100.jsonnet`. 
-The amulet config also sets the `CHECKPOINT_DIR` var, which is where the model will be stored. This container should also be mounted with blobfuse. It should be mounted to `/home/<user>/amlt_models/`. 
+The main change between different `.jsonnet` files is the data path at the top. This points the model to the correct data split to use, e.g. `data/smcalflow_samples_curated/FindManager/5000_100/` 
+points the model to the 5000 train sample subset with 100 FindManager examples. 
+The assumption is that each experiment has a jsonnet file.
+For example, the experiment which trains a transformer model with the `seed=12` for the 5000-100 FindManager corresponds to the `.jsonnet` file `miso/training_configs/calflow_transformer/FindManager/12_seed/5000_100.jsonnet`. 
+In the released configs, the data dir argument is an environment variable 
 
 
 ## Important Scripts
-- `scripts/sample_functions.py`: samples functions (e.g. FindManager) to create the different splits. Can be used to manually curate examples. 
-- `scripts/make_subsamples.sh`: iteratively runs sampling for each split (5000-max), curating the first one and then using those examples later. 
-- `scripts/make_subsamples_uncurated.sh`: same idea, but doesn't require curation (for non-100 splits, no curation is done).
-- `scripts/make_configs.py`: can be used to modify a base jsonnet config to change the path to the split
 - `scripts/prepare_data.sh`: Data is assumed to be pre-processed according to [Task Oriented Parsing as Dataflow Synethesis](https://github.com/microsoft/task_oriented_dialogue_as_dataflow_synthesis) instructions. This is a modified version of the instructions in the README there to include agent utterances and previous user turns. 
-- `scripts/collect_results.py`: script to collect exact match results from predictions, written to `CHECKPOINT_DIR/translate_output`. Aggregates all scores into a csv specified as an arg.
-- `scripts/make_line_nums.py`: makes a .idx file given a dir with a train and test file, which is required for batching minimal pairs. A .idx file just has the line idxs (0-N) per line, but having it stored separately makes batching easier. 
-- `scripts/make_lookup_table.py`: used to combine minimal pairs produced by a model from manually-annotated instances with their corresponding input. To be used with `miso.data.iterators.minimal_pair.RealMinimalPairIterator`. 
-- `submit_amlt_dangerous.sh`: submit all jobs across a split for a given function, seed, and model. Called `dangerous` because it will over-write previously submitted jobs of the same name automatically to avoid lots of prompting per submission. 
-- `decode_amlt_dangerous.sh`: decode test predictions for a given function, seed, and model. 
 - `experiments/calflow.sh`: main training/testing commands for calflow
+- `experiments/tree_dst.sh`: main training/testing commands for TreeDST
 
-## Other scripts 
-- `scripts/annotate_minimal_pairs.py`: helper annotation script to modify minimal pairs manually.
-- `scripts/split_valid.py`: splits all valid dialogs into dev and test subsets. 
-- `scripts/leven.py`: levenshtein utils to do analysis between anonymized plans in correct and incorrect set and min distance to a train example
-- `scripts/error_analysis.py`: for a given function, analyze predicted plans into 3 groups: correct predictions, incorrect examples wihtout the function, incorrect examples with the function. 
-- `scripts/oversample.py`: either over-sample examples for a given function (e.g. turn 5000-100 FindManager into 5000-200 by doubling the 100 FindManager examples) or over-sample the rest of the training data to get a split of e.g. 200k-100 
-where 200k is upsampled from the max setting. 
-- `decode_amlt_beam.sh`: decode top 100 test predictions for given function, seed, model for beam analysis 
-- `decode_amlt_prob.sh`: forced-decode all test examples and save whole output distribution at each timestep for a function, seed, and model type
 
-## Training models 
-Models can be trained locally using `experiments/calflow.sh` or on Azure using amulet. The second option is more common.
-`experiments/calflow.sh` expects the following environment variables to be set: `CHECKPOINT_DIR` and `TRAINING_CONFIG`. 
+## Training Models 
+Models can be trained locally using `experiments/calflow.sh`. 
+`experiments/calflow.sh` expects the following environment variables to be set: `CHECKPOINT_DIR`, `TRAINING_CONFIG`, and `DATA_ROOT`. `DATA_ROOT` is the location where you downloaded the data. 
 The former points to a directory where the model will store checkpoints. The latter is a `.jsonnet` config that will be read by AllenNLP. 
 Optionally, the `FXN` variable can also be set, for function-specific evaluation. 
 
-Each amulet config has several jobs. The `train` job should run training and then decoding for dev and test. In case the decoding jobs fail or need 
-to be re-run, there is a `decode` and `decode_test` job that will run the decoding separately. 
 Model checkpoints and logs will be written to `CHECKPOINT_DIR/ckpt`. Decoded outputs will be written to `CHECKPOINT_DIR/translate_output/<split}>.tgt` 
 
-## Minimal pair utils
-- `minimal_pair_utils` contains a set of tools for extracting minimal pairs. 
-- `construct.py` is the main file, which builds a generated lookup table to be used with `miso.data.iterators.minimal_pair.GeneratedRealMinimalPairIterator`. 
-- `evaluate.py` can be used to manually inspect the quality of the output pairs. 
-- `extract_fxn_lines.py`: gets lines from a test set which contain the desired function (for speed)
-- `extract_all_function_lines.sh`: repeats extraction across all splits 
-- `get_names.py`: gets names from train data for use in `construct.py`. Not used in practice.
-- `levenshtein.py`: does levenshtein computation between test and train utterances. 
-- `mutations.py`: Set of mutations that can be applied to input. In practice, only identity is used. 
 
+For additional details, see [miso_docs/TRAINING.md](miso_docs/TRAINING.md) 
+
+## Testing models 
+The following environment variables need to set:
+1. `CHECKPOINT_DIR`: the directory containing a subdirectory `ckpt`, which contains an archive `model.tar.gz`. If training is interrupted or canceled, the archive may be missing. It can be created manually by the following commands: 
+```cd $CHECKPOINT_DIR/ckpt
+cp best.th weights.th 
+tar -czvf model.tar.gz weights.th config.json vocabulary
+```
+2. `TEST_DATA` is the path to the test data *without the extension*. An example would be `TEST_DATA=data/smcalflow.agent.data/dev_valid`. 
+3. `FXN` is the function of interest. Example: `FXN=FindManager` 
+
+The model can then be tested using `./experiments/calflow.sh -a eval_fxn`  
+
+The output at the end will have the following rows: 
+
+```
+Exact Match: The overall exact match accuracy of produced and reference programs. 
+FXN Coarse: The percentage of programs for which, if FXN is in the reference, it is also in the predicted program. It doesn't matter if the programs match or not. 
+FindManager Fine: The percentage of programs with FXN in the reference where the predicted program is an exact match. 
+FindManager Precision: The percentage of predicted programs that have FXN in them and also have FXN in the reference program. 
+FindManager Recall: Same as Coarse 
+FindManager F1: Harmonic mean of precision and recall 
+```
+
+## Getting logits
+To get the predicted token logits under a forced decode, see the `log_losses` function in `experiments/calflow.sh`. 
+To get token-level predicted probabilities without a forced decode, use `eval_calibrate`. 

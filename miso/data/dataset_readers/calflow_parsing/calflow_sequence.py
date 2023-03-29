@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from collections import defaultdict
 from typing import List, Any, Tuple
 import re 
@@ -109,7 +112,7 @@ class CalFlowSequence:
 
         src_tokens = user_utt
 
-        # TODO (elias): add some string normalization here to 
+        # TODO (elias): we could add some string normalization here to 
         # allow copies without punctuation, e.g. "Darby" in 
         # output can be copied from Darby in input and quotations 
         # can be deterministically added

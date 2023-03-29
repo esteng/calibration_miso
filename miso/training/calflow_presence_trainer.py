@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import logging
 import math
 import numpy
@@ -269,7 +272,6 @@ class CalflowTrainer(Trainer):
                     recover: bool = False,
                     cache_directory: str = None,
                     cache_prefix: str = None):
-        print(params)
         pieces = TrainerPieces.from_params(params,  # pylint: disable=no-member
                                            serialization_dir,
                                            recover,

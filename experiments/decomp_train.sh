@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 #!/usr/bin/env bash
 
 # Causes a pipeline (for example, curl -s http://sipb.mit.edu/ | grep foo)

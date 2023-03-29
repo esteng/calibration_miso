@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -71,7 +74,6 @@ class S(object):
         return 0
 
     def relation_match_score(self, x, y):
-        #print(f"comparing relation {x} and {y}, {x.rel}, {y.rel}")
         return int(x.rel == y.rel)
 
     def compute_pool(self, instance1, attribute1, relation1,
@@ -576,7 +578,6 @@ def compute_s_metric(true_graphs: List[DecompGraph],
     GraphType = None 
     if len(true_graphs) > 0:
         tg = true_graphs[0]
-        print(tg)
         if isinstance(tg, DecompGraph):
             GraphType = DecompGraph
         else:

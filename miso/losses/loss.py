@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import torch
 from torch.nn import MSELoss, L1Loss, BCELoss
 from allennlp.common import Registrable

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import List, Iterator, Optional
 import argparse
 import sys
@@ -178,6 +181,8 @@ class _CalFlowReturningPredictManager(_ReturningPredictManager):
                  line_limit: int = None,
                  oracle: bool = False,
                  top_k_beam_search: bool = False,
+                 top_k_beam_search_hitl: bool = False,
+                 hitl_threshold: bool = 0.8,
                  top_k: int = 1, 
                  precomputed: bool = False) -> None:
         super(_CalFlowReturningPredictManager, self).__init__(predictor=predictor,
@@ -191,17 +196,25 @@ class _CalFlowReturningPredictManager(_ReturningPredictManager):
         self.precomputed = precomputed
         self.oracle = oracle
         self.top_k_beam_search = top_k_beam_search
+        self.top_k_beam_search_hitl = top_k_beam_search_hitl
         self.top_k = top_k
+        self.hitl_threshold = hitl_threshold
 
     @overrides
     def _predict_instances(self, batch):
         # if not oracle or top k, back off to _PredictManager default prediction 
-        if not self.oracle and not self.top_k_beam_search:
+        is_top_k = self.top_k_beam_search or self.top_k_beam_search_hitl
+        if not self.oracle and not is_top_k:
             return super()._predict_instances(batch)
-        elif not self.oracle and self.top_k_beam_search:
-            results = self._predictor.predict_batch_instance(batch, self.oracle, self.top_k_beam_search, self.top_k)
+        elif not self.oracle and is_top_k:
+            results = self._predictor.predict_batch_instance(batch, 
+                                                             self.oracle, 
+                                                             self.top_k_beam_search, 
+                                                             self.top_k_beam_search_hitl, 
+                                                             self.top_k, 
+                                                             self.hitl_threshold)
             return [results]
-        elif self.oracle and not self.top_k_beam_search:
+        elif self.oracle and not is_top_k:
             results = self._predictor.predict_batch_instance(batch, self.oracle) 
             return [results]
         else:
@@ -210,12 +223,13 @@ class _CalFlowReturningPredictManager(_ReturningPredictManager):
     def run(self):
         has_reader = self._dataset_reader is not None
         instances, results = [], []
+        is_top_k = self.top_k_beam_search or self.top_k_beam_search_hitl
         if has_reader:
             self._dataset_reader.line_limit = self.line_limit
             for batch in lazy_groups_of(self._get_instance_data(), self._batch_size):
                 if not self.precomputed:
                     for model_input_instance, result in zip(batch, self._predict_instances(batch)):
-                        if not self.top_k_beam_search:
+                        if not is_top_k:
                             instances.append(model_input_instance)
                             results.append(result)
                         else:

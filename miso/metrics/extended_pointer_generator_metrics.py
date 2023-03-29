@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 """Sequence-to-sequence metrics"""
 from typing import Dict
 import math

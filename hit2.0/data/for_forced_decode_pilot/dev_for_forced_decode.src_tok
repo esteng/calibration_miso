@@ -1,0 +1,989 @@
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Add a location of conference room b to this appointment __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Can you add the location of conference room b ? __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Can you change the location to conference room b ? __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Add location of conference room b __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User change the location to conference room b __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Add location " conference room b " __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Change the location to conference room b. __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User Add the location of conference room b to this appointment __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User have this take place in conference room b __StartOfProgram
+__User yes , confirm that . __Agent I 've put that on your calendar . __User great add a location of conference room b to it __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User Thanks , what else do I have scheduled with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What other meetings do I have with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User Thanks , what else do I have with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What else do I have with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What other meetings do I have coming up with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What other events do I have with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User Thanks , do I have anything else with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What other events do I have coming up with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What else do I have scheduled with Jenny ? __StartOfProgram
+__User good ! thanks __Agent I 've put that on your calendar . __User What else am I doing with Jenny ? __StartOfProgram
+__User What meeting do I have the day after Thanksgiving ? __StartOfProgram
+__User Find the meeting I have the day after Thanksgiving . __StartOfProgram
+__User Can you find my meeting the day after Thanksgiving ? __StartOfProgram
+__User Find my meeting for the day after Thanksgiving . __StartOfProgram
+__User Find the meeting I have the day after Thanksgiving __StartOfProgram
+__User What event do I have the day after Thanksgiving ? __StartOfProgram
+__User Can you find my event the day after Thanksgiving ? __StartOfProgram
+__User What is the meeting I have the day after Thanksgiving __StartOfProgram
+__User Find the event I have the day after Thanksgiving . __StartOfProgram
+__User What do I have the day after Thanksgiving ? __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Move that to tomorrow __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Move this event to tomorrow . __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Can you change the date to tomorrow __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Can you change it to tomorrow ? __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Move that event to tomorrow __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Can you move that to tomorrow ? __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Move that to tomorrow please __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Can you change that to tomorrow ? __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Move that event to tomorrow . __StartOfProgram
+__User Can you change my first event to end at 7 : 00 PM ? __Agent How is this ? __User Move this event to tomorrow __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the Brunch with Kim and say ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the invite to Brunch with Kim and say that ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User will you accept the Brunch Event with Kim and say ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the invite to Brunch with Kim , and say ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the Brunch with Kim and say that ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the invite to Brunch with Kim and say ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User will you accept the Brunch with Kim and say ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the invite to Brunch with Kim and tell her ill bring the Champagne . __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User Accept the invite to Brunch with Kim and tell her ill bring the Champagne __StartOfProgram
+__User Yes and Please also accept road trip with Jolene , and let her know I ca n't believe we are going to Napa ! __Agent I have accepted it . I will accept " road trip with Jolene " and send a response to the organizer with the following comment : " I ca n't believe we are going to Napa ! " . Is that ok ? __User will you accept the Brunch event with Kim and say ill bring the Champagne __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User No , none of those work . __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User No , show me more times . __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User no __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User No , they do n't __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User Nevermind __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User I do n't like either one __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User No , neither of those work . __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User I do n't like either of them __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User No __StartOfProgram
+__User Try that again __Agent Here are some times when you and Frank are free . __User No , I do n't want that __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User Do n't forget your colon today __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User I do n't know yet . __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User No Problem thank you __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User It 's in the game . __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User tbh __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User It could be . __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User It 's a possibility . __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User I do n't know . __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User it fires me __StartOfProgram
+__User cancel the brainstorming session event please __Agent Is this what you want me to cancel ? __User No Problem __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes please add . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes , this is it . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes , this looks correct . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes it does . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User yeesh looks good __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Looks like a good time . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes that is it . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes , this looks good . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes it is . __StartOfProgram
+__User Can you add a full day event from Friday the 18 th for 7 days called Bermuda cruise ? __Agent Is this what you 're looking for ? __User Yes , this looks perfect . __StartOfProgram
+__User What is on my calendar tomorrow ? __StartOfProgram
+__User What do I have scheduled for tomorrow ? __StartOfProgram
+__User What do I have scheduled tomorrow ? __StartOfProgram
+__User What 's on my calendar tomorrow ? __StartOfProgram
+__User What events do I have scheduled tomorrow ? __StartOfProgram
+__User What events do I have scheduled for tomorrow __StartOfProgram
+__User What do I have on my calendar tomorrow __StartOfProgram
+__User What is on my calendar for tomorrow ? __StartOfProgram
+__User What events do I have tomorrow ? __StartOfProgram
+__User What do I have tomorrow ? __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User no , make it 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User change the time to 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User No make it 9 PM __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User Change the time to 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User no make it 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User no , make it 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User No , make it 9 PM __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User no make it 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User No make it 9 pm __StartOfProgram
+__User Create Dinner date with cecelia Waller and Wade tonight __Agent Here are some times when everyone is free . __User No , make it 9 pm __StartOfProgram
+__User When is my next block of free time ? __StartOfProgram
+__User When is my next free afternoon ? __StartOfProgram
+__User When is my next block of free time during the afternoon ? __StartOfProgram
+__User When is my next block of free time on the calendar ? __StartOfProgram
+__User Did I have any meetings last weekend ? __StartOfProgram
+__User When is my next block of free time during the day ? __StartOfProgram
+__User When is my next block of free time on my calendar ? __StartOfProgram
+__User Did I have any meetings last week with anybody from accounting ? __StartOfProgram
+__User Did I have any meetings last week with anyone from accounting ? __StartOfProgram
+__User Do I have any meetings with anyone from accounting this week ? __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User can you rename the event __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User can you change the time __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User I want to rename the first one __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User Can you change the time for the lunch __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User Can you change the time ? __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User Can you change the time __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User Can you change the time of the lunch __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User fix the first one __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User change the timing __StartOfProgram
+__User Are there any next week ? __Agent Yes , I found 2 events next week . The first is " Lunch " on Monday the 16 th from 11 : 00 to 11 : 30 AM . __User can you change the meeting time __StartOfProgram
+__User Schedule a meeting with my manager and Elli 's manager tomorrow . __StartOfProgram
+__User Create a meeting with my boss and Elli 's boss tomorrow __StartOfProgram
+__User Create a meeting with my manager and Elli 's manager tomorrow __StartOfProgram
+__User Schedule a meeting with my boss and Elli 's boss tomorrow __StartOfProgram
+__User Create a meeting with my manager and Elli 's manager tomorrow . __StartOfProgram
+__User Schedule a meeting with my manager and Elli 's manager tomorrow __StartOfProgram
+__User Schedule a meeting with my boss and Elli 's manager tomorrow . __StartOfProgram
+__User Schedule a meeting with my boss and Elli 's boss tomorrow . __StartOfProgram
+__User Schedule a meeting with my boss and Elli 's manager tomorrow __StartOfProgram
+__User Create a meeting with my boss and Elli 's manager tomorrow __StartOfProgram
+__User Add hair cut at 5 pm tuesday __StartOfProgram
+__User Add hair cut on Tuesday at 5 : 00 PM . __StartOfProgram
+__User I need a hair cut on Tuesday at 5 pm . __StartOfProgram
+__User Add hair cut at 5 : 00 PM on Tuesday . __StartOfProgram
+__User I need a hair cut at 5 pm tuesday __StartOfProgram
+__User I need a hair cut at 5 pm Tuesday __StartOfProgram
+__User I need a hair cut at 5 pm Tuesday . __StartOfProgram
+__User I need a hair cut at 5 pm tuesday __StartOfProgram
+__User I need a hair cut at 5 pm next tuesday __StartOfProgram
+__User I need a hair cut at 5 pm on Tuesday . __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User I 'm going to be with Jake all day today __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User Put an all day event with Jake for today . __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User All day event with Jake __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User I need an all day event with Jake today . __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User I need an all day event for today with Jake __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User Make an all day event for today with Jake __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User Make an all day event with Jake for today __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User Put an all day event with Jake for today __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User Make an all day event with Jake today __StartOfProgram
+__User Looks like a great time __Agent I 've put that on your calendar yesterday from 1 : 00 to 1 : 30 PM . __User I need an all day event with Jake today __StartOfProgram
+__User create ball game after 12 __StartOfProgram
+__User create ball game after 12 pm today __StartOfProgram
+__User ball game after 12 pm today __StartOfProgram
+__User create ball game tonight after 12 __StartOfProgram
+__User create ball game after 12 today . __StartOfProgram
+__User create ball game today after 12 __StartOfProgram
+__User create ball game after 12 today __StartOfProgram
+__User create ball game after 12 pm today __StartOfProgram
+__User Create ball game after 12 pm today __StartOfProgram
+__User Create ball game after 12 today __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I meet with Damon Ellery at all this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do i have any meetings with Damon Ellery this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have any meetings scheduled with Damon Ellery this week/ __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have a meeting with Damon Ellery this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have anything scheduled with Damon Ellery this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have any meetings with Damon Ellery this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have any meetings scheduled with Damon Ellery for this week __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have any meetings scheduled with Damon Ellery this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I have anything with Damon Ellery this week ? __StartOfProgram
+__User That 's great . __Agent I 've put that on your calendar . __User Do I see Damon Ellery at all this week ? __StartOfProgram
+__User  __StartOfProgram
+__User When is my next free afternoon ? __StartOfProgram
+__User Defer the meeting with lee Wei __StartOfProgram
+__User How do I create an event ? __StartOfProgram
+__User Defer the meeting with lee Chan __StartOfProgram
+__User Defer the meeting with lee Chan today __StartOfProgram
+__User Defer the meeting with catherin __StartOfProgram
+__User Can you tell me the weather for tomorrow ? __StartOfProgram
+__User Do I have any papers due this week ? __StartOfProgram
+__User When is my next free day ? __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Please schedule a meeting with the CEO of Ford on Friday at 10 am . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User I would like to schedule an appointment with my Endocrinologist this week . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Please schedule a meeting with the CEO of Ford on Friday at 10 : 00 am . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User I would like to schedule an appointment with my primary care physician this week . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User I would like to schedule a meeting with the President of the United States . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Please schedule a meeting with the President of the United States __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Please schedule a meeting with the CEO of Ford tomorrow . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User I would like to schedule a meeting with the President of the United States __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Please schedule a meeting with the President of the United States . __StartOfProgram
+__User I would like to add events for EDC week __Agent I can only do one action at a time . If you separate your requests , I can help you . __User I would like to add an event for Dinner with Mom on Friday at 6 pm . __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User Can you delete my meetings on friday ? __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User I need to clear my schedule next Monday . __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User Can you delete my meetings on Friday ? __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User cancel the event and check for dinner plans __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User cancel the tomorrow events on calender __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User cancel this event and all tomorrow __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User cancel the event and confirm the next day __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User cancel the meeting and check for dinner plans __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User please cancel my all events in my calender __StartOfProgram
+__User When does it end ? __Agent The event with John next week ends on Sunday the 20 th at 9 : 00 AM . __User I need to clear my schedule next week . __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User Pick the earlier time . __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User Pick the earlier time __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User The earlier one please __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User The earlier one please . __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User The earlier one works __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User Pick the earlier one __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User The earlier one __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User The earlier one . __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User Pick the earlier one . __StartOfProgram
+__User Set pick up Mark 's gift this morning __Agent Does one of these work ? __User The earlier one works . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User I need you to enter Page into my address book . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User Page is not in address book . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User I need you to add Page to my address book . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User Page is in my address book . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User I am not sure if Page is in my address book __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User Page is not in my address book . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User I need you to enter the address book . __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User Remove Page from address book __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User I need you to enter Page into my address book __StartOfProgram
+__User Please enter an appointment with Page at my office at noon on Monday . __Agent I did n't find anyone named Page in your address book . __User I need you to enter the address book for Page . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , that 's okay . Decline my AC / CD Reunion and say that I am going to see Journey instead . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes . Please also decline my AC / CD Reunion and say that " i am going to see Journey instead " __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , that 's good . Decline my AC / CD Reunion and say that i am going to see Journey instead . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , that 's good . Decline my AC / CD Reunion and say that I am going to see Journey instead __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , that is correct . Decline my AC / CD Reunion and say that I am going to see Journey instead . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , thank you . Decline my AC / CD Reunion and say that I am going to see Journey instead . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , thank you . Decline my AC / CD Reunion and say that " i am going to see Journey instead " __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , that 's good . Decline my AC / CD Reunion and say that I am going to see Journey instead . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , thank you . Decline my AC / CD Reunion and say that i am going to see Journey instead . __StartOfProgram
+__User i need you to decline the event with Josh __Agent I will decline " Meeting with Josh and Damon Straeter " . Is that ok ? __User Yes , that 's perfect . Decline my AC / CD Reunion and say that I am going to see Journey instead . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Add the location Grand Opera House to Chelsea 's graduation . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Set the location of Chelsea 's graduation to the Grand Opera House . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Make the location of Chelsea 's graduation the Grand Opera House . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Set the location of Chelsea 's graduation to the Grand Opera House __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Add location of Chelsea 's graduation to the Grand Opera House . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Set the location for Chelsea 's graduation to the Grand Opera House . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Can you add the location Grand Opera House to Chelsea 's graduation ? __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Put Chelsea 's graduation location as the Grand Opera House . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Add the location of the Grand Opera House to Chelsea 's graduation . __StartOfProgram
+__User Ok ! __Agent Let me know if there 's anything else I can help you with . __User Update Chelsea 's graduation to the Grand Opera House . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition for Monday at 9 : 00 am . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition on Monday at 9 am . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Add cancel fortnite competition on monday at 9 __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition for Monday at 9 am . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition for Monday at 9 . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition for Monday at 9 am . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition for Monday at 9 : 00 AM . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition for next Monday at 9 am . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition on Monday at 9 : 00 AM . __StartOfProgram
+__User thank you for the information . __Agent Let me know if there 's anything else I can help you with . __User Schedule cancel fortnite competition on Monday at 9 : 00 am . __StartOfProgram
+__User Add Kevin to the event and remove John , Kayla and Thomas . __StartOfProgram
+__User Kevin will be replacing Steve , John , Kayla , and Thomas __StartOfProgram
+__User Kevin will replace Steve , John , Kayla and Thomas . __StartOfProgram
+__User Kevin will be there instead of Steve , John , Kayla and Thomas . __StartOfProgram
+__User Kevin will be replacing Steve , John , Kayla , and Thomas . __StartOfProgram
+__User Kevin will be replacing Steve , John , Kayla and Thomas . __StartOfProgram
+__User Kevin will replace Steve , John , Kayla , and Thomas . __StartOfProgram
+__User Kevin will be replacing Steve , John , Kayla and Thomas __StartOfProgram
+__User Add Kevin to the meeting and remove John , Kayla and Thomas . __StartOfProgram
+__User Add Kevin to the event and remove John , Kayla , and Thomas . __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting Simmons __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User I want the second one . __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting with Louis __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting with Henry __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting with Stephen __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User Please select first one . __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting with Dawson __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User Please select the second one . __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting with john __StartOfProgram
+__User select first one __Agent I 've put that on your calendar . __User defer the next meeting with William __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also add Jaime to Softball meeting __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also add Jaime to my Softball meeting . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also invite Jaime to Softball meeting . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also add Jaime to the Softball meeting __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also add Jaime to the Softball meeting . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Please also invite Jaime to Softball meeting . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also add Jaime to Softball meeting . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also add Jaime to my Softball meeting __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Great . Also add Jaime to the Softball meeting . __StartOfProgram
+__User Push my meeting with Monica back 2 hours . __Agent Is this the update you want ? __User Yes . Also invite Jaime to Softball meeting __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User The first one . And schedule a workout that same day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User first one . And workout that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User the first one . And add workout that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User the first one . And schedule workout for that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User yes the first one . And add workout that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User the first one . And schedule workout that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User The first one . And schedule a workout that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User The first one . And schedule workout for that day . __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User The first one . And schedule a workout for that day __StartOfProgram
+__User Schedule a coffee date with Dana on Sunday __Agent Here are some times when you and Dana Smith are free . __User The first one . And schedule workout for that day __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe ca n't make it to cruise planning , but Rachel and Danny said they would be there . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe ca n't make it to the cruise planning , but Rachel and Danny said they would be there . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe wo n't be at the cruise planning , but Rachel and Danny will be . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe ca n't make it to the cruise planning , but Rachel and Danny can . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe wo n't be able to make it to the cruise planning , but Rachel and Danny will be coming . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe wo n't be at the cruise planning , but Rachel and Danny said they would be there . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe ca n't make it to the cruise planning , but Rachel and Danny will be there . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe wo n't be able to make it to the cruise planning , but Rachel and Danny will be there . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe wo n't be at the cruise planning , but Rachel and Danny will be , please update . __StartOfProgram
+__User Take Mark and Diane off of my cruise planning on Monday at 3 : 00 pm and add Joe and Jen . __Agent How is this ? __User Joe ca n't make it to the cruise planning , but Rachel and Danny will be there instead . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The first one works best . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The first option works best . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The first one works . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User first one looks good __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User First one is look good __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The first one looks good . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The first one looks good __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The 1 st one works . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User The first option . __StartOfProgram
+__User Actually please cancel and schedule an all day retreat with Jim . __Agent Here are some times when you and Jim Johnson are free . __User First one is good . __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to check if kim is free in may __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to see if kim is free in may __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User i need to know if kim is free in may __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to know if kim is free in May __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to see if kim is free in May __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User i need to find out if kim is free in May __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User i need to know if kim is free in May __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to check if kim is free in May __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to check whether kim is free in May __StartOfProgram
+__User wait i meant next month __Agent Yes . Here are some times when you are free in April . __User wait i need to know if kim is free in may __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move tomorrow 's meeting an hour after my meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move my meeting tomorrow to an hour after my meeting with David __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move my appointment tomorrow to an hour after my meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move my meeting tomorrow to an hour after my meeting with David ? __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move my meeting tomorrow to one hour after my meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move tomorrow 's meeting one hour after my meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move the meeting tomorrow to an hour after my meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move tomorrow 's meeting to an hour after my meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move the meeting tomorrow to an hour after the meeting with David . __StartOfProgram
+__User Do I have any other things scheduled after my appointment ? __Agent Yes , I found one event yesterday after 12 : 30 PM . It was " production meeting " from 1 : 00 to 1 : 30 PM . __User Move my meeting tomorrow to an hour after my meeting with David . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User Sorry I meant Madison __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User And Madison ? __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User What about Madison ? __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User How about Madison ? __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User No , I meant Madison . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User Invite Madison instead . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User Sorry , I meant Madison . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User Oh , I meant Madison . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User Sorry I meant Madison . __StartOfProgram
+__User Is Alyssa invited to tonight 's meeting ? __Agent It does n't look like it . __User I meant Madison . __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User first one __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User The first one please . __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User The first one works better __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User The first one works . __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User The first one . __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User the first one __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User first one looks good __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User The first one works well __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User select first one __StartOfProgram
+__User Add another meeting for later that same day . __Agent Does one of these work ? __User fix the first one __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User when do i have my dr appt this week __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User When is my dr appt this week ? __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User when is my dr appt this week __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User when do i have drs appt this week __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User when is my doctors appt this week ? __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User what day is my dr appt this week ? __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User can you search for my dr appt this week __StartOfProgram
+__User No __Agent Ok , I wo n't do anything for now . Let me know what else I can help you with . __User when is my dr appt this week ? __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User Okay , thank you __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User thanks i m done now __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User Thank you __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User ok thank you __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User thanks for your help __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User ok __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User Ok thank you __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User Thank you very much __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User good __StartOfProgram
+__User Actually , I meant the seminar . __Agent Is this the change you want to make ? __User Thank you ! __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Change the location of the staff meeting to Conference Room A. __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Change the location of the staff meeting to Conference Room B. __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Can you change the location of my meeting tomorrow to Conference Room B ? __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Can you change the location of the staff meeting to Conference Room B ? __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Can you change the location to Conference Room A ? __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Can you change the location of the staff meeting to Conference Room A ? __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Can you change the location of my meeting tomorrow to Conference Room A ? __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User No , I want it to take place in Conference Room A. __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User Change the location to Conference Room A. __StartOfProgram
+__User No , I want it to be at 7 am . __Agent How about now ? __User No , I want it to take place in Conference Room B. __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User please update my all events in my calender __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User Can you cancel all my meetings for tomorrow ? __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User Can you delete my meetings on Friday ? __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User cancel the today events on calender __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User please update my all events in my calander __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User please update my all events at my calender __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User Can you cancel all events for tomorrow ? __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User Can you cancel all my meetings on Friday ? __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User please update my all events __StartOfProgram
+__User This works perfectly __Agent Let me know if there 's anything else I can help you with . __User Can you cancel all events for tomorrow __StartOfProgram
+__User hello __StartOfProgram
+__User Hi __StartOfProgram
+__User hai __StartOfProgram
+__User Hi ! __StartOfProgram
+__User Hello ? __StartOfProgram
+__User ok __StartOfProgram
+__User Hello ! __StartOfProgram
+__User OK __StartOfProgram
+__User Hello __StartOfProgram
+__User hi __StartOfProgram
+__User When is the next Thanksgiving __StartOfProgram
+__User When is the next Thanksgiving event ? __StartOfProgram
+__User When 's the next Thanksgiving ? __StartOfProgram
+__User Can you find the next Thanksgiving ? __StartOfProgram
+__User When is Thanksgiving next __StartOfProgram
+__User When is my next Thanksgiving ? __StartOfProgram
+__User Search for my next Thanksgiving event . __StartOfProgram
+__User When is the next Thanksgiving ? __StartOfProgram
+__User When is my next Thanksgiving event ? __StartOfProgram
+__User Search for the next Thanksgiving event . __StartOfProgram
+__User What do I have this morning ? __StartOfProgram
+__User What 's on my calendar this morning ? __StartOfProgram
+__User What 's on my calendar for this morning ? __StartOfProgram
+__User What do I have scheduled this morning ? __StartOfProgram
+__User What events do I have this morning ? __StartOfProgram
+__User What does my morning look like ? __StartOfProgram
+__User What is on my schedule this morning ? __StartOfProgram
+__User What is on my calendar this morning ? __StartOfProgram
+__User What do I have scheduled for this morning ? __StartOfProgram
+__User What is on my calendar for this morning ? __StartOfProgram
+__User What do I have scheduled for next week in Cheryl 's office ? __StartOfProgram
+__User What do I have going on in Cheryl 's office next week ? __StartOfProgram
+__User What do I have in Cheryl 's office next week ? __StartOfProgram
+__User What do I have scheduled at Cheryl 's office next week ? __StartOfProgram
+__User What do I have going on next week in Cheryl 's office __StartOfProgram
+__User What do I have scheduled in Cheryl 's office next week ? __StartOfProgram
+__User What do I have scheduled next week in Cheryl 's office ? __StartOfProgram
+__User What events are in Cheryl 's office next week ? __StartOfProgram
+__User What do I have going on next week in Cheryl 's office ? __StartOfProgram
+__User What events do I have in Cheryl 's office next week ? __StartOfProgram
+__User Change my meeting with Emily today from 3 to 4 . __StartOfProgram
+__User Change my meeting with Emily today from 3 to 4 __StartOfProgram
+__User Update my meeting with Emily today from 3 pm to 4 pm __StartOfProgram
+__User Change my meeting with Emily today from 3 pm to 4 pm . __StartOfProgram
+__User Change my meeting with Emily today from 3 pm to 4 pm __StartOfProgram
+__User Change my meeting with Emily from 3 to 4 today . __StartOfProgram
+__User Please change my meeting with Emily today from 3 pm to 4 pm __StartOfProgram
+__User Change my meeting with Emily today from 3 pm to 4 pm . __StartOfProgram
+__User Update my meeting with Emily today from 3 pm to 4 pm . __StartOfProgram
+__User Change my meeting with Emily today from 3 pm to 4 pm __StartOfProgram
+__User Do I have any free time Saturday night ? __StartOfProgram
+__User Am I free on this Saturday night ? __StartOfProgram
+__User Am I free on Saturday night ? __StartOfProgram
+__User Am I free this Saturday night ? __StartOfProgram
+__User Do I have free time this Saturday night ? __StartOfProgram
+__User Am I free Saturday night ? __StartOfProgram
+__User Am i free Saturday night ? __StartOfProgram
+__User Am I free next Saturday night ? __StartOfProgram
+__User Am I free saturday night ? __StartOfProgram
+__User Do I have free time on Saturday night ? __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th works __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th works . __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th please __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User Let 's go with the one on the fifth __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th works best . __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User I 'll take the one on the 5 th __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User Let 's do the one on the fifth . __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User The one on the 5 th will work . __StartOfProgram
+__User Can you add a new event after that with them called " coffee " __Agent Does one of these work ? __User Let 's do the one on the 5 th __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have planned between 7 pm and 9 pm on Sunday ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have between 7 pm and 9 pm next Sunday ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have on Sunday between 7 pm and 9 pm ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have going on Sunday between 7 pm and 9 pm ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have planned between 7 pm and 9 pm next Sunday ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have going on between 7 and 9 pm next Sunday ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User Can you find any meetings scheduled between 7 and 9 pm next Sunday ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What is going on Sunday between 7 pm and 9 pm ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What 's going on Sunday between 7 and 9 pm ? __StartOfProgram
+__User Is there anything between 11 and 12 ? __Agent No , I did n't find any events between 11 : 00 AM and 12 : 00 PM . __User What do I have going on Sunday between 7 and 9 pm ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Was I at a baseball game last Thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did I go to a baseball game last Thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did I attend a baseball game last thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did I have a baseball game last Thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did I attend a baseball game this past Thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did i have a baseball game last thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did I attend a baseball game last Thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User Did I have a baseball game last thursday ? __StartOfProgram
+__User Will I see Heather for her bridal shower ? __Agent No , I did n't find any events matching " bridal shower " with Heather . __User did i have a baseball game last thursday ? __StartOfProgram
+__User When is my next block of free time ? __StartOfProgram
+__User When is my next free afternoon ? __StartOfProgram
+__User When is my next block of free time during the afternoon ? __StartOfProgram
+__User When is my next block of free time on the calendar ? __StartOfProgram
+__User Did I have any meetings last weekend ? __StartOfProgram
+__User When is my next block of free time during the day ? __StartOfProgram
+__User When is my next block of free time on my calendar ? __StartOfProgram
+__User Did I have any meetings last week with anybody from accounting ? __StartOfProgram
+__User Did I have any meetings last week with anyone from accounting ? __StartOfProgram
+__User Do I have any meetings with anyone from accounting this week ? __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes , please cancel that . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes , that is correct . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes , cancel this . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes it is . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes please cancel . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes please . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes , please . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes , please cancel this . __StartOfProgram
+__User Delete the vet appointment for Tom , Jerry , Roscoe and Rufus next week . __Agent Is this what you want me to cancel ? __User Yes , cancel that . __StartOfProgram
+__User What do I have January 2 nd ? __StartOfProgram
+__User What do I have on January 2 ? __StartOfProgram
+__User What do I have planned on January 2 ? __StartOfProgram
+__User What do I have January 2 ? __StartOfProgram
+__User What do I have scheduled on January 2 ? __StartOfProgram
+__User What events do I have January 2 ? __StartOfProgram
+__User What do I have Jan 2 ? __StartOfProgram
+__User What events do I have on January 2 ? __StartOfProgram
+__User What events do I have January 2 nd ? __StartOfProgram
+__User What do I have on January 2 nd ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Find my meeting with Adam Wallen on Friday at 2 pm __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Can you find my meeting with Adam Wallen on Friday at 2 pm ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Can you find my meeting with Adam Wallen on Friday at 2 PM ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User When is my next meeting with Adam Wallen ? Friday at 2 pm ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Find my meeting with Adam Wallen on Friday at 2 PM __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User When is my next meeting with Adam Wallen ? Friday at 2 PM ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User When is my meeting with Adam Wallen on Friday at 2 PM ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Search for meeting with Adam Wallen on Friday at 2 : 00 pm . __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Can you find my meeting with Adam Wallen on Friday at 2 pm ? __StartOfProgram
+__User When is my next meeting with Adam Wallen ? __Agent I did n't find any events with Adam Wallen . __User Find my meeting with Adam Wallen on Friday at 2 PM . __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User It should last a week . __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User It should be a week long __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User It should be a full week . __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User Make it last a week . __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User It 's a week long event . __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User No it should be a week long __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User Can you make it a week ? __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User Make it a week long instead . __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User Make it last a week __StartOfProgram
+__User Wine fest is Nov 8 - 12 __Agent Does one of these work ? __User Make it a week long __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User okay __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User add that __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User okay sure __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User ok __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User yes __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User looks good __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User looks great __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User good __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User Yes __StartOfProgram
+__User PLease schedule that and check if i m available on March 13 th __Agent Yes . Here are some times when you are free on Friday . __User Sure __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User Neither is good __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User Neither works . __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User no __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User Neither works __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User No . __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User Nevermind __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User No __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User nope __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User Nope __StartOfProgram
+__User Add protest at the White House to my calendar for April 20 , 2069 __Agent Does one of these work ? __User NO __StartOfProgram
+__User  __StartOfProgram
+__User fine __StartOfProgram
+__User No thanks __StartOfProgram
+__User ok __StartOfProgram
+__User nothing __StartOfProgram
+__User OK __StartOfProgram
+__User yes __StartOfProgram
+__User done __StartOfProgram
+__User Yes __StartOfProgram
+__User no thanks __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User Can you put that I went to the easter brunch last year __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User Can you put that I had an easter brunch last year . __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User I had an easter brunch last year __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User Can you put that I had an easter brunch last year __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User i had an easter brunch last year ? __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User i had an easter brunch last year __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User Please put that I went to the easter brunch last year . __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User Please put my easter brunch from last year on my calendar . __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User Can you put that I had an easter brunch last year ? __StartOfProgram
+__User OK ! __Agent I 've put that on your calendar on Sunday from 1 : 00 to 1 : 30 PM . __User I had an easter brunch last year ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User Do I have anything next week that 's not dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User what events do I have next week that are not dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User What do I have next week that 's not dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User What events do I have next week that are n't dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User Is there anything next week that 's not dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User Other than dance parties what else do I have next week ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User What do I have next week that is n't dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User Anything next week that 's not dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User What events do I have next week that are not dance parties ? __StartOfProgram
+__User Do I have anything on monday that 's not Baseball Practice ? __Agent No , I did n't find any events not matching " Baseball Practice " on Monday the 13 th . __User what do I have next week that 's not dance parties ? __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User please change my meeting __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User Show me different times pleas . __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User The first one . __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User The first one works well __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User David needs to be named __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User Show me different times . __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User Show me different times please . __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User fix the second one __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User Show me different times pleas __StartOfProgram
+__User meeting with David __Agent I found 3 different people matching your query . Which of these did you mean ? __User The second one . __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What 's the other event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What 's the second event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What is the second event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What 's the next one ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User Ok , what is the second event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What is the other event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User Ok , and the second event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User Ok . What is the second event ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What is the other event on Saturday ? __StartOfProgram
+__User Can you tell me what 's on the calendar for this coming Saturday ? __Agent You have 2 events on your calendar . Your " basketball game " from 9 : 00 to 10 : 00 AM . __User What is the other event on my calendar __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User Add an appointment to the doctor for the day after tomorrow __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User Add doctor to the calendar for the day after tomorrow . __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User Add doctor to the calendar for the day after tomorrow __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User The day after tomorrow , make an appointment with my doctor __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User The day after tomorrow , make an appointment to the doctor __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User Create a new doctor event for the day after tomorrow __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User Make an appointment for the doctor the day after tomorrow __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User add doctor to my calendar for the day after tomorrow __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User add doctor to the calendar for the day after tomorrow __StartOfProgram
+__User delete doctor event Saturday __Agent Is this what you want me to cancel ? __User The day after tomorrow , make an appointment for doctor __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User please schedule the second option __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User When is the second option ? __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User Add the second option to my calendar __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User Set up the second one please __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User Can you schedule the second option ? __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User When is the second option available ? __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User Set up the second one __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User please schedule the second one __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User Please schedule the second option . __StartOfProgram
+__User When is Sue available for Cambridge ? __Agent Here are some times when Sue is free in the next five days . __User Please schedule the second option __StartOfProgram
+__User  __StartOfProgram
+__User When is my next free afternoon ? __StartOfProgram
+__User Defer the meeting with lee Wei __StartOfProgram
+__User How do I create an event ? __StartOfProgram
+__User Defer the meeting with lee Chan __StartOfProgram
+__User Defer the meeting with lee Chan today __StartOfProgram
+__User Defer the meeting with catherin __StartOfProgram
+__User Can you tell me the weather for tomorrow ? __StartOfProgram
+__User Do I have any papers due this week ? __StartOfProgram
+__User When is my next free day ? __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User Spartan 008-Li __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User No , look up the name Spartan 008-Li __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User How about the other Spartan 008-Li ? __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User No , look for the name Spartan 008-Li . __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User My friend is Spartan 008-Li __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User Is there anything else about the Spartan 008-Li ? __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User Spartan 008-Li ? __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User No , look for the name Spartan 008-Li __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User Is there anything else about the Spartan 008-Li __StartOfProgram
+__User Spartan 006 - Li ? __Agent Here is the contact information for Spartan 006 - Jai : __User Look up the contact details for Spartan 008-Li __StartOfProgram
+__User How old are you ? __StartOfProgram
+__User I need help with using my phone . __StartOfProgram
+__User I need help with using my phone __StartOfProgram
+__User I need help with my taxes . __StartOfProgram
+__User create a timer for me __StartOfProgram
+__User hi , i need to book a train __StartOfProgram
+__User hi , i need help finding a doctor __StartOfProgram
+__User create a timer for me tomorrow __StartOfProgram
+__User hi , i want to book a train __StartOfProgram
+__User What is the current exchange rate ? __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User change time to 4 pm __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User change start time as 4 pm __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User change start time as 4 PM __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User 4 PM is the new time . __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User 4 PM is better . __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User Change time to 4 pm __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User Change the time to 4 pm __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User 4 PM is better __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User Change start time to 4 pm . __StartOfProgram
+__User change lunch from 2 : 30 to 4 pm __Agent Does this look right ? __User change start time as 4 __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User What is the address of the concert this weekend ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User Do you know the address of the amphitheater ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User Where is the closest dunkin donuts ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User What 's the address of the concert this weekend ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User Where is the closest ice skating rink ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User Where is the closest ice skating rink to me ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User What 's the address of the amphitheater ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User What is the address of the amphitheater tomorrow ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User Where is the closest starbucks ? __StartOfProgram
+__User Yes this looks good . __Agent I 've changed " Lunch " to be at 1 : 00 . __User What is the address of the amphitheater ? __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be with my team at Wichitaiiai all next week __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I 'll be with my team all next week at Wichitaiiai __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be with my team all next week in Wichitaiiai __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be with my team all next week at Wichitaiiai __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User All next week I will be with my team at Wichitaiiai __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be with my team at Wichitaiiai all of next week __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I 'll be at Wichitaiiai all next week with my team __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be at Wichitaiiai all next week with my team __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be with my team all of next week at Wichitaiiai __StartOfProgram
+__User Looks right . __Agent I 've put that on your calendar . __User I will be at Wichitaiiai all of next week with my team __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User Schedule a meeting with doctor john tomorrow at 11 : 30 pm . __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User add a meeting with doctor john tomorrow at 11 : 30 pm . __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User add a meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User add a meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User schedule a meeting with doctor john tomorrow at 11 : 30 pm . __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User I need a meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User add a meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User schedule a meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User I need a meeting with doctor john tomorrow at 10 : 30 pm . __Agent Is this good ? __User add meeting with doctor john tomorrow at 11 : 30 pm __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User What about tomorrow ? __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User How about tomorrow ? __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User And tomorrow ? __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User What about tomorrow __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User what about tomorrow ? __StartOfProgram
+__User What was it like yesterday ? __Agent It was clear with a high of 0 . 00 ° F and a low of 0 . 00 ° F on Thu , October 25 . __User how about tomorrow ? __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User Can you change the time of my lunch appointment ? __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User Can you change the time of the lunch ? __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User change the lunch date and time __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User Can you change the time of the Lunch ? __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User Can you change the time of my lunch tomorrow ? __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User can you change the time __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User Move my lunch back a few days . __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User I need to change the time of the staff meeting __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User I need to change the time of my lunch tomorrow __StartOfProgram
+__User That looks great . __Agent I 've changed " Lunch " to be . __User change the time lunch __StartOfProgram
+__User Can you schedule a meeting at City Hall next week . __StartOfProgram
+__User Make a meeting at City Hall next week __StartOfProgram
+__User Make a meeting at City Hall next week . __StartOfProgram
+__User Set up a meeting at City Hall next week . __StartOfProgram
+__User Can you make a meeting at City Hall next week ? __StartOfProgram
+__User Can you schedule a meeting in City Hall next week ? __StartOfProgram
+__User Can you schedule a meeting at City Hall next week ? __StartOfProgram
+__User Schedule a meeting at City Hall next week . __StartOfProgram
+__User I need to schedule a meeting at City Hall next week __StartOfProgram
+__User Schedule a meeting at City Hall for next week . __StartOfProgram
+__User I wanna meet my dad at today 6 pm __StartOfProgram
+__User Please schedule a meeting with the pope tomorrow . __StartOfProgram
+__User I wanna meet my mom at today 6 pm __StartOfProgram
+__User I wanna meet my mom at today 6 PM __StartOfProgram
+__User When is my next meeting with my mates ? __StartOfProgram
+__User When is my next meeting with mom ? __StartOfProgram
+__User When is my next lunch with mom ? __StartOfProgram
+__User I wanna meet my mom at today 7 PM __StartOfProgram
+__User I wanna meet my mom at today 7 pm __StartOfProgram
+__User I wanna meet my mom at today 6 pm __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes please __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes please cancel this . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes it is . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User yes __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes please cancel . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User yes please __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes please . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes , please . __StartOfProgram
+__User Cancel boys night now on Saturday . __Agent Is this what you want me to cancel ? __User Yes __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User How do I create an event ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User How do I add an event to my calendar ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User How do I create an event on my calendar ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User how do I create an event ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User What is the chat i d __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User How do I create a calendar ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User What is the address of my doctor 's office ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User How do I add events to my calendar ? __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User How do I add an event to my calendar __StartOfProgram
+__User what events are this weekend ? __Agent I did n't find any events this weekend . __User When is my next free day ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain saturday during the picnic ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain during the picnic on Saturday ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain during the picnic Saturday ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain for saturday 's picnic ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain for my picnic on Saturday ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain for my picnic Saturday ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain during my picnic on Saturday ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain for Saturday 's picnic ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User Will it rain for the picnic on Saturday ? __StartOfProgram
+__User Will it be sunny for my powerwalk tomorrow ? __Agent Yes . The average cloud cover will be 32 % for " powerwalk " in San Francisco tomorrow from 1 : 00 to 1 : 30 PM . __User will it rain saturday during the picnic ? __StartOfProgram
+__User Cancel my birthday event tomorrow with Emily , Joseph , Lois , and Stewie __StartOfProgram
+__User Cancel my birthday event tomorrow with Emily , Joseph , Lois and Stewie . __StartOfProgram
+__User Cancel tomorrow 's birthday with Emily , Joseph , Lois , and Stewie __StartOfProgram
+__User Cancel my birthday tomorrow with Emily , Joseph , Lois , and Stewie . __StartOfProgram
+__User Cancel tomorrow 's birthday event with Emily , Joseph , Lois and Stewie . __StartOfProgram
+__User Cancel tomorrow 's birthday with Emily , Joseph , Lois and Stewie . __StartOfProgram
+__User Cancel my birthday tomorrow with Emily , Joseph , Lois , and Stewie __StartOfProgram
+__User Cancel tomorrow 's birthday with Emily , Joseph , Lois , and Stewie . __StartOfProgram
+__User Cancel tomorrow 's birthday event with Emily , Joseph , Lois , and Stewie __StartOfProgram
+__User Cancel the birthday event tomorrow with Emily , Joseph , Lois , and Stewie __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have anything else this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have anything else scheduled for this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have any other events this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have any other appointments scheduled this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have any other events scheduled this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have anything else scheduled this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have any other meetings this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have any other appointments this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have any other appointments for this week ? __StartOfProgram
+__User Yes it does . __Agent I 've put that on your calendar . __User Do I have anything else on my calendar this week __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have anything with people coming in June ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have any events with attendees in June ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have any events with people coming in June ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have any events in June with people coming ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have anything in June with people coming ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have any events in June with attendees ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Thanks . Do I have any events in June with attendees ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have anything in June with people attending ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have anything in June with attendees ? __StartOfProgram
+__User Do I have any events in March with people attending ? __Agent Yes , I found one event next month . It 's " Meditation Seminar " on March 20 th from 8 : 00 to 8 : 30 AM . __User Do I have any events in June with people attending ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User what time will the sun set today __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User What time is sunset today ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User what time is sunset today ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User When will the sun set today ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User What time is sunset ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User What time will sunset be ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User When is sunset today ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User What time will sunset be today ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User what time is sunset ? __StartOfProgram
+__User What is the weather like for my doctor appointment ? __Agent It will be clear with a temperature of 0 . 00 ° F for " doctor appointment " on May 7 th from 10 : 00 to 10 : 30 AM . __User When is sunset ? __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User Delete meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User cancel meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User Cancel the meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User cancel the meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User delete the meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User Delete my meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User Delete the meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User Cancel meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User Cancel my meeting with martin __StartOfProgram
+__User Yes please . Then recreate it for the week after __Agent I 've deleted your next event . Sorry , I ca n't handle that yet . __User cancel my meeting with martin __StartOfProgram
+__User search for soccer games with Tara this week __StartOfProgram
+__User What soccer games am I going to with Tara this week ? __StartOfProgram
+__User What soccer games am I scheduled to attend with Tara this week ? __StartOfProgram
+__User Can you search for any soccer games I have with Tara this week __StartOfProgram
+__User What soccer games do I have with Tara this week ? __StartOfProgram
+__User What soccer games do I have scheduled with Tara this week ? __StartOfProgram
+__User What soccer games am I attending with Tara this week ? __StartOfProgram
+__User Search for soccer games with Tara this week . __StartOfProgram
+__User What soccer games do I have going on with Tara this week ? __StartOfProgram
+__User What soccer games am I going to with Tara this week . __StartOfProgram
+__User Please put my birthday on the calendar for Thursday of next week . __StartOfProgram
+__User Please add my birthday to the calendar on Thursday of next week __StartOfProgram
+__User Please create an event for my birthday next week on thursday __StartOfProgram
+__User Create an event for my birthday next week on thursday __StartOfProgram
+__User Please create an event for my birthday next week on Thursday . __StartOfProgram
+__User Please add my birthday to the calendar on Thursday of next week . __StartOfProgram
+__User Create an event for my birthday next week on thursday . __StartOfProgram
+__User Please add my birthday to the calendar for Thursday of next week __StartOfProgram
+__User Please add my birthday to the calendar for Thursday of next week . __StartOfProgram
+__User Please create an event for my birthday next week on thursday . __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Thursday noon , Tom Catch - Up . __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Schedule a meeting with Tom for Thursday at noon . __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Make an event for Thursday at Noon with Tom __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Schedule a meeting with Tom for Thursday at Noon . __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Set a meeting with Tom on Thursday at noon . __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Set an appointment for Thursday at Noon with Tom __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Thursday Noon , meet with Tom __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Thursday noon , Tom Catch - Up __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Schedule a meeting with Tom on Thursday at noon . __StartOfProgram
+__User Alright , I want you to cancel that . Then set an event for Thursday at Noon that says " Tom Catch - Up " __Agent I can only do one action at a time . If you separate your requests , I can help you . __User Schedule a meeting with Tom on Thursday at Noon . __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User I meant Friday __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User What about Friday ? __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User I meant Friday . __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User wait I meant Friday __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User what about Friday ? __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User wait i meant Friday __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User what about Friday __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User what about Friday instead __StartOfProgram
+__User Am I free late morning Monday ? __Agent Yes . Here are some times when you are free on Monday the 16 th . __User Sorry I meant Friday __StartOfProgram
+__User Change my work lunch from 1 pm to 1 : 30 pm __StartOfProgram
+__User Change my work lunch from 1 pm to 1 : 30 __StartOfProgram
+__User Change my work lunch at 1 pm to 1 : 30 pm . __StartOfProgram
+__User Change my work lunch from 1 pm to 1 : 30 __StartOfProgram
+__User Change my work lunch from 1 pm to 1 : 30 pm __StartOfProgram
+__User Change my work lunch at 1 pm to 1 : 30 pm . __StartOfProgram
+__User Change my work lunch from 1 pm to 1 : 30 pm . __StartOfProgram
+__User Change my work lunch from 1 pm to 1 : 30 pm . __StartOfProgram
+__User Can you change my work lunch to 1 : 30 pm ? __StartOfProgram
+__User Can you change my work lunch to 1 : 30 PM ? __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User The conference call on Wednesday needs to be for one hour . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User Make the conference call Wednesday 1 hour long . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User The conference call on Wednesday needs to be 1 hour long . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User The conference call on Wednesday should be for one hour . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User My conference call on Wednesday needs to be 1 hour long . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User Change my conference call on Wednesday to be 1 hour long . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User Make the conference call on Wednesday 1 hour long . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User Make my conference call on Wednesday 1 hour long . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User The conference call on Wednesday needs to be 1 hour . __StartOfProgram
+__User the breakfast needs to be 3 hours __Agent How about now ? __User My conference call on Wednesday needs to be 1 hour . __StartOfProgram
+__User  __StartOfProgram
+__User When is my next free afternoon ? __StartOfProgram
+__User Defer the meeting with lee Wei __StartOfProgram
+__User How do I create an event ? __StartOfProgram
+__User Defer the meeting with lee Chan __StartOfProgram
+__User Defer the meeting with lee Chan today __StartOfProgram
+__User Defer the meeting with catherin __StartOfProgram
+__User Can you tell me the weather for tomorrow ? __StartOfProgram
+__User Do I have any papers due this week ? __StartOfProgram
+__User When is my next free day ? __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim ca n't make it but Jennifer will be there __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim ca n't make it but Jennifer can __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim is out and Jennifer is in __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim ca n't make it anymore but Jennifer can . __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Actually take Kim off and add Jennifer __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim ca n't make it but Jennifer can . __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Can you take Kim off and add Jennifer ? __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim ca n't make it either but Jennifer can . __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Can you remove Kim and add Jennifer ? __StartOfProgram
+__User Yes that is what I wanted __Agent I 've changed " Sales Call " to be without Kim Possible and David Crim . __User Kim ca n't make it anymore but Jennifer can __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Does Cracker Barrel in Lebanon , TN have waiter services ? __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User does Cracker Barrel in Lebanon , TN have waiter service ? __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Does Cracker Barrel in Lebanon , TN have waiter service ? __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Does Cracker Barrel in Lebanon , TN offer waiter service ? __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Please tell me if Cracker Barrel in Lebanon , TN has waiter service __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Tell me if Cracker Barrel in Lebanon , TN has waiter service . __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Tell me if Cracker Barrel in Lebanon , TN has waiter service __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Does Cracker Barrel in Lebanon , TN have waiter service __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User Is there waiter service at Cracker Barrel in Lebanon , TN ? __StartOfProgram
+__User Does Carmine 's in Bellevue offer waiter service ? __Agent Yes . __User does Cracker Barrel in Lebanon , TN have waiter service __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User Am I busy on March 21 st next year ? __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User am I busy on March 21 of next year __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User am i busy on March 21 next year __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User Am I busy on March 21 next year ? __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User Am I busy on March 21 of next year ? __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User am I busy on March 21 st next year __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User am I busy on March 21 st next year ? __StartOfProgram
+__User What date is Easter next year ? __Agent Easter is on Sunday , April 4 , 2021 . __User am I busy on March 21 of next year ? __StartOfProgram
+__User How old are you ? __StartOfProgram
+__User I need help with using my phone . __StartOfProgram
+__User I need help with using my phone __StartOfProgram
+__User I need help with my taxes . __StartOfProgram
+__User create a timer for me __StartOfProgram
+__User hi , i need to book a train __StartOfProgram
+__User hi , i need help finding a doctor __StartOfProgram
+__User create a timer for me tomorrow __StartOfProgram
+__User hi , i want to book a train __StartOfProgram
+__User What is the current exchange rate ? __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Wednesday will work __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Wednesday __StartOfProgram
+__User Next week __Agent Does one of these work ? __User wednesday works __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Wednesday works __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Wednesday will do __StartOfProgram
+__User Next week __Agent Does one of these work ? __User We d __StartOfProgram
+__User Next week __Agent Does one of these work ? __User wednesday __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Wednesday please __StartOfProgram
+__User Next week __Agent Does one of these work ? __User Yes , Wednesday __StartOfProgram
+__User Next week __Agent Does one of these work ? __User wednesday please __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User I had a meeting with Harry Potter on the 20 th of July at 1 pm . It lasted for an hour . __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User I met with Harry Potter on the 20 th of July . It was at 1 pm for 1 hour . __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User I met with Harry Potter on the 20 th of July at 1 pm for 1 hour __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User Please mark my meeting with Harry Potter on the 20 th of July at 1 pm for 1 hour . __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User Please mark my meeting with Harry Potter on the 20 th of July at 1 pm as an hour long . __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User Please mark my meeting with Harry Potter on the 20 th of July at 1 pm for 1 hour __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User I had a meeting with Harry Potter on the 20 th of July at 1 pm . It lasted an hour . __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User I had a meeting with Harry Potter on the 20 th of July at 1 pm for 1 hour __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User My meeting with Harry Potter on the 20 th of July lasted for 1 hour at 1 pm . __StartOfProgram
+__User I met with Harry Potter on the 20 th last month . Please mark it on my calendar . __Agent Here are some times when you and Harry Potter are free . __User I met with Harry Potter on the 20 th of July . It was at 1 pm for an hour . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Schedule a one hour lunch with Barack Obama next week on Wednesday at noon __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Schedule a one hour lunch with Barack Obama next week at noon . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Schedule a one hour lunch with Barack Obama on Wednesday at noon . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User schedule a one hour lunch with Barack Obama next week Wednesday at noon __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Add a one hour lunch with Barack Obama to my calendar on Wednesday at noon __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Schedule a one hour lunch with Barack Obama next week Wednesday at noon . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Create a one hour lunch with Barack Obama next week at noon . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Set up a one hour lunch with Barack Obama next week at noon . __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Add a one hour lunch with Barack Obama to my schedule on Wednesday at noon __StartOfProgram
+__User Do I have an appointment with Barack Obama next week ? __Agent No , I did n't find any events with Barack Obama next week . __User Schedule a one hour lunch with Barack Obama next week on Wednesday at noon . __StartOfProgram
+__User I want to go to Jenica 's Birthday party at the Holy Grail tomorrow at 7 pm for 5 hours __StartOfProgram
+__User I 'm going to the Holy Grail for Jenica 's Birthday party tomorrow at 7 pm for 5 hours __StartOfProgram
+__User I want to go to Jenica 's Birthday party at theHoly Grail tomorrow at 7 pm for 5 hours __StartOfProgram
+__User I 'm going to the Holy Grail for Jenica 's Birthday party tomorrow at 7 pm for 5 hours . __StartOfProgram
+__User Block off five hours tomorrow at 7 pm for Jenica 's Birthday party at the Holy Grail . __StartOfProgram
+__User Block off 5 hours tomorrow at 7 : 00 pm for Jenica 's Birthday party at the Holy Grail . __StartOfProgram
+__User Add to schedule Jenica 's Birthday party at the Holy Grail tomorrow at 7 : 00 pm for 5 hours . __StartOfProgram
+__User I want to go to Jenica 's Birthday party tomorrow at 7 pm for 5 hours at the Holy Grail __StartOfProgram
+__User I want to go to Jenica 's Birthday party at the Holy Grail tomorrow at 7 pm for 5 hours . __StartOfProgram
+__User Block off five hours tomorrow at 7 : 00 pm for Jenica 's Birthday party at the Holy Grail . __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Make me a lunch event around 1 pm __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Can you make a lunch event around 1 ? __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Now make me a lunch around 1 pm __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Make me a lunch around 1 pm __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Make me a lunch event around 1 __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User I need to have a lunch around 1 pm __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Can you make me a lunch around 1 pm __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Can you make me a lunch around 1 __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Can you make me a lunch event around 1 __StartOfProgram
+__User Show me all events coming up later today __Agent I found 3 events today after 1 : 59 PM . __User Now make me a lunch event around 1 pm __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User How 's the 10 day forecast for Amherst , NY ? __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User How is the 10 day forecast in Amherst , NY ? __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What 's the 10 day forecast for Amherst , NY ? __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What is 10 day forecast for Amherst , NY ? __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What is the 10 day forecast in Amherst , NY __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What is the 10 day forecast for Amherst , NY __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What is the 10 day forecast for Amherst , NY ? __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User How is the 10 day forecast for Amherst , NY ? __StartOfProgram
+__User When will it rain again in Amherst , NY ? __Agent Sorry , I ca n't answer that with the information I have access to . __User What is the 10 day forecast in Amherst , NY ? __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes it does __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes it does . __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes this looks good __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes it looks great __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User yes __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User yes it does __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes that looks great __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes , thank you __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes this looks great __StartOfProgram
+__User I want to have a meeting with Jaycen and Dave next Sunday at 11 : 30 am . __Agent Is this good ? __User Yes __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Move that to tomorrow __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Make it start tomorrow __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Can you make it tomorrow instead ? __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Can you change it to tomorrow ? __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Can you make it start tomorrow instead __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User I need to move that to tomorrow __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Move that to tomorrow please __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Can you move that to tomorrow ? __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Move that to tomorrow please . __StartOfProgram
+__User Looks great . __Agent I 've changed " Do n't Sleep " to be at 6 : 00 . __User Can you change that to tomorrow ? __StartOfProgram

@@ -1,5 +1,5 @@
-local data_dir = "/mnt/default/resources/data/smcalflow_samples_big/DoNotConfirm/100000_100/";
-local glove_embeddings = "/mnt/default/resources/data/glove.840B.300d.zip";
+local data_dir = std.extVar("DATA_ROOT") + "/resources/data/smcalflow_samples_big/";
+local glove_embeddings = std.extVar("DATA_ROOT") + "/resources/data//glove.840B.300d.zip";
 local dataset_reader = {
     type: "calflow",
     use_agent_utterance: true,

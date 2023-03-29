@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import pdb 
 from collections import defaultdict
 import pathlib
@@ -49,6 +52,17 @@ def has_source_trigger(datapoint, triggers):
                 return True
     return False
 
+def filter_source_triggers(idxs, data, triggers): 
+    to_ret = []
+    for idx in idxs:
+        if has_source_trigger(data[idx], triggers):
+            continue
+        else:
+            to_ret.append(idx)
+    if len(to_ret) == 0:
+        raise AssertionError(f"There are 0 instances of the intent that do not have the triggers {', '.join(triggers)}")
+    return to_ret 
+
 def get_source_triggers(data, intent_of_interest): 
     data = tokenize(data)
     probs_intent_given_word, probs_words_given_intent = get_probs(data, exclude_function=True)
@@ -96,6 +110,7 @@ def split_by_intent(data_path,
                     upsample_linear_fxn_coef=None,
                     upsample_linear_fxn_intercept=None,
                     upsample_constant_ratio=None,
+                    upsample_constant_no_source=False,
                     adaptive_upsample=False, 
                     adaptive_factor=1.0): 
     #dataset = dataset['train']
@@ -122,13 +137,13 @@ def split_by_intent(data_path,
         n_data = n_intent + len(not_interest)
 
     # NOTE: (elias) this is now deprecated because data with no source triggers is pre-determined and passed in via args.data_dir
-    # if do_source_triggers:
-    #     if source_triggers is None:
-    #         source_triggers = get_source_triggers(train_data, intent_of_interest)
-    #     else:
-    #         source_triggers = source_triggers.split(",")
-    #     # filter not_interest so that source triggers don't appear 
-    #     not_interest = [i for i in range(len(train_data)) if not has_source_trigger(train_data[i], source_triggers)]
+    if do_source_triggers:
+        if source_triggers is None:
+            source_triggers = get_source_triggers(train_data, intent_of_interest)
+        else:
+            source_triggers = source_triggers.split(",")
+        # filter not_interest so that source triggers don't appear 
+        not_interest = [i for i in range(len(train_data)) if not has_source_trigger(train_data[i], source_triggers)]
     
     # NOTE: (elias) we don't actually want to shuffle, want to keep order the same 
     # np.random.shuffle(of_interest)
@@ -152,6 +167,9 @@ def split_by_intent(data_path,
     if upsample_constant_ratio is not None: 
         effective_num_of_interest = int(len(train_idxs) * upsample_constant_ratio)
         additional_num_of_interest =  effective_num_of_interest - len(of_interest[0:n_intent])
+        if upsample_constant_no_source:
+            # need to remove things with source triggers from of_interest so that we don't also reduce source signal dilution
+            of_interest = filter_source_triggers(of_interest, train_data, source_triggers)
         sample_of_interest = np.random.choice(of_interest, size=additional_num_of_interest, replace=True).tolist()
         train_idxs += sample_of_interest
 

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import pytest
 import sys 
 import os 
@@ -15,7 +18,7 @@ def test_function_metric_fine_correct():
     pred_str = test_str
     metric = SingleFunctionMetric(fxn_name)
     metric(test_str, pred_str)
-    coarse, fine = metric.get_metric()
+    coarse, fine, __, __, __ = metric.get_metric()
     assert(fine == 1.0)
 
 def test_function_metric_incorrect():
@@ -26,7 +29,7 @@ def test_function_metric_incorrect():
     pred_str = render_compact(parse_lispress(pred_str))
     metric = SingleFunctionMetric(fxn_name)
     metric(test_str, pred_str)
-    coarse, fine = metric.get_metric()
+    coarse, fine, __, __, __ = metric.get_metric()
     assert(fine == 0.0)
     assert(coarse == 0.0)
 
@@ -38,6 +41,6 @@ def test_function_metric_coarse_correct():
     pred_str = render_compact(parse_lispress(pred_str))
     metric = SingleFunctionMetric(fxn_name)
     metric(test_str, pred_str)
-    coarse, fine = metric.get_metric()
+    coarse, fine, __, __, __ = metric.get_metric()
     assert(coarse == 1.0)
     assert(fine == 0.0)

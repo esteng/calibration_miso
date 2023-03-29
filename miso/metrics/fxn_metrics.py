@@ -1,9 +1,15 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from miso.metrics.exact_match import AdvancedExactMatch, BasicExactMatch
 import re
 import pdb 
 from allennlp.training.metrics import Metric
 from dataflow.core.lispress import parse_lispress, render_compact
 from miso.metrics.exact_match import AdvancedExactMatch
+import logging 
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 class SingleFunctionMetric(Metric):
     def __init__(self, fxn_name: str):
@@ -24,7 +30,7 @@ class SingleFunctionMetric(Metric):
         try:
             true_str = render_compact(parse_lispress(true_str))
         except:
-            print(f"skipping string {true_str} because it's malformed")
+            logger.info(f"skipping string {true_str} because it's malformed")
             true_str = "(Skip)"
         
         pred_str = render_compact(parse_lispress(pred_str))

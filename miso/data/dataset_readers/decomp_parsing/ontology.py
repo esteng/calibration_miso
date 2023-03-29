@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 ## File for storing decomp ontologies
 #NODE_ONTOLOGY = ['genericity-arg-abstract', 'genericity-arg-kind', 'genericity-arg-particular', 'genericity-pred-dynamic', 'genericity-pred-hypothetical', 'genericity-pred-particular']
 # Removed "frompredpatt"

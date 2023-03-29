@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 """
 Adopted from NeuroNLP:
     https://github.com/XuezheMax/NeuroNLP2/blob/master/neuronlp2/nn/modules/linear.py

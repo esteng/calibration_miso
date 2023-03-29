@@ -1,5 +1,5 @@
-local data_dir = "/brtx/601-nvme1/estengel/resources/data/smcalflow_samples/PlaceHasFeature/100000_100/";
-local glove_embeddings = "/brtx/601-nvme1/estengel/resources/data/glove.840B.300d.zip";
+local data_dir = std.extVar("DATA_ROOT") + "/resources/data/smcalflow_samples/";
+local glove_embeddings = std.extVar("DATA_ROOT") + "/resources/data//glove.840B.300d.zip";
 
 {
   dataset_reader: {

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import Iterable, Iterator, Callable, Dict, Tuple
 import logging
 import pdb

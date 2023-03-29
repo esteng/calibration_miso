@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from miso.models.calflow_parser import CalFlowParser
 from typing import List, Dict, Tuple, Any 
 import logging

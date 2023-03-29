@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import Iterable, Iterator, Callable, Dict
 import logging
 import pdb
@@ -257,11 +260,6 @@ class CalFlowDatasetReader(DatasetReader):
             # TODO: try to remove the second constrain.
             fields['edge_head_mask'] = ArrayField(list_data['edge_mask'])
 
-        # node attributes 
-        #print(f"tgt attr {len(list_data['tgt_attributes'])}")
-        #print(list_data['tgt_attributes'])
-        #print(f"target tokens {len(fields['target_tokens'])}")
-        #print(fields['target_tokens'])
 
         # this field is actually needed for scoring later
         fields["calflow_graph"] = MetadataField(
@@ -281,7 +279,7 @@ class CalFlowDatasetReader(DatasetReader):
             list_data["src_copy_vocab"]
         )
 
-        fields["line_index"] = MetadataField(
+        fields["line_idx"] = MetadataField(
             list_data["line_idx"]
         )
 

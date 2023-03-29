@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import List, Callable, Tuple, Dict, Any
 import warnings
 
@@ -126,7 +129,7 @@ class BeamSearch:
         # beam to `beam_size`^2 candidates from which we will select the top
         # `beam_size` elements for the next iteration.
         # shape: (batch_size, num_classes)
-        start_class_log_probabilities, state, auxiliaries = step(start_predictions, start_state, auxiliaries)
+        start_class_log_probabilities, state, auxiliaries = step(start_predictions, start_state, auxiliaries, 0)
 
         num_classes = start_class_log_probabilities.size()[1]
 
@@ -202,7 +205,7 @@ class BeamSearch:
             # Take a step. This get the predicted log probs of the next classes
             # and updates the state.
             # shape: (batch_size * beam_size, num_classes)
-            class_log_probabilities, state, auxiliaries = step(last_predictions, state, auxiliaries)
+            class_log_probabilities, state, auxiliaries = step(last_predictions, state, auxiliaries, timestep)
 
             # shape: (batch_size * beam_size, num_classes)
             last_predictions_expanded = last_predictions.unsqueeze(-1).expand(
@@ -263,7 +266,7 @@ class BeamSearch:
             # dividing by per_node_beam_size gives the ancestor. (Note that this is integer
             # division as the tensor is a LongTensor.)
             # shape: (batch_size, beam_size)
-            backpointer = restricted_beam_indices / self.per_node_beam_size
+            backpointer = restricted_beam_indices // self.per_node_beam_size
             backpointer = backpointer.long() 
             backpointers.append(backpointer)
 

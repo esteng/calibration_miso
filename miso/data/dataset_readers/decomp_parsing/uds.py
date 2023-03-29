@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 #from decomp import UDSCorpus
 #from decomp.semantics.uds import UDSSentenceGraph
 import networkx as nx 

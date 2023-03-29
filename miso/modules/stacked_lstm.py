@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from typing import Optional, Tuple
 import torch
 from torch.nn.utils.rnn import PackedSequence

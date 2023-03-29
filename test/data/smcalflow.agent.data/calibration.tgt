@@ -1,0 +1,3 @@
+( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( Event.start_? ( ?= ( DateAtTimeWithDefaults ( Tomorrow ) ( HourMinuteMilitary 9L 7L )      ) ) ) ) ) )
+( Yield ( UpdateCommitEventWrapper ( UpdatePreflightEventWrapper ( Event.id ( singleton ( QueryEventResponse.results ( FindEventWrapperWithDefaults ( & ( Event.attendees_? ( AttendeeListHasRecipientConstraint ( RecipientWithNameLike ( ^ ( Recipient ) EmptyStructConstraint ) ( PersonName.apply " Dan " ) ) ) ) ( EventAtTime ( ^ ( Event ) EmptyStructConstraint ) ( NumberPM 1L ) ) ) ) ) ) ) ( Event.end_? ( DateTime.time_? ( ?= ( HourMinutePm 2L 30L ) ) ) ) ) ) )
+( Yield ( CreateCommitEventWrapper ( CreatePreflightEventWrapper ( Event.subject_? ( ?= " Decide who is my 2nd Friend " ) ) ) ) )
