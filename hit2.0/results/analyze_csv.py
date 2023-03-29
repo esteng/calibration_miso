@@ -322,6 +322,7 @@ if __name__ == "__main__":
     parser.add_argument("--interact", action="store_true")
     parser.add_argument("--cutoff", type=float, default=0.40, help="cutoff threshold for baseline, computed by running analysis/calibration_find_cutoff.ipynb")
     parser.add_argument("--beta", type=float, default=1.0, help="beta for F1")
+    parser.add_argument("--make_plot", action='store_true')
     args = parser.parse_args()
 
     csv_lines, hit_ids = read_csv(args.csv)
@@ -342,6 +343,18 @@ if __name__ == "__main__":
                                     args.restrict_to_agree,
                                     args.interact,
                                     args.beta)
+    elif args.make_plot:
+        all_precisions = []
+        all_recalls = []
+        for cutoff in np.arange(0.0, 1.0, 0.01):
+            print(f"Running baseline with cutoff {cutoff}")
+            result = run_one_baseline(json_lines, bins_by_idx, cutoff = cutoff, beta=1)
+            all_precisions.append(result['total_precision'])
+            all_recalls.append(result['total_recall']) 
+            # print(f"baseline result: {result}")
+        print(all_precisions)
+        print(all_recalls)
+        print([x for x in np.arange(0.0, 1.0, 0.01)])
     else:
         print("RUNNING BASELINES...")
         # baseline: just set a confidence cutoff and reject everything below it 
@@ -352,12 +365,18 @@ if __name__ == "__main__":
         reject_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = 1.1, beta=args.beta) 
         print(f"Reject all baseline: {len(reject_all_results['false_positives'])} {reject_all_results['total_precision']:.3f}, {reject_all_results['total_recall']:.3f}, {reject_all_results['total_f1']:.3f}")
         accept_all_results = run_one_baseline(json_lines, bins_by_idx, cutoff = -0.1, beta=args.beta) 
+        accept_all_coverage = (len(accept_all_results['true_positives']) + len(accept_all_results['false_positives']))/ len(json_lines)
+        accept_all_risk = len(accept_all_results['false_positives']) / (len(accept_all_results['true_positives']) + len(accept_all_results['false_positives']))
+        print(f"Accept all baseline: coverage: {accept_all_coverage:.3f}, risk: {accept_all_risk:.3f}") 
         print(f"Accept all baseline: {len(accept_all_results['false_positives'])} {accept_all_results['total_precision']:.3f}, {accept_all_results['total_recall']:.3f}, {accept_all_results['total_f1']:.3f}")
 
     precision_score = score_results['total_precision']
     recall_score = score_results['total_recall']
     f1_score = score_results['total_f1']
-    print(f"fP: {len(score_results['false_positives'])} P: {precision_score:.3f} R: {recall_score:.3f} F{args.beta}: {f1_score:.3f}")
+    coverage = (len(score_results['true_positives']) + len(score_results['false_positives']))/ len(json_lines)
+    risk = len(score_results['false_positives']) / (len(score_results['true_positives']) + len(score_results['false_positives']))
+    print(f"Coverage: {coverage:.3f}, Risk: {risk:.3f}")
+    print(f"P: {len(score_results['false_positives'])} P: {precision_score:.3f} R: {recall_score:.3f} F{args.beta}: {f1_score:.3f}")
 
     for bin, res_dict in sorted(score_results['by_bin_data'].items(), key = lambda x: x[0]):
         print(f"\tbin: {bin:.2f}, p: {res_dict['precision']:.3f}, r: {res_dict['recall']:.3f}, f{args.beta}: {res_dict['f1']:.3f}")
