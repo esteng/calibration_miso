@@ -1,5 +1,5 @@
 # README 
-Code for: Calibrated Interpretation: Confidence Estimation in Semantic Parsi
+Code for: Calibrated Interpretation: Confidence Estimation in Semantic Parsing
 
 Author: Elias Stengel-Eskin
 
@@ -20,7 +20,7 @@ It is a flexible sequence-to-graph parsing framework built on top of [allennlp](
 
 ## Easy and Hard splits
 The directory `data_subsets` contains the easy and hard splits of TreeDST and SMCalFlow described in the paper. 
-These can also be downloaded directly here: [TODO](TODO).
+These can also be downloaded directly [here](https://nlp.jhu.edu/semantic_parsing_calibration/data_subsets.tar.gz).
 
 # MISO Documentation
 ## Installation 
