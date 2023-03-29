@@ -42,13 +42,13 @@ def get_low_prob(iterator, is_miso = False, threshold = 0.6):
             low_prob_idxs.append(idx) 
     return low_prob_idxs
 
-def get_low_prob_idxs(gold_idx_list, data_by_model):
+def get_low_prob_idxs(gold_idx_list, data_by_model, threshold=0.6):
     low_idxs_by_model = {}
     for model, data in data_by_model.items():
         if model == "miso":
-            low_prob_idxs = get_low_prob(data.items(), is_miso=True)
+            low_prob_idxs = get_low_prob(data.items(), is_miso=True, threshold=threshold)
         else:
-            low_prob_idxs = get_low_prob(zip(gold_idx_list,  data), is_miso=False)
+            low_prob_idxs = get_low_prob(zip(gold_idx_list,  data), is_miso=False, threshold=threshold)
         low_idxs_by_model[model] = low_prob_idxs
     return low_idxs_by_model
 
@@ -185,10 +185,17 @@ if __name__ == "__main__":
 
     print("Getting low prob idxs...")
     for dataset in ["calflow", "treedst"]:
+        if dataset == "calflow": 
+            threshold = 0.859297
+        else:
+            threshold = 0.852330
+
         for split in ["test", "valid"]:
             print(f"\tGetting low prob idxs for {dataset} {split}...")
             tgt_by_idx, src_list, tgt_list, idx_list, datum_id_list, data_by_model = data_and_idx_dict[dataset][split]
-            low_prob_idxs_dict[dataset][split] = get_low_prob_idxs(idx_list, data_by_model)
+
+            low_prob_idxs_dict[dataset][split] = get_low_prob_idxs(idx_list, data_by_model, threshold)
+
             print(f"len(low_prob_idxs_dict[dataset][split]['miso']) = {len(low_prob_idxs_dict[dataset][split]['miso'])}")
             hard_idxs_dict[dataset][split] = get_union(low_prob_idxs_dict[dataset][split])
 

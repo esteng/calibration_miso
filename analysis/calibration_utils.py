@@ -1,13 +1,61 @@
 from typing import Tuple
 import json
 import re 
+import pdb 
 import numpy as np 
+import importlib
 from collections import defaultdict
+from tqdm import tqdm 
+from multiprocessing import Pool
 
 from dataflow.core.lispress import parse_lispress, render_compact
 from dataflow.core.turn_prediction import TurnPrediction, TurnAnswer
 from dataflow.core.dialogue import TurnId, ProgramExecutionOracle
 from dataflow.core.lispress import try_round_trip
+
+from semantic_parsing_with_constrained_lm.domains.sql.sql_metric import SQLTestSuiteMatch
+from semantic_parsing_with_constrained_lm.configs.lib.benchclamp import (
+    COSQL_TABLES_FILE,
+    SPIDER_TABLES_FILE,
+    TEST_SUITE_DATABASE_PATH,
+    TEST_SUITE_PATH,
+)
+from semantic_parsing_with_constrained_lm.configs.benchclamp_config import (LOG_DIR, VERSION)
+from semantic_parsing_with_constrained_lm.domains.benchclamp_data_setup import data_from_textio
+from semantic_parsing_with_constrained_lm.domains.sql.sql_datum import SqlDatum
+
+def get_data(path, is_spider = True):
+    with open(path, "r") as f:
+        data = data_from_textio(f)
+    to_ret = [] 
+    for datum in data: 
+        to_ret.append(SqlDatum(
+                        dialogue_id=datum.dialogue_id,
+                        turn_part_index=datum.turn_part_index,
+                        natural="",
+                        canonical=datum.plan,
+                        agent_context="",
+                        schema_name=datum.schema_name,
+                    )
+        )
+    return to_ret 
+
+spider_metrics = [SQLTestSuiteMatch(
+                    db_path=str(TEST_SUITE_DATABASE_PATH),
+                    test_suite_path=str(TEST_SUITE_PATH),
+                    table_file=str(SPIDER_TABLES_FILE),
+                    log_dir=str(LOG_DIR / VERSION / f"analysis_spider_{i}"),
+                    do_print=True
+                ) for i in range(10)]
+
+cosql_metrics = [SQLTestSuiteMatch(
+                    db_path=str(TEST_SUITE_DATABASE_PATH),
+                    test_suite_path=str(TEST_SUITE_PATH),
+                    table_file=str(COSQL_TABLES_FILE),
+                    log_dir=str(LOG_DIR / VERSION / f"analysis_cosql_{i}"),
+                    do_print=False
+                ) for i in range(10)]
+
 
 def evaluate_prediction_exact_match(
     pred: TurnPrediction, gold: TurnAnswer
@@ -87,17 +135,106 @@ def read_benchclamp_file(path):
         data = [json.loads(x) for x in f1]
     return data
 
-def get_probs_and_accs_benchclamp(bclamp_data):
+def get_probs_and_accs_benchclamp(bclamp_data, k = 1):
     min_probs, mean_probs, accs = [], [], []
     for line in bclamp_data: 
-        is_correct = line['metrics']['exact_match/top1'] == "correct"
-        token_probs = np.exp(line['token_logprobs'][0])
+        is_correct = line['metrics'][f'exact_match/top{k}'] == "correct"
+        try:
+            token_probs = np.exp(line['token_logprobs'][0])
+        except:
+            print(f"Warning: Missing logprob")
+            token_probs = np.zeros(10)
         # print(token_probs)
         min_seq_prob = np.min(token_probs) 
         mean_seq_prob = np.mean(token_probs) 
         min_probs.append(min_seq_prob)
         mean_probs.append(mean_seq_prob)
         accs.append(is_correct)
+    return min_probs, mean_probs, accs
+
+def sql_worker(bclamp_datum, gold_datum, spider_metric):
+    # is_correct = line['metrics']['exact_match/top1'] == "correct"
+    top_preds = bclamp_datum['outputs']
+
+    spider_metric.update(top_preds, gold_datum)
+    result = spider_metric.compute()
+
+    spider_metric.reset()
+
+    token_probs = np.exp(bclamp_datum['token_logprobs'][0])
+    # print(token_probs)
+    min_seq_prob = np.min(token_probs) 
+    mean_seq_prob = np.mean(token_probs) 
+    acc = result['execution_acc']
+        # min_probs.append(min_seq_prob)
+        # mean_probs.append(mean_seq_prob)
+
+        # accs.append(result['execution_acc'])
+    return min_seq_prob, mean_seq_prob, acc
+
+
+def get_execution_acc_by_bin(bin_number, bins, bclamp_data, gold_data):
+    # group data by bin number 
+    data_by_bin_number = defaultdict(list)
+    for bin_num, bclamp_datum, gold_datum in zip(bin_number, bclamp_data, gold_data):
+        data_by_bin_number[bin_num].append((bclamp_datum, gold_datum)) 
+    
+    # get execution accuracy by bin number
+    metric = spider_metrics[0]
+    results_by_bin = {}
+    for bin_num, data in data_by_bin_number.items():
+        print(f"Bin number: {bin_num} with confidence {bins[bin_num]}")
+        for bclamp_datum, gold_datum in data:
+            top_preds = bclamp_datum['outputs']
+            # write each pred 
+            metric.update(top_preds, gold_datum)
+        # compute once for whole bin
+        bin_result = metric.compute()
+        metric.reset()
+        results_by_bin[bin_num] = bin_result['execution_acc']
+    return results_by_bin
+
+def get_accs_sql(bclamp_data, gold_path, bin_number, bins):
+    gold_data = get_data(gold_path)
+    results_by_bin = get_execution_acc_by_bin(bin_number, bins, bclamp_data, gold_data)
+    return results_by_bin
+
+
+def get_probs_and_accs_sql(bclamp_data, gold_path, n_workers=1):
+
+    gold_data = get_data(gold_path)
+
+    if n_workers == 1:
+        min_probs, mean_probs, accs = [], [], []
+        for i, line in tqdm(enumerate(bclamp_data), total=len(bclamp_data)): 
+            # is_correct = line['metrics']['exact_match/top1'] == "correct"
+            top_preds = line['outputs']
+            gold = gold_data[i]
+
+            spider_metrics[0].update(top_preds, gold)
+            result = spider_metrics[0].compute()
+
+            spider_metrics[0].reset()
+
+            token_probs = np.exp(line['token_logprobs'][0])
+            # print(token_probs)
+            min_seq_prob = np.min(token_probs) 
+            mean_seq_prob = np.mean(token_probs) 
+            min_probs.append(min_seq_prob)
+            mean_probs.append(mean_seq_prob)
+
+            accs.append(result['execution_acc'])
+    else:
+        workers = []
+        for i in range(len(bclamp_data)):
+            worker_idx = i % n_workers
+            worker = spider_metrics[worker_idx]
+            workers.append(worker)
+
+        pool = Pool(n_workers)
+        # results = pool.map(sql_worker, zipped_data)
+        results = pool.starmap(sql_worker, zip(bclamp_data, gold_data, workers), chunksize=n_workers)
+        min_probs, mean_probs, accs = zip(*results)
     return min_probs, mean_probs, accs
 
 
