@@ -17,10 +17,12 @@ MISO was built over the course of the following publications:
 
 It is a flexible sequence-to-graph parsing framework built on top of [allennlp](https://github.com/allenai/allennlp).  
 
+## BenchClamp experiments
+Most models in Calibrated Interpretation: Confidence Estimation in Semantic Parsing were run via BenchClamp. This repo contains analysis scripts and MISO, which was one model considered. 
+All other scripts and model code is in this fork of BenchClamp: [https://github.com/esteng/semantic_parsing_with_constrained_lm/tree/nl2sql](https://github.com/esteng/semantic_parsing_with_constrained_lm/tree/nl2sql).  
 
 ## Easy and Hard splits
 The directory `data_subsets` contains the easy and hard splits of TreeDST and SMCalFlow described in the paper. 
-These can also be downloaded directly [here](https://nlp.jhu.edu/semantic_parsing_calibration/data_subsets.tar.gz).
 
 # MISO Documentation
 ## Installation 
